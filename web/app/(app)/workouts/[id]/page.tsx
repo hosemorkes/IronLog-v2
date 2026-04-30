@@ -110,10 +110,16 @@ export default function WorkoutPlanDetailPage() {
                 })}
             </ul>
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col gap-3">
+              <Link
+                href={`/session/${plan.id}`}
+                className="block rounded-2xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-md hover:bg-emerald-500"
+              >
+                Начать тренировку
+              </Link>
               <Link
                 href="/workouts/new"
-                className="block rounded-2xl bg-accent py-3 text-center text-sm font-semibold text-white hover:bg-accent-dark"
+                className="block rounded-2xl border border-[#232323] bg-[#1a1a1a] py-3 text-center text-sm font-semibold text-white hover:border-accent/40"
               >
                 Создать новый план
               </Link>
