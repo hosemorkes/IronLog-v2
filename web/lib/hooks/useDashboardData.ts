@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import { getAccessToken } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
-import { useAuthStore } from "@/lib/stores/auth-store";
+import { useAuthStore } from "@/lib/stores/authStore";
 import type {
   CurrentUserDto,
   RecentPrListDto,

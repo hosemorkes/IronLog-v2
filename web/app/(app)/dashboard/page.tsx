@@ -14,7 +14,7 @@ import {
   useRecentPrsQuery,
   useUserProgressQuery,
 } from "@/lib/hooks/useDashboardData";
-import { useAuthStore } from "@/lib/stores/auth-store";
+import { useAuthStore } from "@/lib/stores/authStore";
 import type {
   UserAchievementFeedItemDto,
   WeeklyDayTonnageDto,
