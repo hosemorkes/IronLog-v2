@@ -15,6 +15,16 @@ export interface WeeklyDayTonnageDto {
   is_today: boolean;
 }
 
+/** GET /api/user/progress/weekly — неделя Пн–Вс (UTC), по дню. */
+
+export interface WeeklyProgressDayDto {
+  date: string;
+  volume_kg: number;
+  workout_count: number;
+  day_label: string;
+  is_today: boolean;
+}
+
 export interface UserProgressDto {
   total_lifetime_tonnage_kg: number;
   weekly_tonnage_by_day: WeeklyDayTonnageDto[];
@@ -53,4 +63,21 @@ export interface UserAchievementFeedItemDto {
 
 export interface UserAchievementFeedDto {
   items: UserAchievementFeedItemDto[];
+}
+
+/** Элемент журнала сессий GET /api/user/sessions */
+
+export interface WorkoutSessionListItemDto {
+  session_id: string;
+  plan_id: string | null;
+  started_at: string;
+  completed_at: string | null;
+  total_volume_kg: string | number | null;
+}
+
+/** Ответ с пагинацией истории тренировок */
+
+export interface WorkoutSessionHistoryDto {
+  items: WorkoutSessionListItemDto[];
+  total: number;
 }

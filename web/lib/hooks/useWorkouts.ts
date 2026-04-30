@@ -109,7 +109,8 @@ async function parseErrorMessage(res: Response): Promise<string> {
 /**
  * Список планов текущего пользователя.
  */
-export function useWorkoutPlans() {
+export function useWorkoutPlans(options?: { enabled?: boolean }) {
+  const enabled = options?.enabled !== false;
   return useQuery({
     queryKey: ["workout-plans"],
     queryFn: async (): Promise<WorkoutPlanListItem[]> => {
@@ -120,6 +121,7 @@ export function useWorkoutPlans() {
       return res.json() as Promise<WorkoutPlanListItem[]>;
     },
     staleTime: 30 * 1000,
+    enabled,
   });
 }
 

@@ -18,6 +18,16 @@ class WeeklyDayTonnage(BaseModel):
     is_today: bool
 
 
+class WeeklyProgressDayResponse(BaseModel):
+    """Один день текущей календарной недели (Пн–Вс, UTC): тоннаж и число завершённых сессий."""
+
+    date: date
+    volume_kg: float = Field(ge=0)
+    workout_count: int = Field(ge=0)
+    day_label: str = Field(description="Пн…Вс")
+    is_today: bool
+
+
 class UserProgressResponse(BaseModel):
     """Сводка прогресса: тоннаж, неделя, серия, активная сессия."""
 

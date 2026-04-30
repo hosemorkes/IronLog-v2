@@ -9,6 +9,7 @@ from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql.elements import ColumnElement
 
 from models.user import User
 from models.workout_session import WorkoutSession, WorkoutSet
@@ -17,9 +18,15 @@ from schemas.user_progress import (
     RecentPrListResponse,
     UserProgressResponse,
     WeeklyDayTonnage,
+    WeeklyProgressDayResponse,
 )
 
 _WEEKDAY_RU_SHORT = ("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
+
+
+def _session_completed_day_bucket() -> ColumnElement:
+    """Одно выражение date_trunc для SELECT и GROUP BY (совместимо с PostgreSQL)."""
+    return func.date_trunc("day", WorkoutSession.completed_at)
 
 
 def _to_float(d: Decimal | None) -> float:
@@ -88,16 +95,19 @@ async def get_user_progress(db: AsyncSession, user: User) -> UserProgressRespons
 
     # Последние 7 календарных дней (включая сегодня), тоннаж по дате завершения сессии
     week_start = today - timedelta(days=6)
+    day_bucket = _session_completed_day_bucket()
     daily_rows = await db.execute(
         select(
-            func.date_trunc("day", WorkoutSession.completed_at).label("d"),
+            day_bucket.label("d"),
             func.coalesce(func.sum(WorkoutSession.total_volume_kg), 0),
-        ).where(
+        )
+        .where(
             WorkoutSession.user_id == user.id,
             WorkoutSession.completed_at.is_not(None),
             WorkoutSession.completed_at
             >= datetime.combine(week_start, datetime.min.time()).replace(tzinfo=timezone.utc),
-        ).group_by(func.date_trunc("day", WorkoutSession.completed_at)),
+        )
+        .group_by(day_bucket),
     )
     by_day: dict[date, float] = {}
     for row in daily_rows.all():
@@ -121,15 +131,18 @@ async def get_user_progress(db: AsyncSession, user: User) -> UserProgressRespons
 
     # Серия: подряд дней с тренировкой; если сегодня отдых — считаем с вчера (один «грейс»)
     streak_start_lookback = today - timedelta(days=400)
+    day_bucket_streak = _session_completed_day_bucket()
     distinct_days = await db.execute(
-        select(func.date_trunc("day", WorkoutSession.completed_at).label("d")).where(
+        select(day_bucket_streak.label("d"))
+        .where(
             WorkoutSession.user_id == user.id,
             WorkoutSession.completed_at.is_not(None),
             WorkoutSession.completed_at
             >= datetime.combine(streak_start_lookback, datetime.min.time()).replace(
                 tzinfo=timezone.utc,
             ),
-        ).distinct(),
+        )
+        .distinct(),
     )
     workout_days: set[date] = set()
     for (ts,) in distinct_days.all():
@@ -165,6 +178,61 @@ async def get_user_progress(db: AsyncSession, user: User) -> UserProgressRespons
         workouts_completed_this_month=workouts_this_month,
         active_session_id=active,
     )
+
+
+async def get_calendar_week_progress(
+    db: AsyncSession,
+    user: User,
+) -> list[WeeklyProgressDayResponse]:
+    """Тоннаж и число сессий по дням текущей недели (понедельник–воскресенье), UTC-даты."""
+    now = datetime.now(timezone.utc)
+    today: date = now.date()
+    monday = today - timedelta(days=today.weekday())
+    sunday = monday + timedelta(days=6)
+    week_after = sunday + timedelta(days=1)
+
+    day_bucket = _session_completed_day_bucket()
+    stmt = (
+        select(
+            day_bucket.label("d"),
+            func.count(WorkoutSession.id),
+            func.coalesce(func.sum(WorkoutSession.total_volume_kg), 0),
+        )
+        .where(
+            WorkoutSession.user_id == user.id,
+            WorkoutSession.completed_at.is_not(None),
+            WorkoutSession.completed_at
+            >= datetime.combine(monday, datetime.min.time()).replace(tzinfo=timezone.utc),
+            WorkoutSession.completed_at < datetime.combine(week_after, datetime.min.time()).replace(
+                tzinfo=timezone.utc,
+            ),
+        )
+        .group_by(day_bucket)
+    )
+    daily_rows = await db.execute(stmt)
+    by_day: dict[date, tuple[int, float]] = {}
+    for row in daily_rows.all():
+        raw_day, cnt, vol = row[0], row[1], row[2]
+        if raw_day is None:
+            continue
+        d = raw_day.date() if isinstance(raw_day, datetime) else raw_day
+        vol_f = float(vol) if isinstance(vol, Decimal) else float(str(vol))
+        by_day[d] = (int(cnt), vol_f)
+
+    out: list[WeeklyProgressDayResponse] = []
+    for add in range(7):
+        d = monday + timedelta(days=add)
+        cnt, vol_f = by_day.get(d, (0, 0.0))
+        out.append(
+            WeeklyProgressDayResponse(
+                date=d,
+                volume_kg=vol_f,
+                workout_count=cnt,
+                day_label=_WEEKDAY_RU_SHORT[d.weekday()],
+                is_today=d == today,
+            ),
+        )
+    return out
 
 
 async def get_recent_prs(db: AsyncSession, user: User, *, limit: int = 3) -> RecentPrListResponse:

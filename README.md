@@ -38,7 +38,9 @@ docker-compose exec api python -m seeds.achievements
 # 6. Открыть приложение
 # Дашборд — http://localhost:3000/dashboard
 # Упражнения — http://localhost:3000/exercises
-# Активная тренировка (нужен JWT) — http://localhost:3000/session/<session_id>
+# Планы тренировок — http://localhost:3000/workouts (конструктор: /workouts/new)
+# Активная тренировка по плану (JWT) — http://localhost:3000/session/<plan_id>
+#   (при открытии создаётся сессия POST /api/user/sessions; итоги — /session/<plan_id>/complete?sessionId=…)
 ```
 
 Для UI с защищёнными эндпоинтами после логина сохраните access-токен в браузере:  
@@ -65,7 +67,10 @@ docker-compose exec api python -m seeds.achievements
 | Web App (PWA) | http://localhost:3000 |
 | Дашборд | http://localhost:3000/dashboard |
 | Упражнения | http://localhost:3000/exercises |
-| Сессия тренировки | http://localhost:3000/session/[id] |
+| Планы (список и карточка плана) | http://localhost:3000/workouts , `/workouts/[id]` |
+| Конструктор плана | http://localhost:3000/workouts/new |
+| Активная тренировка | http://localhost:3000/session/[plan_id] (`plan_id` из карточки плана; не UUID сессии) |
+| Итоги тренировки | `/session/[plan_id]/complete?sessionId=…` (редирект после завершения) |
 | Admin Panel | http://localhost:3002 |
 | API | http://localhost:8000 |
 | API Docs (Swagger) | http://localhost:8000/docs |
@@ -94,7 +99,7 @@ docker-compose exec api python -m seeds.achievements
 | Справочник | `GET /api/exercises`, `GET /api/exercises/{id}` |
 | Планы пользователя | `GET/POST /api/user/plans`, `GET/PUT/DELETE /api/user/plans/{id}`, `POST .../duplicate` |
 | Журнал тренировок | `POST /api/user/sessions`, `GET /api/user/sessions`, `GET/PUT /api/user/sessions/{id}`, `POST .../sets` |
-| Прогресс и дашборд | `GET /api/user/progress`, `GET /api/user/progress/recent-prs`, `GET /api/user/achievements` |
+| Прогресс и дашборд | `GET /api/user/progress`, `GET /api/user/progress/weekly` (календарная неделя Пн–Вс), `GET /api/user/progress/recent-prs`, `GET /api/user/sessions`, `GET /api/user/achievements` |
 
 После **`PUT`** завершения сессии API ставит в очередь Dramatiq задачи **`check_achievements`** и **`update_stats`**.  
 **`check_achievements`** в воркере вызывает **`services/achievement_service.check_achievements_after_workout`**: идемпотентная выдача ачивок и событие WebSocket **`achievements.unlocked`** на канал **`/ws/{user_id}`** (см. `backend/main.py`, `backend/websocket/manager.py`).
