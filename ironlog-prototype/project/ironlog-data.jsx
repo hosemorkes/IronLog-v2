@@ -1,0 +1,137 @@
+// IronLog — Static Data
+
+const MUSCLE_GROUPS = ['Все', 'Грудь', 'Спина', 'Плечи', 'Руки', 'Ноги', 'Пресс', 'Кардио'];
+
+const EXERCISES = [
+  { id: 'bench_press', name: 'Жим штанги лёжа', group: 'Грудь', equipment: 'Штанга', difficulty: 'Средний',
+    primary: ['Грудь', 'Передние дельты'], secondary: ['Трицепс', 'Кор'],
+    pr: '100 кг × 5', prDate: '3 нед. назад', sets: 47, sessions: 12, tonnage: 4200, muscleGroup: 'chest',
+    steps: ['Лягте на скамью, ноги упираются в пол, спина слегка прогнута в пояснице.','Возьмите штангу хватом чуть шире плеч, снимите со стойки.','Опускайте штангу к нижней части груди, контролируя движение.','Выжмите вверх, не разгибая локти до конца в верхней точке.'] },
+  { id: 'squat', name: 'Приседания со штангой', group: 'Ноги', equipment: 'Штанга', difficulty: 'Сложный',
+    primary: ['Квадрицепс', 'Ягодицы'], secondary: ['Бицепс бедра', 'Кор'],
+    pr: '140 кг × 3', prDate: '1 нед. назад', sets: 38, sessions: 10, tonnage: 6800, muscleGroup: 'legs',
+    steps: ['Штанга на трапециях, ноги чуть шире плеч, носки развёрнуты.','Присядьте до параллели бёдер с полом.','Колени в направлении носков, спина прямая.','Встаньте, выпрямив ноги.'] },
+  { id: 'deadlift', name: 'Становая тяга', group: 'Спина', equipment: 'Штанга', difficulty: 'Сложный',
+    primary: ['Спина', 'Ягодицы'], secondary: ['Бицепс бедра', 'Предплечья'],
+    pr: '180 кг × 1', prDate: 'Сегодня 🔥', sets: 29, sessions: 8, tonnage: 5200, muscleGroup: 'back',
+    steps: ['Ноги на ширине таза, штанга над серединой стопы.','Согнитесь, возьмите штангу хватом чуть шире плеч.','Выпрямитесь, поднимая штангу вдоль ног.','Контролируемо опустите обратно.'] },
+  { id: 'pullup', name: 'Подтягивание', group: 'Спина', equipment: 'Собственный вес', difficulty: 'Средний',
+    primary: ['Широчайшие'], secondary: ['Бицепс', 'Задние дельты'],
+    pr: '15 повт.', prDate: '2 нед. назад', sets: 55, sessions: 18, tonnage: 1100, muscleGroup: 'back',
+    steps: ['Повисните на перекладине, хват чуть шире плеч.','Подтянитесь до уровня подбородка.','Контролируемо опуститесь в исходное.'] },
+  { id: 'ohp', name: 'Жим гантелей сидя', group: 'Плечи', equipment: 'Гантели', difficulty: 'Средний',
+    primary: ['Передние дельты', 'Средние дельты'], secondary: ['Трицепс', 'Кор'],
+    pr: '26 кг × 10', prDate: '1 мес. назад', sets: 32, sessions: 9, tonnage: 2800, muscleGroup: 'shoulders',
+    steps: ['Сядьте прямо, гантели на уровне плеч.','Выжмите вверх до полного выпрямления рук.','Контролируемо опустите к плечам.'] },
+  { id: 'lat_pulldown', name: 'Тяга верхнего блока', group: 'Спина', equipment: 'Блоки', difficulty: 'Начальный',
+    primary: ['Широчайшие'], secondary: ['Бицепс', 'Задние дельты'],
+    pr: '85 кг × 10', prDate: '3 нед. назад', sets: 40, sessions: 14, tonnage: 3600, muscleGroup: 'back',
+    steps: ['Сядьте, зафиксируйте колени под валиком.','Возьмите рукоять широким хватом.','Тяните к верхней части груди, сводя лопатки.','Вернитесь в исходное положение.'] },
+  { id: 'leg_press', name: 'Жим ногами', group: 'Ноги', equipment: 'Тренажёр', difficulty: 'Начальный',
+    primary: ['Квадрицепс', 'Ягодицы'], secondary: ['Бицепс бедра'],
+    pr: '200 кг × 12', prDate: '2 нед. назад', sets: 28, sessions: 8, tonnage: 8400, muscleGroup: 'legs',
+    steps: ['Сядьте в тренажёр, ноги на платформе шире плеч.','Отпустите стопоры и согните колени до 90°.','Выжмите платформу, не выпрямляя колени полностью.'] },
+  { id: 'dumbbell_row', name: 'Тяга гантели к поясу', group: 'Спина', equipment: 'Гантели', difficulty: 'Начальный',
+    primary: ['Широчайшие', 'Трапеции'], secondary: ['Бицепс', 'Задние дельты'],
+    pr: '40 кг × 10', prDate: '1 нед. назад', sets: 34, sessions: 11, tonnage: 2900, muscleGroup: 'back',
+    steps: ['Упритесь одной рукой и коленом в скамью.','Тяните гантель к поясу, локоть вдоль тела.','Опустите контролируемо.'] },
+  { id: 'lateral_raise', name: 'Махи гантелей в стороны', group: 'Плечи', equipment: 'Гантели', difficulty: 'Начальный',
+    primary: ['Средние дельты'], secondary: ['Надостная мышца'],
+    pr: '14 кг × 15', prDate: '2 мес. назад', sets: 45, sessions: 15, tonnage: 1800, muscleGroup: 'shoulders',
+    steps: ['Стоя, гантели у бёдер.','Поднимите руки в стороны до уровня плеч.','Контролируемо опустите.'] },
+  { id: 'bicep_curl', name: 'Подъём гантелей на бицепс', group: 'Руки', equipment: 'Гантели', difficulty: 'Начальный',
+    primary: ['Бицепс'], secondary: ['Брахиалис'],
+    pr: '18 кг × 12', prDate: '3 нед. назад', sets: 50, sessions: 16, tonnage: 2200, muscleGroup: 'arms',
+    steps: ['Стоя, гантели вдоль тела.','Сгибайте руку, поднимая гантель к плечу.','Контролируемо опустите.'] },
+  { id: 'tricep_ext', name: 'Французский жим', group: 'Руки', equipment: 'Штанга', difficulty: 'Средний',
+    primary: ['Трицепс'], secondary: ['Локтевая мышца'],
+    pr: '50 кг × 8', prDate: '1 мес. назад', sets: 22, sessions: 7, tonnage: 1400, muscleGroup: 'arms',
+    steps: ['Лягте на скамью, штанга над грудью.','Сгибайте локти, опуская штангу за голову.','Разгибайте трицепсами обратно.'] },
+  { id: 'plank', name: 'Планка', group: 'Пресс', equipment: 'Собственный вес', difficulty: 'Начальный',
+    primary: ['Кор', 'Пресс'], secondary: ['Ягодицы', 'Плечи'],
+    pr: '3:20 мин', prDate: '1 нед. назад', sets: 30, sessions: 12, tonnage: 0, muscleGroup: 'core',
+    steps: ['Примите упор на предплечьях и носках.','Держите тело прямым, не поднимая и не опуская таз.','Дышите ровно, удерживайте позицию.'] },
+  { id: 'cable_fly', name: 'Сведение рук в кроссовере', group: 'Грудь', equipment: 'Блоки', difficulty: 'Начальный',
+    primary: ['Грудь'], secondary: ['Передние дельты'],
+    pr: '18 кг × 15', prDate: '1 нед. назад', sets: 25, sessions: 8, tonnage: 1800, muscleGroup: 'chest',
+    steps: ['Встаньте в центре кроссовера.','Сводите руки перед собой дугообразным движением.','Контролируемо разводите обратно.'] },
+  { id: 'incline_db', name: 'Жим гантелей на наклонной', group: 'Грудь', equipment: 'Гантели', difficulty: 'Начальный',
+    primary: ['Верхняя грудь', 'Передние дельты'], secondary: ['Трицепс'],
+    pr: '28 кг × 10', prDate: '2 нед. назад', sets: 20, sessions: 7, tonnage: 2200, muscleGroup: 'chest',
+    steps: ['Лягте на наклонную скамью 30–45°.','Жмите гантели вверх и чуть сводите их.','Контролируемо опустите.'] },
+  { id: 'leg_curl', name: 'Сгибание ног лёжа', group: 'Ноги', equipment: 'Тренажёр', difficulty: 'Начальный',
+    primary: ['Бицепс бедра'], secondary: ['Икры'],
+    pr: '55 кг × 12', prDate: '3 нед. назад', sets: 18, sessions: 6, tonnage: 1600, muscleGroup: 'legs',
+    steps: ['Лягте в тренажёр, валик под икрами.','Сгибайте ноги, стараясь достать до ягодиц.','Медленно опустите.'] },
+  { id: 'treadmill', name: 'Беговая дорожка', group: 'Кардио', equipment: 'Кардио', difficulty: 'Начальный',
+    primary: ['Сердечно-сосудистая'], secondary: ['Ноги'],
+    pr: '5 км за 24:30', prDate: '2 нед. назад', sets: 20, sessions: 10, tonnage: 0, muscleGroup: 'cardio',
+    steps: ['Установите скорость и наклон.','Держите ровную осанку, смотрите вперёд.','Дышите через нос и рот.'] },
+  { id: 'hyperext', name: 'Гиперэкстензия', group: 'Спина', equipment: 'Тренажёр', difficulty: 'Начальный',
+    primary: ['Разгибатели спины', 'Ягодицы'], secondary: ['Бицепс бедра'],
+    pr: '25 кг × 15', prDate: '1 мес. назад', sets: 20, sessions: 8, tonnage: 900, muscleGroup: 'back',
+    steps: ['Зафиксируйтесь в тренажёре для гиперэкстензии.','Опуститесь вниз, сгибая в пояснице.','Поднимитесь до прямой линии с туловищем.'] },
+];
+
+const WORKOUT_TEMPLATES = [
+  { id: 'push_a', name: 'Тренировка A — Грудь / Трицепс', tag: 'Толчок',
+    exercises: [
+      { exerciseId: 'bench_press', sets: [{w:80,r:8},{w:80,r:8},{w:85,r:6}], rest: 90 },
+      { exerciseId: 'incline_db', sets: [{w:24,r:10},{w:24,r:10},{w:26,r:8}], rest: 90 },
+      { exerciseId: 'cable_fly', sets: [{w:16,r:12},{w:16,r:12}], rest: 60 },
+    ]},
+  { id: 'pull_b', name: 'Тренировка B — Спина / Бицепс', tag: 'Тяга',
+    exercises: [
+      { exerciseId: 'deadlift', sets: [{w:160,r:5},{w:170,r:3},{w:180,r:1}], rest: 180 },
+      { exerciseId: 'lat_pulldown', sets: [{w:80,r:10},{w:80,r:10},{w:85,r:8}], rest: 90 },
+      { exerciseId: 'dumbbell_row', sets: [{w:36,r:10},{w:36,r:10}], rest: 60 },
+      { exerciseId: 'bicep_curl', sets: [{w:16,r:12},{w:16,r:12}], rest: 60 },
+    ]},
+  { id: 'legs_c', name: 'Тренировка C — Ноги', tag: 'Ноги',
+    exercises: [
+      { exerciseId: 'squat', sets: [{w:120,r:5},{w:130,r:5},{w:140,r:3}], rest: 180 },
+      { exerciseId: 'leg_press', sets: [{w:180,r:12},{w:180,r:12},{w:200,r:10}], rest: 90 },
+      { exerciseId: 'leg_curl', sets: [{w:50,r:12},{w:55,r:10}], rest: 60 },
+    ]},
+];
+
+const TONNAGE_SCALE = [
+  { kg: 200, name: 'Бурый медведь', emoji: '🐻' },
+  { kg: 500, name: 'Лошадь', emoji: '🐴' },
+  { kg: 1000, name: 'Lada Granta', emoji: '🚗' },
+  { kg: 3000, name: '10 белых медведей', emoji: '🐻‍❄️' },
+  { kg: 5000, name: 'Африканский слон', emoji: '🐘' },
+  { kg: 10000, name: 'Грузовик ГАЗель', emoji: '🚚' },
+  { kg: 20000, name: 'Танк Т-72', emoji: '🪖' },
+  { kg: 50000, name: 'Синий кит', emoji: '🐋' },
+  { kg: 100000, name: 'Локомотив ЧС7', emoji: '🚂' },
+  { kg: 400000, name: 'Боинг 747', emoji: '✈️' },
+];
+
+const WEEKLY_DATA = [
+  { day: 'Пн', t: 4200, active: true },
+  { day: 'Вт', t: 0, active: false },
+  { day: 'Ср', t: 5800, active: true },
+  { day: 'Чт', t: 0, active: false },
+  { day: 'Пт', t: 5100, active: true },
+  { day: 'Сб', t: 0, active: false },
+  { day: 'Вс', t: 3200, active: true, today: true },
+];
+
+const RECENT_WORKOUTS = [
+  { id: 1, name: 'Грудь / Трицепс', date: 'Вс, 27 апр', duration: '52 мин', sets: 7, tonnage: 3200, prs: 0 },
+  { id: 2, name: 'Ноги', date: 'Пт, 25 апр', duration: '68 мин', sets: 8, tonnage: 5100, prs: 1 },
+  { id: 3, name: 'Спина / Бицепс', date: 'Ср, 23 апр', duration: '61 мин', sets: 10, tonnage: 5800, prs: 1 },
+  { id: 4, name: 'Грудь / Трицепс', date: 'Пн, 21 апр', duration: '49 мин', sets: 7, tonnage: 4200, prs: 0 },
+];
+
+const ACHIEVEMENTS = [
+  { id: 1, name: 'Первый шаг', emoji: '🏆', unlocked: true },
+  { id: 2, name: '14 дней стрик', emoji: '🔥', unlocked: true },
+  { id: 3, name: 'Поднял слона', emoji: '🐘', unlocked: true },
+  { id: 4, name: '50 тренировок', emoji: '💪', unlocked: false },
+  { id: 5, name: 'Поднял танк', emoji: '🪖', unlocked: false },
+  { id: 6, name: 'Локомотив', emoji: '🚂', unlocked: false },
+];
+
+Object.assign(window, { EXERCISES, WORKOUT_TEMPLATES, TONNAGE_SCALE, WEEKLY_DATA, RECENT_WORKOUTS, ACHIEVEMENTS, MUSCLE_GROUPS });

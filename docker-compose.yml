@@ -1,0 +1,284 @@
+version: "3.9"
+
+networks:
+  ironlog:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  rabbitmq_data:
+  grafana_data:
+  prometheus_data:
+
+services:
+
+  # ─────────────────────────────────────────────
+  # DATA LAYER
+  # ─────────────────────────────────────────────
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ironlog_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ironlog
+      POSTGRES_USER: ironlog
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ironlog_secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - ironlog
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ironlog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ironlog_redis
+    restart: unless-stopped
+    environment:
+      # redis-cli в healthchecks подставляет пароль (--requirepass)
+      REDISCLI_AUTH: ${REDIS_PASSWORD:-redis_secret}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_secret}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - ironlog
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: ironlog_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-ironlog}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-rabbitmq_secret}
+      RABBITMQ_DEFAULT_VHOST: ironlog
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # Management UI
+    networks:
+      - ironlog
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: ironlog_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-ironlog}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio_secret_key_min_8_chars}
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"   # Console
+    networks:
+      - ironlog
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # ─────────────────────────────────────────────
+  # API
+  # ─────────────────────────────────────────────
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        # development: uvicorn --reload (см. backend/Dockerfile CMD); production: задать production
+        APP_ENV: development
+    container_name: ironlog_api
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://ironlog:${POSTGRES_PASSWORD:-ironlog_secret}@postgres:5432/ironlog
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-ironlog}:${RABBITMQ_PASSWORD:-rabbitmq_secret}@rabbitmq:5672/ironlog
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-ironlog}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minio_secret_key_min_8_chars}
+    ports:
+      - "8000:8000"
+    networks:
+      - ironlog
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app   # hot-reload в dev
+
+  # ─────────────────────────────────────────────
+  # DRAMATIQ WORKER
+  # ─────────────────────────────────────────────
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        APP_ENV: production
+    container_name: ironlog_worker
+    restart: unless-stopped
+    command: dramatiq tasks --processes 2 --threads 4
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://ironlog:${POSTGRES_PASSWORD:-ironlog_secret}@postgres:5432/ironlog
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-ironlog}:${RABBITMQ_PASSWORD:-rabbitmq_secret}@rabbitmq:5672/ironlog
+    networks:
+      - ironlog
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+
+  # ─────────────────────────────────────────────
+  # FRONTEND
+  # ─────────────────────────────────────────────
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+        NEXT_PUBLIC_WS_URL: ws://localhost:8000
+    container_name: ironlog_web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_WS_URL: ws://localhost:8000
+    ports:
+      - "3000:3000"
+    networks:
+      - ironlog
+    depends_on:
+      - api
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    container_name: ironlog_admin
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3002:3000"
+    networks:
+      - ironlog
+    depends_on:
+      - api
+
+  # ─────────────────────────────────────────────
+  # MONITORING
+  # ─────────────────────────────────────────────
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ironlog_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ironlog.local
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-pgadmin_secret}
+    ports:
+      - "5050:80"
+    networks:
+      - ironlog
+    depends_on:
+      - postgres
+    profiles:
+      - monitoring
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: ironlog_redis_commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:${REDIS_PASSWORD:-redis_secret}
+    ports:
+      - "8081:8081"
+    networks:
+      - ironlog
+    depends_on:
+      - redis
+    profiles:
+      - monitoring
+
+  flower:
+    image: mher/flower:2.0
+    container_name: ironlog_flower
+    restart: unless-stopped
+    command: celery --broker=amqp://${RABBITMQ_USER:-ironlog}:${RABBITMQ_PASSWORD:-rabbitmq_secret}@rabbitmq:5672/ironlog flower
+    ports:
+      - "5555:5555"
+    networks:
+      - ironlog
+    depends_on:
+      - rabbitmq
+    profiles:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ironlog_prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - ironlog
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ironlog_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-grafana_secret}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana-dashboards:/etc/grafana/provisioning/dashboards:ro
+    ports:
+      - "3003:3000"
+    networks:
+      - ironlog
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring

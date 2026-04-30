@@ -1,0 +1,29 @@
+---
+description: IronLog web/admin — Next.js, React, UI
+globs: web/**/*.{ts,tsx},admin/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Frontend (web + admin)
+
+- Next.js 14 App Router; по возможности Server Components. TypeScript strict; без `any`.
+- Стили только Tailwind; без inline styles. Компонент = один файл, **named export**; props через `interface`.
+- Данные с сервера: TanStack Query; клиентское состояние (в т.ч. auth): Zustand. Запросы к API — через общий клиент (`lib/api.ts` или аналог), не разбрасывать сырой `fetch` по компонентам.
+- Импорты: сначала библиотеки, затем `@/` локальные. Хуки — `lib/hooks/`, утилиты — `lib/utils.ts`.
+- Цвета и радиусы — как в `ironlog-project` / макетах; нижняя навигация web: Упражнения / Тренировка / Прогресс / Профиль; mobile-first (~375px).
+- Новая фича: хук данных → компоненты в `components/<feature>/` → страница в `app/`; показать skeleton при загрузке.
+- PWA (web): учитывай offline/service worker, не ломай кэширование без причины.
+
+```tsx
+import { useState } from "react"
+import type { Exercise } from "@/lib/types"
+
+interface ExerciseCardProps {
+  exercise: Exercise
+  onSelect?: (id: string) => void
+}
+
+export function ExerciseCard({ exercise, onSelect }: ExerciseCardProps) {
+  return null
+}
+```

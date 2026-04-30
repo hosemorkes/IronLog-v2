@@ -1,0 +1,13 @@
+---
+description: IronLog — Docker Compose, образы, CI
+globs: docker-compose.yml,Dockerfile,Dockerfile.*,**/*docker-compose*.yml,.github/**/*.yml
+alwaysApply: false
+---
+
+# Инфраструктура
+
+- Multi-stage Dockerfile где уместно; non-root в production-образах; **healthcheck** на сервисах; данные в volumes.
+- Секреты и URL только из `.env`; в git — `.env.example`, не реальные ключи. Не хардкодить чувствительное в `docker-compose.yml`.
+- Мониторинг: профиль `monitoring` в compose; обычный дев: `docker-compose up -d`.
+- Prod/VPS (ориентир): `git pull` → `docker-compose pull` → точечный rebuild критичных сервисов, например `docker-compose up -d --no-deps --build api worker`, чтобы не ронять остальное.
+- CI (GitHub Actions): кэш зависимостей, явные версии образов, не логировать секреты.

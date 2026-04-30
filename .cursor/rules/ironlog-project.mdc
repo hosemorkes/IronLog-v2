@@ -1,0 +1,46 @@
+---
+description: IronLog — продукт, стек, инварианты, порты
+alwaysApply: true
+---
+
+# IronLog — контекст
+
+**Ключевая модель данных**
+Разделить **три понятия** — без этого каша в статистике:
+
+| Сущность | Смысл |
+|----------|--------|
+| **Exercise** | Упражнение — базовый кирпичик, неизменный справочник. |
+| **Workout Template** | Шаблон тренировки — набор упражнений с параметрами (сеты, повторы, вес). |
+| **Workout Log** | Журнал выполнения — конкретный день, конкретные результаты. |
+Большинство приложений путают шаблон и выполнение — потом нельзя нормально строить статистику и прогресс.
+
+**Домен:** тренировочный трекер. Цепочка: `Exercise` (справочник) → `WorkoutTemplate` (план) → `WorkoutLog` (факт).
+
+**Стек:** FastAPI · Python 3.11 · PostgreSQL 15 · Redis · RabbitMQ · MinIO · Dramatiq. Web/Admin: Next.js 14 **App Router** · TypeScript strict · Tailwind · TanStack Query · Zustand · PWA (web). Dev: Docker Compose.
+
+**Не менять без согласования:** UUID как PK; async I/O в API; SQLAlchemy 2 **AsyncSession** + Alembic; **Dramatiq** (не Celery); Pydantic v2; App Router (не Pages Router).
+
+**Документация в `docs/` (подключай `@` по задаче, не дублируй целиком в промпт):**
+- `docs/ARCHITECTURE.md` — стек и порты, диаграмма клиенты → API → Postgres/Redis/MinIO/RabbitMQ, воркеры Dramatiq; сущности Exercise / WorkoutTemplate / WorkoutLog; роли; обзор API и модели данных.
+- `docs/MICROSERVICES.md` — роли сервисов в docker-compose (`api`, `worker`, БД, кеш, брокер, хранилище), WebSocket, JWT+Redis; таблица фоновых задач и очередей.
+- `docs/PROJECT_STRUCTURE.md` — дерево репозитория: назначение `backend/` (models, schemas, routes, services, tasks), `web/`, `admin/`, сиды, миграции, docker.
+- Дополнительно: `ROADMAP.md` — фазы; `CLAUDE.md` — чеклисты агента; `.cursorrules` — стиль кода.
+
+**Структура изменений:** новый API: `backend/models/` → `schemas/` → `services/` → `routes/` → `main.py` → миграция Alembic. Новая страница web: `web/app/(app)/...`, `web/components/`, `web/lib/hooks/`, при необходимости навигация.
+
+**Роли:** `user` — solo + поиск тренера; `trainer` — + свои упражнения, ученики; `admin` — + роли и блокировки.
+
+**Языки:** код и имена — EN; UI и `HTTPException.detail` — RU.
+
+**Дизайн web:** dark `bg #141414`, surface `#1c1c1c`, border `#252525`, accent `#7c6ef2`, blue `#5ba3d9`, text `#fff`, muted `#888`; light `bg #f5f5f5`, surface `#fff`, border `#e8e8e8`. Макеты: `exercise_library_mockup.html`, `exercise_detail_mockup.html`. Сиды упражнений и ачивки: `docs/PRODUCT_NOTES.md`.
+
+**Опасные зоны:** не править файлы миграций вручную; секреты только через `.env`; не отдавать пароли/`hashed_password` из API.
+
+**Безопасность:** JWT access/refresh; bcrypt; CORS из env; MinIO через presigned URL; без секретов в репозитории.
+
+**Docker:** `docker-compose up -d`; мониторинг `docker-compose --profile monitoring up -d`; БД `docker-compose exec api alembic upgrade head`; сиды при необходимости `docker-compose exec api python -m seeds.exercises`.
+
+**Pytest (backend):** локально — только `backend/.venv` (`VENV_SETUP.md`); в контейнере — `docker-compose exec api pytest`.
+
+**Порты:** 3000 web · 3002 admin · 8000 API · 5432 Postgres · 6379 Redis · 9000/9001 MinIO · 5672/15672 RabbitMQ · 9090 Prometheus · 3003 Grafana · 5555 Flower · 5050 pgAdmin · 8081 Redis Commander.

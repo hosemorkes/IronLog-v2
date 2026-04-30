@@ -1,0 +1,11 @@
+# Production image context — не тянем локальные артефакты в build
+node_modules
+.next
+out
+dist
+.git
+.gitignore
+*.md
+.env
+.env.*
+!.env.example

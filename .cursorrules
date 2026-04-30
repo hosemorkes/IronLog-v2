@@ -1,0 +1,119 @@
+# IronLog — Cursor Rules
+# Эти правила применяются ко всем файлам в проекте
+
+## Общие принципы
+
+- Пиши production-ready код с первого раза
+- Типизируй всё: TypeScript strict, Python с аннотациями типов
+- Никаких `any` в TypeScript, никаких `# type: ignore` без комментария
+- Все функции и классы с docstring/JSDoc
+- Нет магических строк и чисел — выноси в константы/enum
+
+## Язык и именование
+
+- Код на английском (переменные, функции, комментарии в коде)
+- UI-тексты, сообщения об ошибках — на русском (приложение на RU)
+- snake_case в Python, camelCase в TypeScript, PascalCase для компонентов/классов
+- Роуты API: `/api/resource` (существительное, множественное число)
+
+## Backend (FastAPI / Python)
+
+- Python 3.11+, async/await везде где работаем с I/O
+- SQLAlchemy 2.x async (AsyncSession), Alembic для миграций
+- Pydantic v2 для схем — разделяй schemas/request и schemas/response
+- Каждый роутер в своём файле в `routes/`, бизнес-логика в `services/`
+- Зависимости FastAPI (`Depends`) для auth, db session, pagination
+- Все ошибки через `HTTPException` с понятными `detail` на русском
+- Логирование через `logging` с уровнями DEBUG/INFO/WARNING/ERROR
+- Никогда не возвращай пароли или `hashed_password` в ответах API
+
+### Пример endpoint'а:
+```python
+@router.get("/{exercise_id}", response_model=ExerciseResponse)
+async def get_exercise(
+    exercise_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ExerciseResponse:
+    """Получить детали упражнения по ID."""
+    exercise = await db.get(Exercise, exercise_id)
+    if not exercise:
+        raise HTTPException(status_code=404, detail="Упражнение не найдено")
+    return exercise
+```
+
+## Frontend (Next.js / TypeScript)
+
+- Next.js 14+ App Router, только Server Components где возможно
+- Tailwind CSS для стилей, никаких inline styles
+- Цветовая схема из дизайна: dark `#141414`, accent `#7c6ef2`, light `#f5f5f5`
+- Компоненты: 1 файл = 1 компонент, named export
+- Хуки в `lib/hooks/`, утилиты в `lib/utils.ts`
+- Fetching данных через React Query (TanStack Query)
+- Состояние авторизации в Zustand store
+- Все API-запросы через `lib/api.ts`, не fetch напрямую в компонентах
+- PWA: страницы работают offline (service worker)
+
+### Структура компонента:
+```tsx
+// Импорты сначала библиотеки, потом локальные
+import { useState } from "react"
+import type { Exercise } from "@/lib/types"
+
+interface ExerciseCardProps {
+  exercise: Exercise
+  onSelect?: (id: string) => void
+}
+
+export function ExerciseCard({ exercise, onSelect }: ExerciseCardProps) {
+  // ...
+}
+```
+
+## База данных
+
+- UUID как первичный ключ (не serial int)
+- `created_at` и `updated_at` на всех таблицах
+- Мягкое удаление через `is_active: bool` там где нужна история
+- Индексы: FK-поля, часто фильтруемые колонки (email, muscle_group)
+- Нет бизнес-логики в миграциях — только DDL
+
+## Docker
+
+- Healthcheck на каждом сервисе
+- Мониторинг-сервисы в отдельном `profile: monitoring`
+- Запуск: `docker-compose up -d` (без monitoring)
+- С monitoring: `docker-compose --profile monitoring up -d`
+
+## Тесты (Backend)
+
+- Локально: из каталога `backend/` с активированным `backend/.venv` или явно `backend/.venv/Scripts/python -m pytest` (Windows) / `backend/.venv/bin/python -m pytest` (Unix). См. `VENV_SETUP.md`.
+- В Docker: `docker-compose exec api pytest`.
+- Не вызывать `pytest` от системного Python без venv — зависимости из `backend/requirements.txt` не гарантированы.
+
+## Безопасность
+
+- JWT токены: access (24ч) + refresh (90д)
+- Пароли: bcrypt, никогда не логировать
+- CORS: только разрешённые origins из .env
+- MinIO: приватные бакеты, presigned URLs для доступа
+- Никаких секретов в коде или git
+
+## Порты (локально)
+
+```
+3000  → Web App (PWA)
+3002  → Admin Panel
+8000  → FastAPI
+5432  → PostgreSQL
+6379  → Redis
+9000  → MinIO API
+9001  → MinIO Console
+5672  → RabbitMQ
+15672 → RabbitMQ UI
+5050  → pgAdmin
+8081  → Redis Commander
+5555  → Flower
+9090  → Prometheus
+3003  → Grafana
+```

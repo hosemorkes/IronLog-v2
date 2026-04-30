@@ -1,0 +1,32 @@
+---
+description: IronLog backend — FastAPI, Python, БД-слой
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# Backend
+
+- Async везде, где I/O; типы и docstrings обязательны; без «тихих» `# type: ignore`.
+- Роутеры `backend/routes/` — HTTP и Depends; Бизнес-логика `backend/services/`; схемы `backend/schemas/` (разделяй Create/Update/Response); модели `backend/models/`; фоновые задачи Dramatiq `backend/tasks/`.
+- SQLAlchemy 2 async-сессии; UUID PK; `created_at` / `updated_at` по конвенции проекта; мягкое удаление через `is_active` где уместно.
+- Ошибки: `HTTPException`, `detail` на русском. Логи: `logging`, не `print`.
+- Auth: `get_current_user`, проверка ролей при необходимости. Никогда не включай пароли в ответы.
+- Миграции только `alembic revision --autogenerate`; не редактируй сгенерированные revision вручную без крайней нужды.
+- Запросы: избегай N+1; индексы на FK и частых фильтрах (`email`, `muscle_group`, `user_id` и т.д.).
+- Сиды в `backend/seeds/`; ачивки согласованы с `achievement_service.py` если есть.
+- **Pytest:** локально всегда через `backend/.venv` (`python -m pytest` из активированного venv или полный путь к `.venv/.../python`); в CI/Docker — `docker-compose exec api pytest`. Подробности `VENV_SETUP.md` и `CLAUDE.md`.
+
+```python
+# Паттерн эндпоинта
+@router.get("/{exercise_id}", response_model=ExerciseResponse)
+async def get_exercise(
+    exercise_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ExerciseResponse:
+    """Получить упражнение по ID."""
+    exercise = await db.get(Exercise, exercise_id)
+    if not exercise:
+        raise HTTPException(status_code=404, detail="Упражнение не найдено")
+    return exercise
+```
