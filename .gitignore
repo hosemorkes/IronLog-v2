@@ -2,6 +2,10 @@
 # IronLog — .gitignore
 # ─────────────────────────────────────────────
 
+# ── Maintainer-only docs (keep local; not published) ─
+CURSOR_PROMPTS.md
+ROADMAP.md
+
 # ── Env / Secrets ────────────────────────────
 # Root and package-level env files (pattern .env excludes name .env anywhere)
 .env
