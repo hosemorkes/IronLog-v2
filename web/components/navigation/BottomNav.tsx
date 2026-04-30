@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const ITEMS = [
   { href: "/dashboard", label: "Тренировка" },
   { href: "/exercises", label: "Упражнения" },
-  { href: "/exercises", label: "Упражнения" },
+  { href: "/workouts", label: "Планы" },
   { href: "/progress", label: "Прогресс" },
   { href: "/profile", label: "Профиль" },
 ] as const;
@@ -27,7 +27,9 @@ export function BottomNav() {
           const active =
             href === "/dashboard"
               ? pathname.startsWith("/dashboard")
-              : pathname === href || pathname.startsWith(`${href}/`);
+              : href === "/workouts"
+                ? pathname.startsWith("/workouts")
+                : pathname === href || pathname.startsWith(`${href}/`);
           return (
             <li key={href}>
               <Link
