@@ -38,7 +38,10 @@ docker-compose exec api python -m seeds.achievements
 # 6. Открыть приложение
 # Дашборд — http://localhost:3000/dashboard
 # Упражнения — http://localhost:3000/exercises
-# Планы тренировок — http://localhost:3000/workouts (конструктор: /workouts/new)
+# Планы — http://localhost:3000/workouts (новый: /workouts/new; карточка: /workouts/<id>; редактирование: /workouts/<id>/edit)
+# Прогресс — http://localhost:3000/progress
+# Профиль — http://localhost:3000/profile
+# История тренировок — http://localhost:3000/history
 # Активная тренировка по плану (JWT) — http://localhost:3000/session/<plan_id>
 #   (при открытии создаётся сессия POST /api/user/sessions; итоги — /session/<plan_id>/complete?sessionId=…)
 ```
@@ -67,8 +70,11 @@ docker-compose exec api python -m seeds.achievements
 | Web App (PWA) | http://localhost:3000 |
 | Дашборд | http://localhost:3000/dashboard |
 | Упражнения | http://localhost:3000/exercises |
-| Планы (список и карточка плана) | http://localhost:3000/workouts , `/workouts/[id]` |
-| Конструктор плана | http://localhost:3000/workouts/new |
+| Планы (список, карточка) | http://localhost:3000/workouts , `/workouts/[id]` |
+| Конструктор / редактирование плана | `/workouts/new` , `/workouts/[id]/edit` (свои планы; назначенные тренером не редактируются) |
+| Прогресс | http://localhost:3000/progress |
+| Профиль | http://localhost:3000/profile |
+| История тренировок | http://localhost:3000/history |
 | Активная тренировка | http://localhost:3000/session/[plan_id] (`plan_id` из карточки плана; не UUID сессии) |
 | Итоги тренировки | `/session/[plan_id]/complete?sessionId=…` (редирект после завершения) |
 | Admin Panel | http://localhost:3002 |
