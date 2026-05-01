@@ -111,12 +111,29 @@ export default function WorkoutPlanDetailPage() {
             </ul>
 
             <div className="mt-6 flex flex-col gap-3">
-              <Link
-                href={`/session/${plan.id}`}
-                className="block rounded-2xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-md hover:bg-emerald-500"
-              >
-                Начать тренировку
-              </Link>
+              {!plan.assigned_by_trainer ? (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Link
+                    href={`/session/${plan.id}`}
+                    className="block rounded-2xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-md hover:bg-emerald-500"
+                  >
+                    Начать тренировку
+                  </Link>
+                  <Link
+                    href={`/workouts/${plan.id}/edit`}
+                    className="block rounded-2xl border border-accent/40 bg-accent/15 py-3 text-center text-sm font-semibold text-accent hover:border-accent/60"
+                  >
+                    Редактировать
+                  </Link>
+                </div>
+              ) : (
+                <Link
+                  href={`/session/${plan.id}`}
+                  className="block rounded-2xl bg-emerald-600 py-3 text-center text-sm font-semibold text-white shadow-md hover:bg-emerald-500"
+                >
+                  Начать тренировку
+                </Link>
+              )}
               <Link
                 href="/workouts/new"
                 className="block rounded-2xl border border-[#232323] bg-[#1a1a1a] py-3 text-center text-sm font-semibold text-white hover:border-accent/40"

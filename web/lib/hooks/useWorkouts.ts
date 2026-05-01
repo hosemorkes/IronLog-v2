@@ -168,6 +168,42 @@ export function useCreateWorkoutPlan() {
   });
 }
 
+/** Тело PUT /api/user/plans/{id} — полная замена упражнений при переданном `exercises`. */
+export type UpdateWorkoutPlanPayload = CreateWorkoutPlanPayload;
+
+/**
+ * Обновление плана (PUT /api/user/plans/{id}).
+ */
+export function useUpdateWorkoutPlan(planId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      payload: UpdateWorkoutPlanPayload,
+    ): Promise<WorkoutPlanDetail> => {
+      if (!planId) {
+        throw new Error("План не указан");
+      }
+      const res = await apiFetch(`/user/plans/${planId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        throw new Error(await parseErrorMessage(res));
+      }
+      return res.json() as Promise<WorkoutPlanDetail>;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["workout-plans"] });
+      if (planId) {
+        void queryClient.invalidateQueries({
+          queryKey: ["workout-plan", planId],
+        });
+      }
+    },
+  });
+}
+
 export {
   useExercises,
   type ExerciseListFilters,

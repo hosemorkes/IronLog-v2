@@ -1,14 +1,19 @@
 "use client";
 
 import {
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 
 import { apiFetch } from "@/lib/api";
+import { getAccessToken } from "@/lib/auth";
+import type { WorkoutSessionHistoryDto } from "@/lib/types/dashboard";
 
 import type { ExerciseDetailDto, SessionDetailDto } from "@/lib/types/session";
+
+const HISTORY_PAGE_SIZE = 50;
 
 async function parseErrorMessage(res: Response): Promise<string> {
   const raw = await res.text();
@@ -180,7 +185,69 @@ export function useFinishSession(sessionId: string | null) {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["workout-session"] });
       void queryClient.invalidateQueries({ queryKey: ["workout-plans"] });
-      void queryClient.invalidateQueries({ queryKey: ["workout-session-start"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["workout-session-start"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["user", "sessions", "history"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["user", "sessions", "recent"],
+      });
     },
   });
 }
+
+function isSessionHistoryEnabled(): boolean {
+  return typeof window !== "undefined" && !!getAccessToken();
+}
+
+async function parseHistoryJson<T>(res: Response): Promise<T> {
+  if (res.status === 401) {
+    throw new Error("Войдите в аккаунт.");
+  }
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(t || `Ошибка ${String(res.status)}`);
+  }
+  return res.json() as Promise<T>;
+}
+
+/** Одна страница истории (после фильтра завершённых в рамках ответа). */
+export interface SessionHistoryPage {
+  items: WorkoutSessionHistoryDto["items"];
+  total: number;
+  offset: number;
+}
+
+/**
+ * Журнал сессий с пагинацией: GET /api/user/sessions?limit=50&offset=…
+ * В каждой странице остаются только завершённые (completed_at != null).
+ */
+export function useSessionHistory() {
+  return useInfiniteQuery({
+    queryKey: ["user", "sessions", "history"],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }): Promise<SessionHistoryPage> => {
+      const offset = pageParam as number;
+      const res = await apiFetch(
+        `/user/sessions?limit=${String(HISTORY_PAGE_SIZE)}&offset=${String(offset)}`,
+      );
+      const data = await parseHistoryJson<WorkoutSessionHistoryDto>(res);
+      const items = data.items.filter((s) => s.completed_at != null);
+      return {
+        items,
+        total: data.total,
+        offset,
+      };
+    },
+    getNextPageParam: (lastPage) => {
+      const next = lastPage.offset + HISTORY_PAGE_SIZE;
+      return next < lastPage.total ? next : undefined;
+    },
+    staleTime: 30 * 1000,
+    enabled: isSessionHistoryEnabled(),
+  });
+}
+
+export { HISTORY_PAGE_SIZE };

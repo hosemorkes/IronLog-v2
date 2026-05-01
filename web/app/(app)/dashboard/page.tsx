@@ -328,6 +328,12 @@ export default function DashboardPage() {
                   return v != null ? `${nf.format(Math.round(v))} кг` : "—";
                 })()}
               </p>
+              <Link
+                href="/history"
+                className="mt-3 block text-center text-sm font-semibold text-accent hover:underline"
+              >
+                Все тренировки →
+              </Link>
             </section>
           ) : (
             <Link
