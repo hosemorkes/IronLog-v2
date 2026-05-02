@@ -36,6 +36,8 @@ docker-compose exec api python -m seeds.exercises
 docker-compose exec api python -m seeds.achievements
 
 # 6. Открыть приложение
+# Вход / регистрация — http://localhost:3000/login , http://localhost:3000/signup
+# (JWT сохраняется в localStorage как ironlog_access_token; без токена зона приложения редиректит на /login)
 # Дашборд — http://localhost:3000/dashboard
 # Упражнения — http://localhost:3000/exercises
 # Планы — http://localhost:3000/workouts (новый: /workouts/new; карточка: /workouts/<id>; редактирование: /workouts/<id>/edit)
@@ -46,8 +48,7 @@ docker-compose exec api python -m seeds.achievements
 #   (при открытии создаётся сессия POST /api/user/sessions; итоги — /session/<plan_id>/complete?sessionId=…)
 ```
 
-Для UI с защищёнными эндпоинтами после логина сохраните access-токен в браузере:  
-`localStorage.setItem("ironlog_access_token", "<jwt>")`. Без токена каталог упражнений доступен публично; планы, сессии и прогресс отвечают **401**.
+В веб-клиенте основное приложение (маршруты под `(app)` — дашборд, упражнения, планы, сессии и т.д.) защищено: без JWT в **`ironlog_access_token`** выполняется редирект на **`/login`**. Войти можно через **`/login`** или **`/signup`** (после успеха токен пишется в `localStorage` автоматически). Для отладки API вручную можно задать тот же ключ: `localStorage.setItem("ironlog_access_token", "<jwt>")`.
 
 ---
 
@@ -68,6 +69,8 @@ docker-compose exec api python -m seeds.achievements
 | Сервис | URL |
 |--------|-----|
 | Web App (PWA) | http://localhost:3000 |
+| Вход | http://localhost:3000/login |
+| Регистрация | http://localhost:3000/signup |
 | Дашборд | http://localhost:3000/dashboard |
 | Упражнения | http://localhost:3000/exercises |
 | Планы (список, карточка) | http://localhost:3000/workouts , `/workouts/[id]` |
@@ -101,7 +104,7 @@ docker-compose exec api python -m seeds.achievements
 
 | Область | Примеры |
 |---------|---------|
-| Аутентификация | `GET /api/auth/me` (текущий пользователь по JWT) |
+| Аутентификация | `POST /api/auth/login`, `POST /api/auth/signup`, `GET /api/auth/me` (по JWT), `POST /api/auth/refresh`, `POST /api/auth/logout` |
 | Справочник | `GET /api/exercises`, `GET /api/exercises/{id}` |
 | Планы пользователя | `GET/POST /api/user/plans`, `GET/PUT/DELETE /api/user/plans/{id}`, `POST .../duplicate` |
 | Журнал тренировок | `POST /api/user/sessions`, `GET /api/user/sessions`, `GET/PUT /api/user/sessions/{id}`, `POST .../sets` |
