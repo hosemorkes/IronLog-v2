@@ -9,7 +9,7 @@ interface WeeklyChartProps {
 const nf = new Intl.NumberFormat("ru-RU");
 
 /**
- * Столбцы тоннажа по дням (как в прототипе — flex + высота от max).
+ * Столбцы объёма по дням (flex + высота от max).
  */
 export function WeeklyChart({ days }: WeeklyChartProps) {
   const maxT = Math.max(...days.map((d) => d.tonnage_kg), 1);
@@ -17,7 +17,7 @@ export function WeeklyChart({ days }: WeeklyChartProps) {
   return (
     <section className="rounded-2xl border border-border bg-surface px-4 py-4">
       <h2 className="text-sm font-semibold text-white">Активность — 7 дней</h2>
-      <p className="mt-1 text-xs text-muted">Тоннаж по дням (кг)</p>
+      <p className="mt-1 text-xs text-muted">Поднято по дням (кг)</p>
       <div className="mt-4 flex h-[70px] items-end justify-between gap-1.5">
         {days.map((d) => {
           const h =

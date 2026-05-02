@@ -36,8 +36,9 @@ docker-compose exec api python -m seeds.exercises
 docker-compose exec api python -m seeds.achievements
 
 # 6. Открыть приложение
+# Главная — http://localhost:3000 (лендинг: вход / регистрация; если в localStorage уже есть ironlog_access_token — редирект на /dashboard)
 # Вход / регистрация — http://localhost:3000/login , http://localhost:3000/signup
-# (JWT сохраняется в localStorage как ironlog_access_token; без токена зона приложения редиректит на /login)
+# (JWT сохраняется в localStorage как ironlog_access_token; без токена зона приложения в (app) редиректит на /login)
 # Дашборд — http://localhost:3000/dashboard
 # Упражнения — http://localhost:3000/exercises
 # Планы — http://localhost:3000/workouts (новый: /workouts/new; карточка: /workouts/<id>; редактирование: /workouts/<id>/edit)
@@ -48,7 +49,9 @@ docker-compose exec api python -m seeds.achievements
 #   (при открытии создаётся сессия POST /api/user/sessions; итоги — /session/<plan_id>/complete?sessionId=…)
 ```
 
-В веб-клиенте основное приложение (маршруты под `(app)` — дашборд, упражнения, планы, сессии и т.д.) защищено: без JWT в **`ironlog_access_token`** выполняется редирект на **`/login`**. Войти можно через **`/login`** или **`/signup`** (после успеха токен пишется в `localStorage` автоматически). Для отладки API вручную можно задать тот же ключ: `localStorage.setItem("ironlog_access_token", "<jwt>")`.
+**Главная `/`** — публичный лендинг с переходами на вход и регистрацию; при наличии **`ironlog_access_token`** выполняется редирект на **`/dashboard`**.
+
+В веб-клиенте основное приложение (маршруты под `(app)` — дашборд, упражнения, планы, сессии и т.д.) защищено: без JWT в **`ironlog_access_token`** выполняется редирект на **`/login`**. Войти можно через **`/`**, **`/login`** или **`/signup`** (после успеха токен пишется в `localStorage` автоматически). Для отладки API вручную можно задать тот же ключ: `localStorage.setItem("ironlog_access_token", "<jwt>")`.
 
 ---
 
@@ -68,7 +71,7 @@ docker-compose exec api python -m seeds.achievements
 
 | Сервис | URL |
 |--------|-----|
-| Web App (PWA) | http://localhost:3000 |
+| Web · лендинг `/` (есть токен в localStorage → `/dashboard`) | http://localhost:3000 |
 | Вход | http://localhost:3000/login |
 | Регистрация | http://localhost:3000/signup |
 | Дашборд | http://localhost:3000/dashboard |

@@ -138,7 +138,7 @@ export default function ExerciseDetailPage() {
           <div className="grid grid-cols-3 gap-2.5">
             <StatBox value={STATS_PLACEHOLDER.totalSets} label="подходов" />
             <StatBox value={STATS_PLACEHOLDER.workouts} label="тренировок" />
-            <StatBox value={STATS_PLACEHOLDER.tonnageKg} label="кг тоннаж" />
+            <StatBox value={STATS_PLACEHOLDER.tonnageKg} label="кг поднято" />
           </div>
           <p className="text-[10px] leading-snug text-muted/90">
             TODO: агрегаты по данным пользователя после эндпоинтов прогресса /

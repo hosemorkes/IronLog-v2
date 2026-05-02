@@ -21,12 +21,20 @@ export default function WorkoutsListPage() {
             Планы из конструктора. Откройте карточку, чтобы посмотреть состав.
           </p>
         </div>
-        <Link
-          href="/workouts/new"
-          className="shrink-0 rounded-full bg-accent px-3 py-2 text-center text-[12px] font-semibold leading-tight text-white shadow-sm transition hover:bg-accent-dark sm:px-4 sm:text-[13px]"
-        >
-          Создать тренировку
-        </Link>
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <Link
+            href="/workouts/new"
+            className="rounded-full bg-accent px-3 py-2 text-center text-[12px] font-semibold leading-tight text-white shadow-sm transition hover:bg-accent-dark sm:px-4 sm:text-[13px]"
+          >
+            Создать тренировку
+          </Link>
+          <Link
+            href="/exercises"
+            className="rounded-full border border-border bg-transparent px-3 py-2 text-center text-[12px] font-semibold leading-tight text-white transition hover:border-accent/50 hover:text-accent sm:px-4 sm:text-[13px]"
+          >
+            Библиотека упражнений →
+          </Link>
+        </div>
       </header>
 
       <main className="flex-1 px-4">

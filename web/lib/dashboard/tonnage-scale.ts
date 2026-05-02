@@ -1,10 +1,10 @@
 /**
- * Шкала «тоннаж → объект» (CLAUDE.md / PRODUCT_NOTES).
+ * Шкала «накопленный объём (кг) → объект» (CLAUDE.md / PRODUCT_NOTES).
  * Пороги в кг: достигнув значения, показываем соответствующий объект.
  */
 
 export interface TonnageLevelRow {
-  /** Минимальный накопленный тоннаж (кг) для уровня. */
+  /** Минимальный накопленный объём (кг) для уровня. */
   minKg: number;
   /** Человекочитаемый объект. */
   objectLabel: string;
@@ -41,7 +41,7 @@ export interface TonnageScaleState {
 }
 
 /**
- * Вычислить положение на шкале для суммарного тоннажа (кг).
+ * Вычислить положение на шкале для суммарного поднятого веса (кг).
  */
 export function getTonnageScaleState(totalKg: number): TonnageScaleState {
   const t = Math.max(0, totalKg);

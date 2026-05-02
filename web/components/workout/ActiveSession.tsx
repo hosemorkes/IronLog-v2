@@ -525,7 +525,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
             <p className="text-[13px] font-bold text-accent">
               {new Intl.NumberFormat("ru-RU").format(tonnageKg)} кг
             </p>
-            <p className="text-[10px] text-muted">тоннаж*</p>
+            <p className="text-[10px] text-muted">поднято*</p>
           </div>
           <div className="rounded-xl border border-border bg-surface p-2">
             <p className="text-[13px] font-bold text-accent">

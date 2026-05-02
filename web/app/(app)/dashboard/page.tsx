@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { AchievementsWidget } from "@/components/dashboard/AchievementsWidget";
-import { PRWidget } from "@/components/dashboard/PRWidget";
-import { TonnageWidget } from "@/components/dashboard/TonnageWidget";
-import { WeeklyChart } from "@/components/dashboard/WeeklyChart";
+import {
+  emptyCalendarWeekChart,
+  ProgressHomeSection,
+  weeklyDtoToChart,
+} from "@/components/dashboard/ProgressHomeSection";
 import { getAccessToken } from "@/lib/auth";
 import { useCurrentUserQuery } from "@/lib/hooks/useDashboardData";
 import {
@@ -21,7 +22,6 @@ import { useAuthStore } from "@/lib/stores/authStore";
 import type {
   UserAchievementFeedItemDto,
   WeeklyDayTonnageDto,
-  WeeklyProgressDayDto,
 } from "@/lib/types/dashboard";
 
 const nf = new Intl.NumberFormat("ru-RU");
@@ -43,56 +43,6 @@ function greetingByHour(): string {
     return "Добрый вечер";
   }
   return "Доброй ночи";
-}
-
-function utcTodayDate(): Date {
-  const n = new Date();
-  return new Date(
-    Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()),
-  );
-}
-
-/**
- * Пн–Вс UTC с нулевым тоннажом, если ответ /weekly недоступен.
- */
-function emptyCalendarWeekChart(): WeeklyDayTonnageDto[] {
-  const today = utcTodayDate();
-  const dow = today.getUTCDay(); // 0 вс — 6 сб
-  const mondayDelta = dow === 0 ? -6 : 1 - dow;
-  const monday = new Date(today);
-  monday.setUTCDate(monday.getUTCDate() + mondayDelta);
-  const labels: string[] = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
-  const out: WeeklyDayTonnageDto[] = [];
-  for (let i = 0; i < 7; i += 1) {
-    const d = new Date(monday);
-    d.setUTCDate(monday.getUTCDate() + i);
-    const y = d.getUTCFullYear();
-    const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(d.getUTCDate()).padStart(2, "0");
-    const iso = `${String(y)}-${m}-${day}`;
-    const dwd = d.getUTCDay(); // 1..6,0
-    const ix = dwd === 0 ? 6 : dwd - 1;
-    const isToday =
-      d.getUTCFullYear() === today.getUTCFullYear() &&
-      d.getUTCMonth() === today.getUTCMonth() &&
-      d.getUTCDate() === today.getUTCDate();
-    out.push({
-      date: iso,
-      day_label: labels[ix] ?? "—",
-      tonnage_kg: 0,
-      is_today: isToday,
-    });
-  }
-  return out;
-}
-
-function weeklyDtoToChart(days: WeeklyProgressDayDto[]): WeeklyDayTonnageDto[] {
-  return days.map((d) => ({
-    date: typeof d.date === "string" ? d.date.slice(0, 10) : String(d.date),
-    day_label: d.day_label,
-    tonnage_kg: d.volume_kg,
-    is_today: d.is_today,
-  }));
 }
 
 function parseVolumeKg(
@@ -130,7 +80,7 @@ function formatSessionDuration(startIso: string, endIso: string | null): string 
 }
 
 /**
- * Главный дашборд: приветствие, тоннаж, неделя, PR, ачивки, последняя тренировка.
+ * Главный дашборд: приветствие, сводка, активная сессия, последняя тренировка; внизу — статистика как на бывшем /progress.
  */
 export default function DashboardPage() {
   const hasToken =
@@ -177,6 +127,16 @@ export default function DashboardPage() {
   const achItems: UserAchievementFeedItemDto[] = achievements?.items ?? [];
 
   const activeSessionId = progress?.active_session_id ?? null;
+  const activePlanId = useMemo(() => {
+    if (!activeSessionId || !sessions?.items?.length) {
+      return null;
+    }
+    const row = sessions.items.find(
+      (s) => s.session_id === activeSessionId,
+    );
+    return row?.plan_id ?? null;
+  }, [activeSessionId, sessions?.items]);
+
   const lifetime = progress?.total_lifetime_tonnage_kg ?? 0;
   const streak = progress?.workout_streak_days ?? 0;
   const totalWorkouts = progress?.workouts_completed_total ?? 0;
@@ -215,7 +175,7 @@ export default function DashboardPage() {
           </h1>
           {!hasToken ? (
             <p className="mt-2 max-w-sm text-xs text-muted">
-              Войдите в аккаунт — загрузим тоннаж, рекорды и ачивки с сервера.
+              Войдите в аккаунт — загрузим поднятый вес, рекорды и ачивки с сервера.
             </p>
           ) : null}
         </div>
@@ -239,6 +199,46 @@ export default function DashboardPage() {
         )}
       </header>
 
+      {hasToken && activeSessionId ? (
+        <div className="mt-3 px-4">
+          <div className="rounded-2xl border border-accent/40 bg-accent/10 px-4 py-3">
+            {activePlanId ? (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
+                    Активная тренировка
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold text-white">
+                    Есть незавершённая сессия
+                  </p>
+                </div>
+                <Link
+                  href={`/session/${activePlanId}`}
+                  className="shrink-0 rounded-full bg-accent px-4 py-2 text-[13px] font-bold text-white shadow-sm transition hover:bg-accent-dark"
+                >
+                  Продолжить
+                </Link>
+              </div>
+            ) : (
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
+                  Активная тренировка
+                </p>
+                <p className="mt-0.5 text-sm text-muted">
+                  Откройте историю, если нужно найти эту тренировку.
+                </p>
+                <Link
+                  href="/history"
+                  className="mt-2 inline-block text-[13px] font-semibold text-accent hover:underline"
+                >
+                  К истории →
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
+
       <div className="mt-3 grid grid-cols-3 gap-2.5 px-4">
         {loadingDash && hasToken
           ? [0, 1, 2].map((k) => (
@@ -261,7 +261,7 @@ export default function DashboardPage() {
               },
               {
                 val: `${nf.format(Math.round(weeklySumKg))} кг`,
-                lbl: "Тоннаж",
+                lbl: "Поднято",
                 sub: "7 дней",
               },
             ].map((s) => (
@@ -298,9 +298,9 @@ export default function DashboardPage() {
                     {lastPlanName}
                   </p>
                 </div>
-                {activeSessionId ? (
+                {activeSessionId && activePlanId ? (
                   <Link
-                    href={`/session/${activeSessionId}`}
+                    href={`/session/${activePlanId}`}
                     className="shrink-0 rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 text-[11px] font-semibold text-accent"
                   >
                     Продолжить →
@@ -320,7 +320,7 @@ export default function DashboardPage() {
                 )}
               </p>
               <p className="mt-1 text-sm text-white">
-                Тоннаж:{" "}
+                Поднято:{" "}
                 {(() => {
                   const v = parseVolumeKg(
                     lastCompletedSession.total_volume_kg ?? null,
@@ -361,34 +361,18 @@ export default function DashboardPage() {
         ) : null}
       </div>
 
-      <div className="mt-4 space-y-4 px-4">
-        {loadingDash && hasToken ? (
-          <>
-            <div
-              className="h-48 animate-pulse rounded-2xl bg-surface"
-              aria-hidden
-            />
-            <div
-              className="h-52 animate-pulse rounded-2xl bg-surface"
-              aria-hidden
-            />
-            <div
-              className="h-40 animate-pulse rounded-2xl bg-surface"
-              aria-hidden
-            />
-            <div
-              className="h-40 animate-pulse rounded-2xl bg-surface"
-              aria-hidden
-            />
-          </>
-        ) : (
-          <>
-            <TonnageWidget totalLifetimeKg={lifetime} />
-            <WeeklyChart days={weekChartDays} />
-            <PRWidget items={prItems} />
-            <AchievementsWidget items={achItems} />
-          </>
-        )}
+      <div className="mt-6 px-4">
+        <ProgressHomeSection
+          hasToken={hasToken}
+          loading={Boolean(loadingDash)}
+          totalWorkouts={totalWorkouts}
+          weeklyTrainingDays={weeklyTrainingDays}
+          weeklySumKg={weeklySumKg}
+          prItems={prItems}
+          achItems={achItems}
+          weekChartDays={weekChartDays}
+          lifetimeKg={lifetime}
+        />
       </div>
     </main>
   );

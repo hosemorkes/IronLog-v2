@@ -207,7 +207,7 @@ export default function HistoryPage() {
                                 vol != null
                                   ? `${nf.format(Math.round(vol))} кг`
                                   : "—",
-                              l: "тоннаж",
+                              l: "поднято",
                             },
                           ] as const
                         ).map((row) => (

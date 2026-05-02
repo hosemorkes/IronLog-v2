@@ -161,7 +161,7 @@ function SessionCompleteContent() {
             { v: String(stats.setsCount), l: "Сетов" },
             {
               v: `${Math.round(stats.tonnage).toLocaleString("ru-RU")} кг`,
-              l: "Тоннаж",
+              l: "Поднято",
             },
             { v: String(stats.exerciseCount), l: "Упражнений" },
           ].map((card) => (

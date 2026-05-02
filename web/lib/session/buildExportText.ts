@@ -78,7 +78,7 @@ export function buildSessionExportText(
         }, 0);
 
   lines.push(
-    `📊 Итого: ${String(sortedSets.length)} сетов · ${Math.round(vol).toLocaleString("ru-RU")} кг тоннаж`,
+    `📊 Итого: ${String(sortedSets.length)} сетов · ${Math.round(vol).toLocaleString("ru-RU")} кг поднято`,
   );
   lines.push("—");
   lines.push("Отправлено из IronLog 🏋️");

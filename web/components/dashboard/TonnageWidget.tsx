@@ -9,7 +9,7 @@ interface TonnageWidgetProps {
 }
 
 /**
- * Карточка суммарного тоннажа, объект шкалы, прогресс до порога, таблица уровней.
+ * Карточка суммарного поднятого веса, объект шкалы, прогресс до порога, таблица уровней.
  */
 export function TonnageWidget({ totalLifetimeKg }: TonnageWidgetProps) {
   const scale = getTonnageScaleState(totalLifetimeKg);
@@ -18,7 +18,7 @@ export function TonnageWidget({ totalLifetimeKg }: TonnageWidgetProps) {
   return (
     <section className="rounded-2xl border border-border bg-surface px-4 py-4">
       <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
-        Тоннаж за всё время
+        Поднято за всё время
       </h2>
       <p className="mt-1 text-3xl font-extrabold tracking-tight text-white">
         {nf.format(Math.round(totalLifetimeKg))}
@@ -83,7 +83,7 @@ export function TonnageWidget({ totalLifetimeKg }: TonnageWidgetProps) {
         {scale.currentLevelIndex < 0 && (
           <p className="mt-2 text-[10px] text-muted">
             Пока ниже первого порога ({nf.format(TONNAGE_LEVELS[0].minKg)} кг) — строка
-            «Старт» активна в прогрессе выше.
+            «Старт» активна в карточке выше.
           </p>
         )}
       </div>

@@ -437,7 +437,7 @@ export default function ActiveSessionPage() {
                 { v: formatClock(elapsed), l: "время" },
                 {
                   v: `${Math.round(tonnageDone).toLocaleString("ru-RU")} кг`,
-                  l: "тоннаж",
+                  l: "поднято",
                 },
                 { v: `${completedSets}/${totalSteps}`, l: "шаги" },
               ].map((s) => (

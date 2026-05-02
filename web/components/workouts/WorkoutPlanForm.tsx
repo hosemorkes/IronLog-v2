@@ -439,7 +439,7 @@ export function WorkoutPlanForm({
                 totals.estTonnage >= 100
                   ? `~${Math.round(totals.estTonnage / 100) * 100}`
                   : `~${Math.round(totals.estTonnage)}`,
-              l: "кг тонн.",
+              l: "кг (поднято)",
             },
           ].map((s) => (
             <div key={s.l} className="text-center">
