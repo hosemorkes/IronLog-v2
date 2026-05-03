@@ -205,7 +205,10 @@ async def start_session(
     if active is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="У вас уже есть активная тренировка. Завершите её перед новой.",
+            detail={
+                "message": "У вас уже есть активная тренировка. Завершите её перед новой.",
+                "active_session_id": str(active.id),
+            },
         )
 
     plan: WorkoutPlan | None = None

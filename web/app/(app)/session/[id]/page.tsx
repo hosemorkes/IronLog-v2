@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  computeResumeStats,
   useFinishSession,
   useLogSet,
   useStartSession,
@@ -84,8 +85,27 @@ export default function ActiveSessionPage() {
 
   const sessionId = startQuery.data?.session_id ?? null;
   const previews = startQuery.data?.exercises ?? [];
+  const dataPlanId = startQuery.data?.plan_id ?? null;
 
   const steps = useMemo(() => buildSteps(previews), [previews]);
+
+  const resumeSessionIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    resumeSessionIdRef.current = null;
+  }, [planId]);
+
+  useEffect(() => {
+    if (
+      !startQuery.isSuccess ||
+      !dataPlanId ||
+      !planId ||
+      dataPlanId === planId
+    ) {
+      return;
+    }
+    router.replace(`/session/${dataPlanId}`);
+  }, [startQuery.isSuccess, dataPlanId, planId, router]);
 
   const [elapsed, setElapsed] = useState(0);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -103,6 +123,78 @@ export default function ActiveSessionPage() {
   const curStep = steps[currentIdx];
   const totalSteps = steps.length;
   const restGoal = curStep?.restSeconds ?? REST_FALLBACK_SEC;
+
+  const completePlanId = dataPlanId ?? planId;
+
+  const navigateComplete = useCallback(
+    (sid: string) => {
+      const name = plan?.name ?? "Тренировка";
+      const pid = completePlanId ?? planId;
+      if (!pid) {
+        return;
+      }
+      router.push(
+        `/session/${pid}/complete?sessionId=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
+      );
+    },
+    [completePlanId, plan?.name, planId, router],
+  );
+
+  const runFinish = useCallback(async () => {
+    if (!sessionId) {
+      return;
+    }
+    await finishSession.mutateAsync();
+    navigateComplete(sessionId);
+  }, [finishSession, navigateComplete, sessionId]);
+
+  useEffect(() => {
+    const detail = startQuery.data?.resumedDetail;
+    if (
+      !startQuery.isSuccess ||
+      !detail ||
+      !steps.length ||
+      resumeSessionIdRef.current === detail.session_id
+    ) {
+      return;
+    }
+    resumeSessionIdRef.current = detail.session_id;
+    const refs = steps.map((s) => ({
+      exerciseId: s.exerciseId,
+      setNum: s.setNum,
+    }));
+    const stats = computeResumeStats(detail, refs);
+    if (stats.completedSets >= steps.length) {
+      void (async () => {
+        try {
+          await finishSession.mutateAsync();
+          const name = plan?.name ?? "Тренировка";
+          const pid = completePlanId ?? planId;
+          if (pid && sessionId) {
+            router.push(
+              `/session/${pid}/complete?sessionId=${encodeURIComponent(sessionId)}&planName=${encodeURIComponent(name)}`,
+            );
+          }
+        } catch {
+          resumeSessionIdRef.current = null;
+        }
+      })();
+      return;
+    }
+    setCompletedSets(stats.completedSets);
+    setCurrentIdx(stats.currentIdx);
+    setTonnageDone(stats.tonnageDone);
+  }, [
+    completePlanId,
+    finishSession,
+    plan?.name,
+    planId,
+    router,
+    sessionId,
+    startQuery.data?.resumedDetail,
+    startQuery.isSuccess,
+    steps,
+  ]);
 
   useEffect(() => {
     const iv = window.setInterval(() => setElapsed((e) => e + 1), 1000);
@@ -134,24 +226,6 @@ export default function ActiveSessionPage() {
     }, 1000);
     return () => window.clearInterval(iv);
   }, [restActive]);
-
-  const navigateComplete = useCallback(
-    (sid: string) => {
-      const name = plan?.name ?? "Тренировка";
-      router.push(
-        `/session/${planId}/complete?sessionId=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
-      );
-    },
-    [plan?.name, planId, router],
-  );
-
-  const runFinish = useCallback(async () => {
-    if (!sessionId) {
-      return;
-    }
-    await finishSession.mutateAsync();
-    navigateComplete(sessionId);
-  }, [finishSession, navigateComplete, sessionId]);
 
   const handleCompleteSet = async () => {
     if (restActive || !sessionId || !curStep || logSet.isPending) {
@@ -235,15 +309,12 @@ export default function ActiveSessionPage() {
 
   if (startQuery.isError) {
     const msg = (startQuery.error as Error).message;
-    const is409 = msg.includes("активную тренировку");
     return (
       <div className="flex flex-1 flex-col bg-bg-dark px-6 py-10">
         <p className="text-center text-sm text-rose-300">{msg}</p>
-        {is409 ? (
-          <p className="mt-3 text-center text-xs text-muted">
-            Завершите текущую сессию или откройте её из приложения.
-          </p>
-        ) : null}
+        <p className="mt-3 text-center text-xs text-muted">
+          Если проблема не исчезла, откройте главную и начните снова.
+        </p>
         <Link
           href="/dashboard"
           className="mt-8 block rounded-2xl bg-accent py-3 text-center font-semibold text-white"

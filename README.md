@@ -39,19 +39,19 @@ docker-compose exec api python -m seeds.achievements
 # Главная — http://localhost:3000 (лендинг: вход / регистрация; если в localStorage уже есть ironlog_access_token — редирект на /dashboard)
 # Вход / регистрация — http://localhost:3000/login , http://localhost:3000/signup
 # (JWT сохраняется в localStorage как ironlog_access_token; без токена зона приложения в (app) редиректит на /login)
-# Дашборд — http://localhost:3000/dashboard
-# Упражнения — http://localhost:3000/exercises
+# Дашборд — http://localhost:3000/dashboard (статистика, шкала «поднято», PR и ачивки)
+# Упражнения — http://localhost:3000/exercises (со списка планов — кнопка «Библиотека упражнений»)
 # Планы — http://localhost:3000/workouts (новый: /workouts/new; карточка: /workouts/<id>; редактирование: /workouts/<id>/edit)
-# Прогресс — http://localhost:3000/progress
 # Профиль — http://localhost:3000/profile
 # История тренировок — http://localhost:3000/history
+# /progress — редирект на /dashboard
 # Активная тренировка по плану (JWT) — http://localhost:3000/session/<plan_id>
 #   (при открытии создаётся сессия POST /api/user/sessions; итоги — /session/<plan_id>/complete?sessionId=…)
 ```
 
 **Главная `/`** — публичный лендинг с переходами на вход и регистрацию; при наличии **`ironlog_access_token`** выполняется редирект на **`/dashboard`**.
 
-В веб-клиенте основное приложение (маршруты под `(app)` — дашборд, упражнения, планы, сессии и т.д.) защищено: без JWT в **`ironlog_access_token`** выполняется редирект на **`/login`**. Войти можно через **`/`**, **`/login`** или **`/signup`** (после успеха токен пишется в `localStorage` автоматически). Для отладки API вручную можно задать тот же ключ: `localStorage.setItem("ironlog_access_token", "<jwt>")`.
+В веб-клиенте основное приложение (маршруты под `(app)` — дашборд, упражнения, планы, сессии и т.д.) защищено: без JWT в **`ironlog_access_token`** выполняется редирект на **`/login`**. Нижняя навигация: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`); на экранах **`/session/*`** (активная тренировка) панель скрыта. Войти можно через **`/`**, **`/login`** или **`/signup`** (после успеха токен пишется в `localStorage` автоматически). Для отладки API вручную можно задать тот же ключ: `localStorage.setItem("ironlog_access_token", "<jwt>")`.
 
 ---
 
@@ -74,11 +74,11 @@ docker-compose exec api python -m seeds.achievements
 | Web · лендинг `/` (есть токен в localStorage → `/dashboard`) | http://localhost:3000 |
 | Вход | http://localhost:3000/login |
 | Регистрация | http://localhost:3000/signup |
-| Дашборд | http://localhost:3000/dashboard |
+| Дашборд (статистика, «поднято», PR, ачивки) | http://localhost:3000/dashboard |
 | Упражнения | http://localhost:3000/exercises |
 | Планы (список, карточка) | http://localhost:3000/workouts , `/workouts/[id]` |
 | Конструктор / редактирование плана | `/workouts/new` , `/workouts/[id]/edit` (свои планы; назначенные тренером не редактируются) |
-| Прогресс | http://localhost:3000/progress |
+| `/progress` | редирект на `/dashboard` |
 | Профиль | http://localhost:3000/profile |
 | История тренировок | http://localhost:3000/history |
 | Активная тренировка | http://localhost:3000/session/[plan_id] (`plan_id` из карточки плана; не UUID сессии) |
@@ -149,7 +149,7 @@ docker-compose exec api python -m seeds.achievements
 
 **Backend:** Python 3.11 · FastAPI · PostgreSQL 15 · Redis · RabbitMQ · MinIO · Dramatiq · SQLAlchemy 2 async · Alembic
 
-**Frontend:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · TanStack Query · Zustand
+**Frontend:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · TanStack Query · Zustand · Lucide React (иконки навигации)
 
 **Infra:** Docker Compose (сеть **ironlog**) · multi-stage Dockerfile (api, web) · (опционально) Prometheus · Grafana
 

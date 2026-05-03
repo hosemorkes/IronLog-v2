@@ -33,7 +33,11 @@ async def start_session(
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> WorkoutSessionStartResponse:
-    """Начать тренировку (опционально по плану)."""
+    """Начать тренировку (опционально по плану).
+
+    Если у пользователя уже есть незавершённая сессия: **409 Conflict**,
+    ``detail`` — объект с полями ``message`` (str) и ``active_session_id`` (str, UUID).
+    """
     return await user_session_service.start_session(db, current_user, body)
 
 
