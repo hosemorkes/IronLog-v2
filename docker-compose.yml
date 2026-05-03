@@ -136,32 +136,34 @@ services:
     volumes:
       - ./backend:/app   # hot-reload в dev
 
-  # ─────────────────────────────────────────────
-  # DRAMATIQ WORKER
-  # ─────────────────────────────────────────────
-
-  worker:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        APP_ENV: production
-    container_name: ironlog_worker
-    restart: unless-stopped
-    command: dramatiq tasks --processes 2 --threads 4
-    env_file:
-      - ./backend/.env
-    environment:
-      DATABASE_URL: postgresql+asyncpg://ironlog:${POSTGRES_PASSWORD:-ironlog_secret}@postgres:5432/ironlog
-      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
-      RABBITMQ_URL: amqp://${RABBITMQ_USER:-ironlog}:${RABBITMQ_PASSWORD:-rabbitmq_secret}@rabbitmq:5672/ironlog
-    networks:
-      - ironlog
-    depends_on:
-      api:
-        condition: service_healthy
-    healthcheck:
-      disable: true
+  # TODO: раскомментировать сервисы worker и admin, когда будут готовы.
+  #
+  # # ─────────────────────────────────────────────
+  # # DRAMATIQ WORKER
+  # # ─────────────────────────────────────────────
+  #
+  # worker:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #     args:
+  #       APP_ENV: production
+  #   container_name: ironlog_worker
+  #   restart: unless-stopped
+  #   command: dramatiq tasks --processes 2 --threads 4
+  #   env_file:
+  #     - ./backend/.env
+  #   environment:
+  #     DATABASE_URL: postgresql+asyncpg://ironlog:${POSTGRES_PASSWORD:-ironlog_secret}@postgres:5432/ironlog
+  #     REDIS_URL: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
+  #     RABBITMQ_URL: amqp://${RABBITMQ_USER:-ironlog}:${RABBITMQ_PASSWORD:-rabbitmq_secret}@rabbitmq:5672/ironlog
+  #   networks:
+  #     - ironlog
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     disable: true
 
   # ─────────────────────────────────────────────
   # FRONTEND
@@ -186,20 +188,20 @@ services:
     depends_on:
       - api
 
-  admin:
-    build:
-      context: ./admin
-      dockerfile: Dockerfile
-    container_name: ironlog_admin
-    restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
-    ports:
-      - "3002:3000"
-    networks:
-      - ironlog
-    depends_on:
-      - api
+  # admin:
+  #   build:
+  #     context: ./admin
+  #     dockerfile: Dockerfile
+  #   container_name: ironlog_admin
+  #   restart: unless-stopped
+  #   environment:
+  #     NEXT_PUBLIC_API_URL: http://localhost:8000
+  #   ports:
+  #     - "3002:3000"
+  #   networks:
+  #     - ironlog
+  #   depends_on:
+  #     - api
 
   # ─────────────────────────────────────────────
   # MONITORING

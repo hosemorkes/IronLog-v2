@@ -192,6 +192,20 @@ docker-compose down -v
 
 ---
 
+## Деплой на VPS
+
+1. Скопировать шаблон подстановки URL для сборки фронта:  
+   `cp docker-compose.override.yml.example docker-compose.override.yml`
+2. Отредактировать **`docker-compose.override.yml`**: заменить `your-domain.com` на свой домен (HTTPS / WSS для прода).
+3. Пересобрать веб-образ с подставленными `NEXT_PUBLIC_*`:  
+   `docker compose build web`
+4. Поднять стек:  
+   `docker compose up -d`
+
+Файл **`docker-compose.override.yml`** в репозитории не хранится (см. `.gitignore`); в каждом окружении свой.
+
+---
+
 ## На VPS нужно сделать вручную только три вещи — один раз при первом деплое:
 
 ```bash

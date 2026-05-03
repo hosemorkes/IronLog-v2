@@ -1,0 +1,11 @@
+# Скопируйте в docker-compose.override.yml и подставьте свой домен.
+# Compose автоматически подмешивает docker-compose.override.yml к основному файлу.
+#
+#   cp docker-compose.override.yml.example docker-compose.override.yml
+
+services:
+  web:
+    build:
+      args:
+        NEXT_PUBLIC_API_URL: https://your-domain.com
+        NEXT_PUBLIC_WS_URL: wss://your-domain.com
