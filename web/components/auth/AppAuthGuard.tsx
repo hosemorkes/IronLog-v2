@@ -1,8 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { getAccessToken } from "@/lib/auth";
 import { AUTH_UI_COLORS } from "@/lib/constants/auth-ui";
@@ -16,9 +15,13 @@ interface AppAuthGuardProps {
  * Защита зоны (app): без токена — редирект на /login; иначе загрузка профиля через fetchMe().
  */
 export function AppAuthGuard({ children }: AppAuthGuardProps) {
-  const router = useRouter();
   const fetchMe = useAuthStore((s) => s.fetchMe);
+  const fetchMeRef = useRef(fetchMe);
   const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    fetchMeRef.current = fetchMe;
+  }, [fetchMe]);
 
   useEffect(() => {
     let cancelled = false;
@@ -26,15 +29,15 @@ export function AppAuthGuard({ children }: AppAuthGuardProps) {
     async function run() {
       const token = getAccessToken();
       if (!token) {
-        router.replace("/login");
+        window.location.replace("/login");
         return;
       }
-      await fetchMe();
+      await fetchMeRef.current();
       if (cancelled) {
         return;
       }
       if (!getAccessToken()) {
-        router.replace("/login");
+        window.location.replace("/login");
         return;
       }
       setReady(true);
@@ -44,7 +47,8 @@ export function AppAuthGuard({ children }: AppAuthGuardProps) {
     return () => {
       cancelled = true;
     };
-  }, [fetchMe, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- один прогон при монте; fetchMe через ref
+  }, []);
 
   if (!ready) {
     return (
