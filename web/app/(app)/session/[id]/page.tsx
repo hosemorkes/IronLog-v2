@@ -134,7 +134,7 @@ export default function ActiveSessionPage() {
         return;
       }
       router.push(
-        `/session/${pid}/complete?sessionId=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
+        `/session/${pid}/complete?session_id=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
       );
     },
     [completePlanId, plan?.name, planId, router],
@@ -144,7 +144,7 @@ export default function ActiveSessionPage() {
     if (!sessionId) {
       return;
     }
-    await finishSession.mutateAsync();
+    await finishSession.mutateAsync(sessionId);
     navigateComplete(sessionId);
   }, [finishSession, navigateComplete, sessionId]);
 
@@ -167,12 +167,13 @@ export default function ActiveSessionPage() {
     if (stats.completedSets >= steps.length) {
       void (async () => {
         try {
-          await finishSession.mutateAsync();
+          const sid = detail.session_id;
+          await finishSession.mutateAsync(sid);
           const name = plan?.name ?? "Тренировка";
           const pid = completePlanId ?? planId;
-          if (pid && sessionId) {
+          if (pid) {
             router.push(
-              `/session/${pid}/complete?sessionId=${encodeURIComponent(sessionId)}&planName=${encodeURIComponent(name)}`,
+              `/session/${pid}/complete?session_id=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
             );
           }
         } catch {
@@ -190,7 +191,6 @@ export default function ActiveSessionPage() {
     plan?.name,
     planId,
     router,
-    sessionId,
     startQuery.data?.resumedDetail,
     startQuery.isSuccess,
     steps,

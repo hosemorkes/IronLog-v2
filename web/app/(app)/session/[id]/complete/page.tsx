@@ -2,9 +2,14 @@
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useSessionDetail } from "@/lib/hooks/useSessions";
+import {
+  finishUserSession,
+  invalidateAfterSessionComplete,
+  useSessionDetail,
+} from "@/lib/hooks/useSessions";
 import { buildSessionExportText } from "@/lib/session/buildExportText";
 
 function formatMmSs(totalSeconds: number): string {
@@ -17,13 +22,50 @@ function formatMmSs(totalSeconds: number): string {
 function SessionCompleteContent() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const planId = typeof params.id === "string" ? params.id : "";
-  const sessionId = searchParams.get("sessionId");
+  const resolvedSessionId = useMemo(() => {
+    const a = searchParams.get("session_id")?.trim();
+    const b = searchParams.get("sessionId")?.trim();
+    return a || b || "";
+  }, [searchParams]);
   const planNameFromQuery = searchParams.get("planName");
 
   const [copyHint, setCopyHint] = useState<string | null>(null);
+  const [ensurePending, setEnsurePending] = useState(false);
+  const autoFinishAttempted = useRef(0);
 
-  const { data: detail, error, isPending } = useSessionDetail(sessionId);
+  useEffect(() => {
+    autoFinishAttempted.current = 0;
+  }, [resolvedSessionId]);
+
+  const { data: detail, error, isPending } = useSessionDetail(
+    resolvedSessionId || null,
+  );
+
+  useEffect(() => {
+    if (!resolvedSessionId || !detail || detail.completed_at) {
+      return;
+    }
+    if (autoFinishAttempted.current >= 1) {
+      return;
+    }
+    autoFinishAttempted.current = 1;
+    setEnsurePending(true);
+    void (async () => {
+      try {
+        await finishUserSession(resolvedSessionId);
+        invalidateAfterSessionComplete(queryClient);
+        await queryClient.refetchQueries({
+          queryKey: ["workout-session", resolvedSessionId],
+        });
+      } catch {
+        /* одна попытка за визит — остаётся экран «ещё не завершена» */
+      } finally {
+        setEnsurePending(false);
+      }
+    })();
+  }, [detail, queryClient, resolvedSessionId]);
 
   const planTitle =
     planNameFromQuery?.trim() ||
@@ -87,11 +129,12 @@ function SessionCompleteContent() {
     }
   }, [exportFull]);
 
-  if (!sessionId) {
+  if (!resolvedSessionId) {
     return (
       <div className="flex min-h-full flex-1 flex-col bg-bg-dark px-6 py-16">
         <p className="text-center text-sm text-muted">
-          Не указана сессия. Откройте экран из завершённой тренировки.
+          Не указана сессия (параметр session_id). Откройте экран из
+          завершённой тренировки.
         </p>
         <Link
           href="/dashboard"
@@ -124,6 +167,15 @@ function SessionCompleteContent() {
         >
           На главную
         </Link>
+      </div>
+    );
+  }
+
+  if (!detail.completed_at && ensurePending) {
+    return (
+      <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-bg-dark px-6">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        <p className="mt-4 text-sm text-muted">Завершаем тренировку…</p>
       </div>
     );
   }
@@ -214,14 +266,6 @@ function SessionCompleteContent() {
       >
         На главную
       </Link>
-      {planId ? (
-        <Link
-          href={`/workouts/${planId}`}
-          className="mt-4 text-sm text-muted hover:text-white"
-        >
-          К плану
-        </Link>
-      ) : null}
     </div>
   );
 }

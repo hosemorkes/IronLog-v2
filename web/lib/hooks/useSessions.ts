@@ -5,6 +5,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  type QueryClient,
 } from "@tanstack/react-query";
 
 import { apiFetch } from "@/lib/api";
@@ -252,6 +253,49 @@ export interface WorkoutSessionCompleteResponse {
 }
 
 /**
+ * Завершить сессию PUT /user/sessions/:id (для явного id и повторных вызовов с экрана итогов).
+ */
+export async function finishUserSession(
+  sessionId: string,
+): Promise<WorkoutSessionCompleteResponse> {
+  const res = await apiFetch(`/user/sessions/${sessionId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  });
+  if (res.status === 400) {
+    const msg = await parseErrorMessage(res);
+    if (msg.includes("уже завершена")) {
+      const check = await apiFetch(`/user/sessions/${sessionId}`);
+      if (check.ok) {
+        const d = (await check.json()) as SessionDetailDto;
+        if (d.completed_at) {
+          return {
+            session_id: d.session_id,
+            completed_at: d.completed_at,
+            total_volume_kg: d.total_volume_kg ?? "0",
+          };
+        }
+      }
+    }
+    throw new Error(msg);
+  }
+  if (!res.ok) {
+    throw new Error(await parseErrorMessage(res));
+  }
+  return res.json() as Promise<WorkoutSessionCompleteResponse>;
+}
+
+export function invalidateAfterSessionComplete(qc: QueryClient): void {
+  void qc.invalidateQueries({ queryKey: ["workout-session"] });
+  void qc.invalidateQueries({ queryKey: ["workout-plans"] });
+  void qc.invalidateQueries({ queryKey: ["workout-session-start"] });
+  void qc.invalidateQueries({ queryKey: ["user", "sessions", "history"] });
+  void qc.invalidateQueries({ queryKey: ["user", "sessions", "recent"] });
+  void qc.invalidateQueries({ queryKey: ["user", "progress"] });
+}
+
+/**
  * Детали сессии GET /user/sessions/:id (после завершения — для экрана итогов).
  */
 export function useSessionDetail(sessionId: string | null) {
@@ -321,36 +365,25 @@ export function useLogSet(sessionId: string | null) {
 
 /**
  * Завершение сессии PUT /user/sessions/:id.
+ * Передайте id в mutateAsync(sessionId), чтобы гарантированно завершить нужную сессию (без устаревшего замыкания).
  */
 export function useFinishSession(sessionId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (): Promise<WorkoutSessionCompleteResponse> => {
-      if (!sessionId) {
+    mutationFn: async (
+      explicitSessionId?: string | null,
+    ): Promise<WorkoutSessionCompleteResponse> => {
+      const id =
+        explicitSessionId !== undefined && explicitSessionId !== null
+          ? explicitSessionId
+          : sessionId;
+      if (!id) {
         throw new Error("Нет активной сессии");
       }
-      const res = await apiFetch(`/user/sessions/${sessionId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      if (!res.ok) {
-        throw new Error(await parseErrorMessage(res));
-      }
-      return res.json() as Promise<WorkoutSessionCompleteResponse>;
+      return finishUserSession(id);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["workout-session"] });
-      void queryClient.invalidateQueries({ queryKey: ["workout-plans"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["workout-session-start"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["user", "sessions", "history"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["user", "sessions", "recent"],
-      });
+      invalidateAfterSessionComplete(queryClient);
     },
   });
 }

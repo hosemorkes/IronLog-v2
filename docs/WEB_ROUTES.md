@@ -1,0 +1,39 @@
+# Web (PWA) — маршруты и ответственность
+
+Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фактическое состояние репозитория: **15 экранов** (файлов `app/**/page.tsx`). Отдельное приложение **admin** в дереве проекта может отсутствовать — страницы админки здесь не перечислены.
+
+## Таблица маршрутов
+
+| URL | Файл | Назначение |
+|-----|------|------------|
+| `/` | `web/app/page.tsx` | Лендинг; при наличии access-токена — редирект на `/dashboard`. |
+| `/login` | `web/app/(auth)/login/page.tsx` | Вход. |
+| `/signup` | `web/app/(auth)/signup/page.tsx` | Регистрация. |
+| `/dashboard` | `web/app/(app)/dashboard/page.tsx` | Главный дашборд после входа. |
+| `/history` | `web/app/(app)/history/page.tsx` | История тренировок. |
+| `/progress` | `web/app/(app)/progress/page.tsx` | Прогресс и статистика. (сейчас слился с /dashboard) |
+| `/profile` | `web/app/(app)/profile/page.tsx` | Профиль пользователя. |
+| `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека упражнений. |
+| `/exercises/[id]` | `web/app/(app)/exercises/[id]/page.tsx` | Карточка упражнения. |
+| `/workouts` | `web/app/(app)/workouts/page.tsx` | Список планов тренировок. |
+| `/workouts/new` | `web/app/(app)/workouts/new/page.tsx` | Создание плана. |
+| `/workouts/[id]` | `web/app/(app)/workouts/[id]/page.tsx` | Просмотр плана. |
+| `/workouts/[id]/edit` | `web/app/(app)/workouts/[id]/edit/page.tsx` | Редактирование плана. |
+| `/session/[id]` | `web/app/(app)/session/[id]/page.tsx` | Активная тренировка (план `id`). |
+| `/session/[id]/complete` | `web/app/(app)/session/[id]/complete/page.tsx` | Завершение сессии. |
+
+`[id]` — динамический сегмент (UUID плана или упражнения и т.д.).
+
+## Оболочка и навигация
+
+| Компонент | Файл | Роль |
+|-----------|------|------|
+| Группа `(app)` | `web/app/(app)/layout.tsx` | Защищённая зона: `AppAuthGuard` (JWT), контейнер с `AppShell`. |
+| Оболочка | `web/components/navigation/AppShell.tsx` | Отступ под нижнюю панель; на маршрутах `/session/*` нижняя навигация **не показывается**. |
+| Нижняя навигация | `web/components/navigation/BottomNav.tsx` | Четыре вкладки: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`). Остальные экраны открываются по ссылкам с этих страниц и из контента. |
+
+Группа `(auth)` (`login`, `signup`) не использует layout `(app)` — отдельные экраны без нижней навигации.
+
+## Согласование с `PROJECT_STRUCTURE.md`
+
+Дерево в [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) может описывать целевую или устаревшую структуру (например, `session/history`, `trainers`, отдельная страница achievements). **Актуальный список URL и файлов** — в таблице выше; при расхождении ориентироваться на `web/app/` в репозитории.
