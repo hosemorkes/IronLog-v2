@@ -5,13 +5,16 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  computeResumeStats,
+  isActiveSessionConflictError,
   useFinishSession,
   useLogSet,
   useStartSession,
-  type SessionExercisePreview,
 } from "@/lib/hooks/useSessions";
-import { useWorkoutPlan } from "@/lib/hooks/useWorkouts";
+import {
+  useWorkoutPlan,
+  type PlanDetailExerciseRef,
+  type WorkoutPlanDetail,
+} from "@/lib/hooks/useWorkouts";
 
 import type { ExerciseDetailDto } from "@/lib/types/session";
 
@@ -41,20 +44,40 @@ function parseTargetWeight(
   return n;
 }
 
-function buildSteps(previews: SessionExercisePreview[]): SessionStep[] {
-  const sorted = [...previews].sort((a, b) => a.order - b.order);
+function planExerciseRefToDetail(ex: PlanDetailExerciseRef): ExerciseDetailDto {
+  return {
+    id: ex.id,
+    name: ex.name,
+    name_ru: ex.name_ru,
+    muscle_group: ex.muscle_group,
+    secondary_muscles: null,
+    equipment: ex.equipment,
+    difficulty: ex.difficulty,
+    description: null,
+    technique_steps: null,
+    image_url: ex.image_url,
+    gif_url: null,
+    created_by: null,
+    is_active: true,
+    created_at: "",
+  };
+}
+
+function buildStepsFromPlan(plan: WorkoutPlanDetail): SessionStep[] {
+  const sorted = [...plan.exercises].sort((a, b) => a.order - b.order);
   const out: SessionStep[] = [];
-  for (const p of sorted) {
-    const rest = p.rest_seconds ?? REST_FALLBACK_SEC;
-    const tw = parseTargetWeight(p.target_weight_kg);
-    for (let i = 1; i <= p.target_sets; i++) {
+  for (const row of sorted) {
+    const rest = row.rest_seconds ?? REST_FALLBACK_SEC;
+    const tw = parseTargetWeight(row.weight_kg);
+    const exercise = planExerciseRefToDetail(row.exercise);
+    for (let i = 1; i <= row.sets; i++) {
       out.push({
-        exerciseId: p.exercise.id,
+        exerciseId: exercise.id,
         setNum: i,
-        targetReps: p.target_reps,
+        targetReps: row.reps,
         targetWeightKg: tw,
         restSeconds: rest,
-        exercise: p.exercise,
+        exercise,
       });
     }
   }
@@ -80,16 +103,20 @@ export default function ActiveSessionPage() {
   const router = useRouter();
   const planId = typeof params.id === "string" ? params.id : null;
 
-  const { data: plan } = useWorkoutPlan(planId);
+  const { data: plan, isPending: planPending } = useWorkoutPlan(planId);
   const startSession = useStartSession();
 
-  const sessionId = startSession.data?.session_id ?? null;
-  const previews = startSession.data?.exercises ?? [];
+  const steps = useMemo(
+    () => (plan ? buildStepsFromPlan(plan) : []),
+    [plan],
+  );
 
-  const steps = useMemo(() => buildSteps(previews), [previews]);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [startError, setStartError] = useState<string | null>(null);
+  const [startSettled, setStartSettled] = useState(false);
 
   /**
-   * Один POST /user/sessions на каждое новое значение planId из URL (без router.replace).
+   * Один POST /user/sessions на каждое новое значение planId из URL.
    */
   const lastPostForPlanIdRef = useRef<string | null>(null);
 
@@ -98,14 +125,30 @@ export default function ActiveSessionPage() {
       return;
     }
     lastPostForPlanIdRef.current = planId;
-    void startSession.mutateAsync(planId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- только planId; не включать startSession
-  }, [planId]);
-
-  const resumeSessionIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    resumeSessionIdRef.current = null;
+    setSessionId(null);
+    setStartError(null);
+    setStartSettled(false);
+    startSession.reset();
+    startSession.mutate(planId, {
+      onSuccess: (data) => {
+        setSessionId(data.session_id);
+        setStartError(null);
+        setStartSettled(true);
+      },
+      onError: (err: unknown) => {
+        if (isActiveSessionConflictError(err)) {
+          setSessionId(err.activeSessionId);
+          setStartError(null);
+        } else {
+          setSessionId(null);
+          setStartError(
+            err instanceof Error ? err.message : "Не удалось начать тренировку",
+          );
+        }
+        setStartSettled(true);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- один запуск на planId; mutate/reset из useMutation
   }, [planId]);
 
   const [elapsed, setElapsed] = useState(0);
@@ -145,52 +188,6 @@ export default function ActiveSessionPage() {
     await finishSession.mutateAsync(sessionId);
     navigateComplete(sessionId);
   }, [finishSession, navigateComplete, sessionId]);
-
-  useEffect(() => {
-    const detail = startSession.data?.resumedDetail;
-    if (
-      !startSession.isSuccess ||
-      !detail ||
-      !steps.length ||
-      resumeSessionIdRef.current === detail.session_id
-    ) {
-      return;
-    }
-    resumeSessionIdRef.current = detail.session_id;
-    const refs = steps.map((s) => ({
-      exerciseId: s.exerciseId,
-      setNum: s.setNum,
-    }));
-    const stats = computeResumeStats(detail, refs);
-    if (stats.completedSets >= steps.length) {
-      void (async () => {
-        try {
-          const sid = detail.session_id;
-          await finishSession.mutateAsync(sid);
-          const name = plan?.name ?? "Тренировка";
-          if (planId) {
-            router.push(
-              `/session/${planId}/complete?session_id=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
-            );
-          }
-        } catch {
-          resumeSessionIdRef.current = null;
-        }
-      })();
-      return;
-    }
-    setCompletedSets(stats.completedSets);
-    setCurrentIdx(stats.currentIdx);
-    setTonnageDone(stats.tonnageDone);
-  }, [
-    finishSession,
-    plan?.name,
-    planId,
-    router,
-    startSession.data?.resumedDetail,
-    startSession.isSuccess,
-    steps,
-  ]);
 
   useEffect(() => {
     const iv = window.setInterval(() => setElapsed((e) => e + 1), 1000);
@@ -294,20 +291,10 @@ export default function ActiveSessionPage() {
     );
   }
 
-  if (startSession.isPending) {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center bg-bg-dark px-6">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-        <p className="mt-4 text-sm text-muted">Подготовка тренировки…</p>
-      </div>
-    );
-  }
-
-  if (startSession.isError) {
-    const msg = (startSession.error as Error).message;
+  if (startError) {
     return (
       <div className="flex flex-1 flex-col bg-bg-dark px-6 py-10">
-        <p className="text-center text-sm text-rose-300">{msg}</p>
+        <p className="text-center text-sm text-rose-300">{startError}</p>
         <p className="mt-3 text-center text-xs text-muted">
           Если проблема не исчезла, откройте главную и начните снова.
         </p>
@@ -327,7 +314,16 @@ export default function ActiveSessionPage() {
     );
   }
 
-  if (!sessionId || totalSteps === 0) {
+  if (!startSettled || planPending || !sessionId) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center bg-bg-dark px-6">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        <p className="mt-4 text-sm text-muted">Подготовка тренировки…</p>
+      </div>
+    );
+  }
+
+  if (totalSteps === 0) {
     return (
       <div className="flex flex-1 flex-col bg-bg-dark px-6 py-10">
         <p className="text-center text-sm text-muted">

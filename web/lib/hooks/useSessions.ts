@@ -12,7 +12,7 @@ import { apiFetch } from "@/lib/api";
 import { getAccessToken } from "@/lib/auth";
 import type { WorkoutSessionHistoryDto } from "@/lib/types/dashboard";
 
-import type { ExerciseDetailDto, SessionDetailDto } from "@/lib/types/session";
+import type { SessionDetailDto } from "@/lib/types/session";
 
 const HISTORY_PAGE_SIZE = 50;
 
@@ -58,78 +58,24 @@ async function parseErrorMessage(res: Response): Promise<string> {
   return raw;
 }
 
-/** Превью упражнения из ответа POST /user/sessions. */
-export interface SessionExercisePreview {
-  plan_exercise_id: string;
-  order: number;
-  exercise: ExerciseDetailDto;
-  target_sets: number;
-  target_reps: number;
-  target_weight_kg: string | number | null;
-  rest_seconds: number | null;
-}
-
+/** Ответ POST /api/user/sessions (поле exercises с бэкенда не используем на клиенте). */
 export interface WorkoutSessionStartResponse {
   session_id: string;
   plan_id: string | null;
   started_at: string;
-  exercises: SessionExercisePreview[];
 }
 
-/** Результат подготовки сессии: после 409 может быть тело GET /sessions/:id для восстановления шага. */
-export interface WorkoutSessionStartResult extends WorkoutSessionStartResponse {
-  resumedDetail?: SessionDetailDto;
-}
+/** Сообщение ошибки при 409 с известной активной сессией (см. isActiveSessionConflictError). */
+export const ACTIVE_SESSION_CONFLICT_MESSAGE = "active";
 
-export interface SessionStepRef {
-  exerciseId: string;
-  setNum: number;
-}
-
-export function computeResumeStats(
-  detail: SessionDetailDto,
-  steps: SessionStepRef[],
-): {
-  completedSets: number;
-  currentIdx: number;
-  tonnageDone: number;
-} {
-  const logged = new Set(
-    detail.sets.map((s) => `${s.exercise_id}:${String(s.set_num)}`),
+export function isActiveSessionConflictError(
+  err: unknown,
+): err is Error & { activeSessionId: string } {
+  return (
+    err instanceof Error &&
+    err.message === ACTIVE_SESSION_CONFLICT_MESSAGE &&
+    typeof (err as { activeSessionId?: unknown }).activeSessionId === "string"
   );
-  let completedSets = 0;
-  let currentIdx = 0;
-  let foundIncomplete = false;
-  for (let i = 0; i < steps.length; i++) {
-    const st = steps[i];
-    const key = `${st.exerciseId}:${String(st.setNum)}`;
-    if (logged.has(key)) {
-      completedSets += 1;
-    } else {
-      currentIdx = i;
-      foundIncomplete = true;
-      break;
-    }
-  }
-  if (!foundIncomplete && steps.length > 0) {
-    currentIdx = steps.length - 1;
-    completedSets = steps.length;
-  }
-  let tonnageDone = 0;
-  for (const s of detail.sets) {
-    const w =
-      s.weight_kg !== null && s.weight_kg !== ""
-        ? Number.parseFloat(String(s.weight_kg))
-        : NaN;
-    if (Number.isFinite(w)) {
-      tonnageDone += w * s.reps_done;
-    }
-  }
-  return {
-    completedSets,
-    currentIdx,
-    tonnageDone,
-  };
 }
 
 async function parse409ConflictBody(raw: string): Promise<{
@@ -159,78 +105,24 @@ async function parse409ConflictBody(raw: string): Promise<{
   return { message: raw.slice(0, 280), activeSessionId: null };
 }
 
-/**
- * Продолжить активную сессию после 409: план и превью как у старта, плюс detail для UI.
- */
-async function resumeActiveWorkout(
-  activeSessionId: string,
-): Promise<WorkoutSessionStartResult> {
-  const res = await apiFetch(`/user/sessions/${activeSessionId}`);
-  if (!res.ok) {
-    throw new Error(await parseErrorMessage(res));
-  }
-  const detail = (await res.json()) as SessionDetailDto;
-  if (detail.completed_at) {
-    throw new Error("Сессия уже завершена — начните новую тренировку.");
-  }
-  const sessionPlanId = detail.plan_id;
-  if (!sessionPlanId) {
-    throw new Error(
-      "Активная тренировка без плана. Продолжение с этого экрана недоступно.",
-    );
-  }
-  const planRes = await apiFetch(`/user/plans/${sessionPlanId}`);
-  if (!planRes.ok) {
-    throw new Error(await parseErrorMessage(planRes));
-  }
-  const planJson = (await planRes.json()) as {
-    exercises: Array<{
-      id: string;
-      order: number;
-      sets: number;
-      reps: number;
-      weight_kg: string | number | null;
-      rest_seconds: number | null;
-      exercise: ExerciseDetailDto;
-    }>;
-  };
-  const exercises: SessionExercisePreview[] = [...planJson.exercises]
-    .sort((a, b) => a.order - b.order)
-    .map((pe) => ({
-      plan_exercise_id: pe.id,
-      order: pe.order,
-      exercise: pe.exercise,
-      target_sets: pe.sets,
-      target_reps: pe.reps,
-      target_weight_kg: pe.weight_kg,
-      rest_seconds: pe.rest_seconds,
-    }));
-
-  return {
-    session_id: detail.session_id,
-    plan_id: sessionPlanId,
-    started_at: detail.started_at,
-    exercises,
-    resumedDetail: detail,
-  };
-}
-
 export async function requestStartSession(
   planId: string,
-): Promise<WorkoutSessionStartResult> {
+): Promise<WorkoutSessionStartResponse> {
   const res = await apiFetch("/user/sessions", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ plan_id: planId }),
   });
   if (res.ok) {
-    return (await res.json()) as WorkoutSessionStartResult;
+    return (await res.json()) as WorkoutSessionStartResponse;
   }
   const raw = await res.text();
   if (res.status === 409) {
     const { message, activeSessionId } = await parse409ConflictBody(raw);
     if (activeSessionId) {
-      return resumeActiveWorkout(activeSessionId);
+      throw Object.assign(new Error(ACTIVE_SESSION_CONFLICT_MESSAGE), {
+        activeSessionId,
+      });
     }
     throw new Error(message);
   }
@@ -313,12 +205,12 @@ export function useSessionDetail(sessionId: string | null) {
 }
 
 /**
- * Старт тренировки по плану: только через mutate(planId) из эффекта (без авто-fetch при рендере).
- * При 409 внутри requestStartSession — один GET активной сессии + план, без повторного POST.
+ * Старт тренировки: POST /api/user/sessions через mutate(planId).
+ * При 409 с active_session_id — ошибка с message "active" и полем activeSessionId.
  */
 export function useStartSession() {
   return useMutation({
-    mutationFn: (planId: string): Promise<WorkoutSessionStartResult> =>
+    mutationFn: (planId: string): Promise<WorkoutSessionStartResponse> =>
       requestStartSession(planId),
     retry: 0,
   });
