@@ -289,7 +289,6 @@ export async function finishUserSession(
 export function invalidateAfterSessionComplete(qc: QueryClient): void {
   void qc.invalidateQueries({ queryKey: ["workout-session"] });
   void qc.invalidateQueries({ queryKey: ["workout-plans"] });
-  void qc.invalidateQueries({ queryKey: ["workout-session-start"] });
   void qc.invalidateQueries({ queryKey: ["user", "sessions", "history"] });
   void qc.invalidateQueries({ queryKey: ["user", "sessions", "recent"] });
   void qc.invalidateQueries({ queryKey: ["user", "progress"] });
@@ -314,18 +313,14 @@ export function useSessionDetail(sessionId: string | null) {
 }
 
 /**
- * Старт тренировки по плану; один запрос на planId за счёт React Query (dedupe).
- * При 409 подтягивает активную сессию и возвращает тот же формат ответа.
+ * Старт тренировки по плану: только через mutate(planId) из эффекта (без авто-fetch при рендере).
+ * При 409 внутри requestStartSession — один GET активной сессии + план, без повторного POST.
  */
-export function useStartSession(planId: string | null) {
-  return useQuery({
-    queryKey: ["workout-session-start", planId],
-    enabled: Boolean(planId),
-    queryFn: async (): Promise<WorkoutSessionStartResult> =>
-      requestStartSession(planId as string),
-    staleTime: Infinity,
-    gcTime: 1000 * 60 * 60,
-    retry: false,
+export function useStartSession() {
+  return useMutation({
+    mutationFn: (planId: string): Promise<WorkoutSessionStartResult> =>
+      requestStartSession(planId),
+    retry: 0,
   });
 }
 

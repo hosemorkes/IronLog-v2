@@ -81,13 +81,27 @@ export default function ActiveSessionPage() {
   const planId = typeof params.id === "string" ? params.id : null;
 
   const { data: plan } = useWorkoutPlan(planId);
-  const startQuery = useStartSession(planId);
+  const startSession = useStartSession();
 
-  const sessionId = startQuery.data?.session_id ?? null;
-  const previews = startQuery.data?.exercises ?? [];
-  const dataPlanId = startQuery.data?.plan_id ?? null;
+  const sessionId = startSession.data?.session_id ?? null;
+  const previews = startSession.data?.exercises ?? [];
+  const dataPlanId = startSession.data?.plan_id ?? null;
 
   const steps = useMemo(() => buildSteps(previews), [previews]);
+
+  /**
+   * Ровно один POST /user/sessions за монтирование страницы.
+   * После router.replace(plan_id из ответа) planId меняется — повторный POST не нужен (данные уже в mutation state).
+   */
+  const sessionPostOnceRef = useRef(false);
+
+  useEffect(() => {
+    if (!planId || sessionPostOnceRef.current) {
+      return;
+    }
+    sessionPostOnceRef.current = true;
+    void startSession.mutateAsync(planId);
+  }, [planId, startSession]);
 
   const resumeSessionIdRef = useRef<string | null>(null);
 
@@ -97,7 +111,7 @@ export default function ActiveSessionPage() {
 
   useEffect(() => {
     if (
-      !startQuery.isSuccess ||
+      !startSession.isSuccess ||
       !dataPlanId ||
       !planId ||
       dataPlanId === planId
@@ -105,7 +119,7 @@ export default function ActiveSessionPage() {
       return;
     }
     router.replace(`/session/${dataPlanId}`);
-  }, [startQuery.isSuccess, dataPlanId, planId, router]);
+  }, [startSession.isSuccess, dataPlanId, planId, router]);
 
   const [elapsed, setElapsed] = useState(0);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -149,9 +163,9 @@ export default function ActiveSessionPage() {
   }, [finishSession, navigateComplete, sessionId]);
 
   useEffect(() => {
-    const detail = startQuery.data?.resumedDetail;
+    const detail = startSession.data?.resumedDetail;
     if (
-      !startQuery.isSuccess ||
+      !startSession.isSuccess ||
       !detail ||
       !steps.length ||
       resumeSessionIdRef.current === detail.session_id
@@ -191,8 +205,8 @@ export default function ActiveSessionPage() {
     plan?.name,
     planId,
     router,
-    startQuery.data?.resumedDetail,
-    startQuery.isSuccess,
+    startSession.data?.resumedDetail,
+    startSession.isSuccess,
     steps,
   ]);
 
@@ -298,7 +312,7 @@ export default function ActiveSessionPage() {
     );
   }
 
-  if (startQuery.isPending) {
+  if (startSession.isPending) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center bg-bg-dark px-6">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
@@ -307,8 +321,8 @@ export default function ActiveSessionPage() {
     );
   }
 
-  if (startQuery.isError) {
-    const msg = (startQuery.error as Error).message;
+  if (startSession.isError) {
+    const msg = (startSession.error as Error).message;
     return (
       <div className="flex flex-1 flex-col bg-bg-dark px-6 py-10">
         <p className="text-center text-sm text-rose-300">{msg}</p>
