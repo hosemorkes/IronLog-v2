@@ -85,41 +85,28 @@ export default function ActiveSessionPage() {
 
   const sessionId = startSession.data?.session_id ?? null;
   const previews = startSession.data?.exercises ?? [];
-  const dataPlanId = startSession.data?.plan_id ?? null;
 
   const steps = useMemo(() => buildSteps(previews), [previews]);
 
   /**
-   * Ровно один POST /user/sessions за монтирование страницы.
-   * После router.replace(plan_id из ответа) planId меняется — повторный POST не нужен (данные уже в mutation state).
+   * Один POST /user/sessions на каждое новое значение planId из URL (без router.replace).
    */
-  const sessionPostOnceRef = useRef(false);
+  const lastPostForPlanIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!planId || sessionPostOnceRef.current) {
+    if (!planId || lastPostForPlanIdRef.current === planId) {
       return;
     }
-    sessionPostOnceRef.current = true;
+    lastPostForPlanIdRef.current = planId;
     void startSession.mutateAsync(planId);
-  }, [planId, startSession]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- только planId; не включать startSession
+  }, [planId]);
 
   const resumeSessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     resumeSessionIdRef.current = null;
   }, [planId]);
-
-  useEffect(() => {
-    if (
-      !startSession.isSuccess ||
-      !dataPlanId ||
-      !planId ||
-      dataPlanId === planId
-    ) {
-      return;
-    }
-    router.replace(`/session/${dataPlanId}`);
-  }, [startSession.isSuccess, dataPlanId, planId, router]);
 
   const [elapsed, setElapsed] = useState(0);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -138,20 +125,17 @@ export default function ActiveSessionPage() {
   const totalSteps = steps.length;
   const restGoal = curStep?.restSeconds ?? REST_FALLBACK_SEC;
 
-  const completePlanId = dataPlanId ?? planId;
-
   const navigateComplete = useCallback(
     (sid: string) => {
       const name = plan?.name ?? "Тренировка";
-      const pid = completePlanId ?? planId;
-      if (!pid) {
+      if (!planId) {
         return;
       }
       router.push(
-        `/session/${pid}/complete?session_id=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
+        `/session/${planId}/complete?session_id=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
       );
     },
-    [completePlanId, plan?.name, planId, router],
+    [plan?.name, planId, router],
   );
 
   const runFinish = useCallback(async () => {
@@ -184,10 +168,9 @@ export default function ActiveSessionPage() {
           const sid = detail.session_id;
           await finishSession.mutateAsync(sid);
           const name = plan?.name ?? "Тренировка";
-          const pid = completePlanId ?? planId;
-          if (pid) {
+          if (planId) {
             router.push(
-              `/session/${pid}/complete?session_id=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
+              `/session/${planId}/complete?session_id=${encodeURIComponent(sid)}&planName=${encodeURIComponent(name)}`,
             );
           }
         } catch {
@@ -200,7 +183,6 @@ export default function ActiveSessionPage() {
     setCurrentIdx(stats.currentIdx);
     setTonnageDone(stats.tonnageDone);
   }, [
-    completePlanId,
     finishSession,
     plan?.name,
     planId,
