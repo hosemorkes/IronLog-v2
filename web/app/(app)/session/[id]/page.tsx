@@ -4,12 +4,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  isActiveSessionConflictError,
-  useFinishSession,
-  useLogSet,
-  useStartSession,
-} from "@/lib/hooks/useSessions";
+import { apiFetch } from "@/lib/api";
+import { useFinishSession, useLogSet } from "@/lib/hooks/useSessions";
 import {
   useWorkoutPlan,
   type PlanDetailExerciseRef,
@@ -95,6 +91,37 @@ function exerciseTitle(ex: ExerciseDetailDto): string {
   return ex.name_ru.trim() || ex.name;
 }
 
+async function startSessionDirect(
+  planId: string,
+): Promise<{ sessionId: string }> {
+  const res = await apiFetch("/user/sessions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ plan_id: planId }),
+  });
+  if (res.ok) {
+    const data = (await res.json()) as { session_id: string };
+    return { sessionId: data.session_id };
+  }
+  if (res.status === 409) {
+    const data = (await res.json()) as {
+      detail?: { active_session_id?: string } | string;
+    };
+    const d = data?.detail;
+    if (
+      typeof d === "object" &&
+      d !== null &&
+      typeof (d as { active_session_id?: unknown }).active_session_id ===
+        "string"
+    ) {
+      return {
+        sessionId: (d as { active_session_id: string }).active_session_id,
+      };
+    }
+  }
+  throw new Error("Не удалось начать тренировку");
+}
+
 /**
  * Активная тренировка по плану: `id` в URL — plan_id.
  */
@@ -104,7 +131,8 @@ export default function ActiveSessionPage() {
   const planId = typeof params.id === "string" ? params.id : null;
 
   const { data: plan, isPending: planPending } = useWorkoutPlan(planId);
-  const startSession = useStartSession();
+  const planIdRef = useRef(planId);
+  planIdRef.current = planId;
 
   const steps = useMemo(
     () => (plan ? buildStepsFromPlan(plan) : []),
@@ -115,41 +143,27 @@ export default function ActiveSessionPage() {
   const [startError, setStartError] = useState<string | null>(null);
   const [startSettled, setStartSettled] = useState(false);
 
-  /**
-   * Один POST /user/sessions на каждое новое значение planId из URL.
-   */
-  const lastPostForPlanIdRef = useRef<string | null>(null);
-
   useEffect(() => {
-    if (!planId || lastPostForPlanIdRef.current === planId) {
+    const id = planIdRef.current;
+    if (!id) {
       return;
     }
-    lastPostForPlanIdRef.current = planId;
-    setSessionId(null);
-    setStartError(null);
-    setStartSettled(false);
-    startSession.reset();
-    startSession.mutate(planId, {
-      onSuccess: (data) => {
-        setSessionId(data.session_id);
+    void startSessionDirect(id)
+      .then(({ sessionId: sid }) => {
+        setSessionId(sid);
         setStartError(null);
+      })
+      .catch((err: unknown) => {
+        setSessionId(null);
+        setStartError(
+          err instanceof Error ? err.message : "Не удалось начать тренировку",
+        );
+      })
+      .finally(() => {
         setStartSettled(true);
-      },
-      onError: (err: unknown) => {
-        if (isActiveSessionConflictError(err)) {
-          setSessionId(err.activeSessionId);
-          setStartError(null);
-        } else {
-          setSessionId(null);
-          setStartError(
-            err instanceof Error ? err.message : "Не удалось начать тренировку",
-          );
-        }
-        setStartSettled(true);
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- один запуск на planId; mutate/reset из useMutation
-  }, [planId]);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- один POST при монте; planId через ref
+  }, []);
 
   const [elapsed, setElapsed] = useState(0);
   const [currentIdx, setCurrentIdx] = useState(0);
