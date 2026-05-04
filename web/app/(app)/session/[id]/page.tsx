@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { apiFetch } from "@/lib/api";
 import { useFinishSession, useLogSet } from "@/lib/hooks/useSessions";
@@ -17,6 +17,19 @@ import type { ExerciseDetailDto } from "@/lib/types/session";
 const REST_FALLBACK_SEC = 90;
 const RING_R = 26;
 const RING_C = 2 * Math.PI * RING_R;
+const PROGRESS_TTL_MS = 24 * 60 * 60 * 1000;
+
+function getStorage(): Storage | null {
+  return typeof window !== "undefined" ? localStorage : null;
+}
+
+function workoutProgressKey(sessionId: string): string {
+  return `workout_progress_${sessionId}`;
+}
+
+function clearWorkoutProgress(sessionId: string): void {
+  getStorage()?.removeItem(workoutProgressKey(sessionId));
+}
 
 interface SessionStep {
   exerciseId: string;
@@ -200,8 +213,68 @@ export default function ActiveSessionPage() {
       return;
     }
     await finishSession.mutateAsync(sessionId);
+    clearWorkoutProgress(sessionId);
     navigateComplete(sessionId);
   }, [finishSession, navigateComplete, sessionId]);
+
+  useLayoutEffect(() => {
+    if (!sessionId || totalSteps === 0) {
+      return;
+    }
+    const raw = getStorage()?.getItem(workoutProgressKey(sessionId));
+    if (!raw) {
+      return;
+    }
+    try {
+      const data = JSON.parse(raw) as {
+        currentIdx?: unknown;
+        completedSets?: unknown;
+        tonnageDone?: unknown;
+        savedAt?: unknown;
+      };
+      if (typeof data.savedAt !== "number") {
+        return;
+      }
+      if (Date.now() - data.savedAt >= PROGRESS_TTL_MS) {
+        clearWorkoutProgress(sessionId);
+        return;
+      }
+      const idx =
+        typeof data.currentIdx === "number" && Number.isFinite(data.currentIdx)
+          ? data.currentIdx
+          : 0;
+      const done =
+        typeof data.completedSets === "number" &&
+        Number.isFinite(data.completedSets)
+          ? data.completedSets
+          : 0;
+      const tonn =
+        typeof data.tonnageDone === "number" && Number.isFinite(data.tonnageDone)
+          ? data.tonnageDone
+          : 0;
+      const maxIdx = Math.max(0, totalSteps - 1);
+      setCurrentIdx(Math.min(Math.max(0, idx), maxIdx));
+      setCompletedSets(Math.min(Math.max(0, done), totalSteps));
+      setTonnageDone(Math.max(0, tonn));
+    } catch {
+      /* некорректный JSON */
+    }
+  }, [sessionId, totalSteps]);
+
+  useEffect(() => {
+    if (!sessionId || totalSteps === 0) {
+      return;
+    }
+    getStorage()?.setItem(
+      workoutProgressKey(sessionId),
+      JSON.stringify({
+        currentIdx,
+        completedSets,
+        tonnageDone,
+        savedAt: Date.now(),
+      }),
+    );
+  }, [sessionId, totalSteps, currentIdx, completedSets, tonnageDone]);
 
   useEffect(() => {
     const iv = window.setInterval(() => setElapsed((e) => e + 1), 1000);
