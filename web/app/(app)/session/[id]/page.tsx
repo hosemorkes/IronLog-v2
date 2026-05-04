@@ -27,8 +27,17 @@ function workoutProgressKey(sessionId: string): string {
   return `workout_progress_${sessionId}`;
 }
 
+function workoutStartKey(sessionId: string): string {
+  return `workout_start_${sessionId}`;
+}
+
 function clearWorkoutProgress(sessionId: string): void {
-  getStorage()?.removeItem(workoutProgressKey(sessionId));
+  const s = getStorage();
+  if (!s) {
+    return;
+  }
+  s.removeItem(workoutProgressKey(sessionId));
+  s.removeItem(workoutStartKey(sessionId));
 }
 
 interface SessionStep {
@@ -163,6 +172,10 @@ export default function ActiveSessionPage() {
     }
     void startSessionDirect(id)
       .then(({ sessionId: sid }) => {
+        const storage = getStorage();
+        if (storage && !storage.getItem(workoutStartKey(sid))) {
+          storage.setItem(workoutStartKey(sid), String(Date.now()));
+        }
         setSessionId(sid);
         setStartError(null);
       })
@@ -221,7 +234,15 @@ export default function ActiveSessionPage() {
     if (!sessionId || totalSteps === 0) {
       return;
     }
-    const raw = getStorage()?.getItem(workoutProgressKey(sessionId));
+    const storage = getStorage();
+    const startRaw = storage?.getItem(workoutStartKey(sessionId));
+    if (startRaw) {
+      const t = Number(startRaw);
+      if (Number.isFinite(t) && t > 0) {
+        setElapsed(Math.max(0, Math.floor((Date.now() - t) / 1000)));
+      }
+    }
+    const raw = storage?.getItem(workoutProgressKey(sessionId));
     if (!raw) {
       return;
     }
@@ -277,9 +298,24 @@ export default function ActiveSessionPage() {
   }, [sessionId, totalSteps, currentIdx, completedSets, tonnageDone]);
 
   useEffect(() => {
-    const iv = window.setInterval(() => setElapsed((e) => e + 1), 1000);
+    if (!sessionId) {
+      return;
+    }
+    const tick = (): void => {
+      const startRaw = getStorage()?.getItem(workoutStartKey(sessionId));
+      if (!startRaw) {
+        return;
+      }
+      const t = Number(startRaw);
+      if (!Number.isFinite(t) || t <= 0) {
+        return;
+      }
+      setElapsed(Math.max(0, Math.floor((Date.now() - t) / 1000)));
+    };
+    tick();
+    const iv = window.setInterval(tick, 1000);
     return () => window.clearInterval(iv);
-  }, []);
+  }, [sessionId]);
 
   useEffect(() => {
     if (!curStep) {
