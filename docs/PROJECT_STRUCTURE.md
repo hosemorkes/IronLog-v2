@@ -204,8 +204,9 @@ ironlog/                                   # Корневая папка
 │       ├── ExerciseForm.tsx               # Форма + загрузка изображения в MinIO
 │       └── UserRoleManager.tsx
 │
-├── docker-compose.yml                     # ГЛАВНЫЙ ФАЙЛ
-├── docker-compose.override.yml            # Локальные переопределения (dev)
+├── docker-compose.yml                     # ГЛАВНЫЙ ФАЙЛ (worker/admin могут быть закомментированы)
+├── docker-compose.override.yml.example    # Шаблон NEXT_PUBLIC_* для web на VPS
+├── docker-compose.override.yml            # Не в git; docker compose подмешивает автоматически
 ├── prometheus.yml
 ├── grafana-dashboards/
 │   └── ironlog-dashboard.json

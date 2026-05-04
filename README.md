@@ -59,9 +59,9 @@ docker-compose exec api python -m seeds.achievements
 
 | Сервис | Файл | Заметки |
 |--------|------|---------|
-| **api** | `backend/Dockerfile` | Multi-stage (wheels → runtime), Python **3.11-slim**, non-root `appuser`, **HEALTHCHECK** на `GET /health`. Сборка **`APP_ENV`**: в `docker-compose` для **api** задано `development` (uvicorn **--reload** и монтирование `./backend:/app`); для **worker** — `production`. Для продакшена API соберите с `APP_ENV=production`. |
-| **worker** | тот же образ | Команда `dramatiq ...`; **healthcheck** в compose отключён (порт 8000 не слушается). |
-| **web** | `web/Dockerfile` | Multi-stage **deps → builder → runner**, Next.js **`output: "standalone"`**, Node **20**, пользователь **nextjs**, **`node server.js`**. На этапе **build** задаются **`NEXT_PUBLIC_API_URL`** и **`NEXT_PUBLIC_WS_URL`** (в compose сейчас `localhost` для доступа из браузера хоста). Локальная разработка UI: **`cd web && npm run dev`** — без Docker. |
+| **api** | `backend/Dockerfile` | Multi-stage (wheels → runtime), Python **3.11-slim**, non-root `appuser`, **HEALTHCHECK** на `GET /health`. В **`docker-compose.yml`** для **api** задано `development` (uvicorn **--reload** и монтирование `./backend:/app`); для продакшена API соберите с **`APP_ENV=production`**. |
+| **worker** | тот же образ | Dramatiq, очереди RabbitMQ — **сервис в корневом `docker-compose.yml` по умолчанию закомментирован** (см. `# TODO` в файле); без воркера задачи из API остаются в очереди. |
+| **web** | `web/Dockerfile` | Multi-stage **deps → builder → runner**, Next.js **`output: "standalone"`**, Node **20**, пользователь **nextjs**, **`node server.js`**. **Build args** `NEXT_PUBLIC_*`: локально — `localhost` в compose; на VPS — через **`docker-compose.override.yml`** (шаблон **`docker-compose.override.yml.example`**, см. «Деплой на VPS»). Локально без Docker: **`cd web && npm run dev`**. |
 
 Мониторинг: `docker-compose --profile monitoring up -d`.
 
@@ -83,7 +83,7 @@ docker-compose exec api python -m seeds.achievements
 | История тренировок | http://localhost:3000/history |
 | Активная тренировка | http://localhost:3000/session/[plan_id] (`plan_id` из карточки плана; не UUID сессии) |
 | Итоги тренировки | `/session/[plan_id]/complete?sessionId=…` (редирект после завершения) |
-| Admin Panel | http://localhost:3002 |
+| Admin Panel (:3002) | сервис **`admin` в compose по умолчанию закомментирован**; после раскомментирования — http://localhost:3002 |
 | API | http://localhost:8000 |
 | API Docs (Swagger) | http://localhost:8000/docs |
 | Проверка API | http://localhost:8000/health |
@@ -114,7 +114,7 @@ docker-compose exec api python -m seeds.achievements
 | Прогресс и дашборд | `GET /api/user/progress`, `GET /api/user/progress/weekly` (календарная неделя Пн–Вс), `GET /api/user/progress/recent-prs`, `GET /api/user/sessions`, `GET /api/user/achievements` |
 
 После **`PUT`** завершения сессии API ставит в очередь Dramatiq задачи **`check_achievements`** и **`update_stats`**.  
-**`check_achievements`** в воркере вызывает **`services/achievement_service.check_achievements_after_workout`**: идемпотентная выдача ачивок и событие WebSocket **`achievements.unlocked`** на канал **`/ws/{user_id}`** (см. `backend/main.py`, `backend/websocket/manager.py`).
+**`check_achievements`** в воркере вызывает **`services/achievement_service.check_achievements_after_workout`**: идемпотентная выдача ачивок и событие WebSocket **`achievements.unlocked`** на канал **`/ws/{user_id}`** (см. `backend/main.py`, `backend/websocket/manager.py`). Пока сервис **`worker`** в Docker отключён, сообщения остаются в RabbitMQ до запуска воркера (или локального **`dramatiq`**).
 
 ---
 
@@ -137,6 +137,7 @@ docker-compose exec api python -m seeds.achievements
 | `docs/ARCHITECTURE.md` | Архитектура, API, данные |
 | `docs/PROJECT_STRUCTURE.md` | Структура репозитория |
 | `docs/MICROSERVICES.md` | Сервисы в docker-compose |
+| `docker-compose.override.yml.example` | Шаблон `NEXT_PUBLIC_*` для сборки **web** на VPS (копия → `docker-compose.override.yml`) |
 | `CURSOR_PROMPTS.md` | Промпты для Cursor |
 | `.cursor/agents/` | Подсказки для агентов (backend, frontend, devops и др.) |
 | `CLAUDE.md` | Контекст для Claude/Cursor |
@@ -161,8 +162,8 @@ docker-compose exec api python -m seeds.achievements
 # Логи API
 docker-compose logs -f api
 
-# Логи воркера (Dramatiq)
-docker-compose logs -f worker
+# Логи воркера (Dramatiq) — только если сервис worker раскомментирован в docker-compose.yml
+# docker-compose logs -f worker
 
 # PostgreSQL в контейнере
 docker-compose exec postgres psql -U ironlog -d ironlog
