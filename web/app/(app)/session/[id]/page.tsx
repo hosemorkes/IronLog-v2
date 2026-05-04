@@ -172,10 +172,6 @@ export default function ActiveSessionPage() {
     }
     void startSessionDirect(id)
       .then(({ sessionId: sid }) => {
-        const storage = getStorage();
-        if (storage && !storage.getItem(workoutStartKey(sid))) {
-          storage.setItem(workoutStartKey(sid), String(Date.now()));
-        }
         setSessionId(sid);
         setStartError(null);
       })
@@ -229,6 +225,20 @@ export default function ActiveSessionPage() {
     clearWorkoutProgress(sessionId);
     navigateComplete(sessionId);
   }, [finishSession, navigateComplete, sessionId]);
+
+  useEffect(() => {
+    if (!sessionId) {
+      return;
+    }
+    const storage = getStorage();
+    if (!storage) {
+      return;
+    }
+    const key = workoutStartKey(sessionId);
+    if (!storage.getItem(key)) {
+      storage.setItem(key, String(Date.now()));
+    }
+  }, [sessionId]);
 
   useLayoutEffect(() => {
     if (!sessionId || totalSteps === 0) {
