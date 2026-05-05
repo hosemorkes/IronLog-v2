@@ -23,6 +23,7 @@ from routes import (
     trainer_manage,
     trainers,
     user_achievements,
+    user_exercises,
     user_plans,
     user_progress,
     user_sessions,
@@ -80,6 +81,7 @@ def create_app() -> FastAPI:
 
     application.include_router(auth.router, prefix="/api/auth")
     application.include_router(exercises.router, prefix="/api/exercises")
+    application.include_router(user_exercises.router, prefix="/api/user/exercises")
     application.include_router(user_plans.router, prefix="/api/user/plans")
     application.include_router(user_sessions.router, prefix="/api/user/sessions")
     application.include_router(user_progress.router, prefix="/api/user/progress")

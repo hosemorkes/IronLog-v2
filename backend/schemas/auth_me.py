@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
 
+from models.enums import UserRole
+
 
 class CurrentUserResponse(BaseModel):
     """Публичные поля пользователя (без пароля)."""
@@ -13,3 +15,4 @@ class CurrentUserResponse(BaseModel):
     id: UUID
     email: EmailStr
     username: str
+    role: UserRole

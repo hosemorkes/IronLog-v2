@@ -1,8 +1,9 @@
 "use client";
 
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { apiUrl } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
+import { useAuthStore } from "@/lib/stores/authStore";
 
 /** Ответ строки каталога (GET /api/exercises). */
 export interface ExerciseListItem {
@@ -43,8 +44,7 @@ async function fetchExercisePage(
   offset: number,
 ): Promise<ExerciseListItem[]> {
   const qs = buildQueryString(filters, offset);
-  const url = `${apiUrl("/exercises")}?${qs}`;
-  const res = await fetch(url);
+  const res = await apiFetch(`/exercises?${qs}`);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(text || `Ошибка ${res.status}`);
@@ -75,5 +75,78 @@ export function useExercises(filters: ExerciseListFilters) {
       return loaded;
     },
     staleTime: 60 * 1000,
+  });
+}
+
+export interface CustomExerciseCreateInput {
+  name: string;
+  muscle_group: string;
+  equipment: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  description?: string | null;
+}
+
+async function readCreateError(res: Response): Promise<string> {
+  const text = await res.text();
+  try {
+    const j = JSON.parse(text) as { detail?: unknown; message?: unknown };
+    if (typeof j.detail === "string") {
+      return j.detail;
+    }
+    if (typeof j.message === "string") {
+      return j.message;
+    }
+  } catch {
+    /* игнор — не JSON */
+  }
+  return text || `Ошибка ${String(res.status)}`;
+}
+
+/**
+ * Создание кастомного упражнения: POST /api/user/exercises или /api/exercises
+ * (тренер и админ используют общий эндпоинт справочника).
+ */
+export function useCreateCustomExercise() {
+  const queryClient = useQueryClient();
+  const role = useAuthStore((s) => s.user?.role);
+
+  return useMutation({
+    mutationFn: async (body: CustomExerciseCreateInput) => {
+      const useCatalogPath = role === "trainer" || role === "admin";
+      const path = useCatalogPath ? "/exercises" : "/user/exercises";
+      const nameTrim = body.name.trim();
+      const desc =
+        body.description && body.description.trim()
+          ? body.description.trim()
+          : null;
+      const payload = useCatalogPath
+        ? {
+            name: nameTrim,
+            name_ru: nameTrim,
+            muscle_group: body.muscle_group,
+            equipment: body.equipment,
+            difficulty: body.difficulty,
+            description: desc,
+          }
+        : {
+            name: nameTrim,
+            muscle_group: body.muscle_group,
+            equipment: body.equipment,
+            difficulty: body.difficulty,
+            description: desc,
+          };
+      const res = await apiFetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        throw new Error(await readCreateError(res));
+      }
+      return (await res.json()) as { id: string };
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["exercises"] });
+    },
   });
 }

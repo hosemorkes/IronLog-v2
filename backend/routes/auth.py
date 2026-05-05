@@ -43,6 +43,7 @@ async def read_me(
         id=current_user.id,
         email=current_user.email,
         username=current_user.username,
+        role=current_user.role,
     )
 
 

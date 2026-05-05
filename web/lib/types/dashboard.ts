@@ -1,9 +1,14 @@
 /** Ответ GET /api/auth/me */
 
+/** Роль аккаунта (GET /api/auth/me → role). */
+
+export type UserRoleDto = "user" | "trainer" | "admin";
+
 export interface CurrentUserDto {
   id: string;
   email: string;
   username: string;
+  role: UserRoleDto;
 }
 
 /** GET /api/user/progress */

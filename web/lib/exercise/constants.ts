@@ -18,6 +18,41 @@ export const MUSCLE_FILTER_CHIPS: ReadonlyArray<{
   { id: "cardio", label: "Кардио", apiValue: "Кардио" },
 ];
 
+/** Чипы формы создания упражнения (без «Все»); apiValue отправляются в POST. */
+export const CUSTOM_EXERCISE_MUSCLE_CHIPS: ReadonlyArray<{
+  label: string;
+  apiValue: string;
+}> = [
+  { label: "Грудь", apiValue: "Грудь" },
+  { label: "Спина", apiValue: "Спина" },
+  { label: "Плечи", apiValue: "Плечи" },
+  { label: "Руки", apiValue: "Руки" },
+  { label: "Ноги", apiValue: "Ноги" },
+  { label: "Пресс", apiValue: "Пресс" },
+  { label: "Кардио", apiValue: "Кардио" },
+];
+
+/** Оборудование — совпадает с PRODUCT_NOTES / сидом. */
+export const CUSTOM_EXERCISE_EQUIPMENT_CHIPS: ReadonlyArray<{
+  label: string;
+  apiValue: string;
+}> = [
+  { label: "Штанга", apiValue: "Штанга" },
+  { label: "Гантели", apiValue: "Гантели" },
+  { label: "Тренажёр", apiValue: "Тренажёр" },
+  { label: "Своё тело", apiValue: "Своё тело" },
+  { label: "Кроссовер", apiValue: "Кроссовер" },
+];
+
+export const CUSTOM_EXERCISE_DIFFICULTY_CHIPS: ReadonlyArray<{
+  label: string;
+  apiValue: "beginner" | "intermediate" | "advanced";
+}> = [
+  { label: "Начальный", apiValue: "beginner" },
+  { label: "Средний", apiValue: "intermediate" },
+  { label: "Сложный", apiValue: "advanced" },
+];
+
 /** Отображение сложности API (англ.) в короткий заголовок RU как в прототипе. */
 export const DIFFICULTY_LABELS: Record<string, string> = {
   beginner: "Начальный",

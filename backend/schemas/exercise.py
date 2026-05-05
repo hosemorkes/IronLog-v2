@@ -10,6 +10,13 @@ from pydantic import BaseModel, Field, field_validator
 
 from models.enums import ExerciseDifficulty
 
+_USER_CUSTOM_MUSCLE_GROUPS: frozenset[str] = frozenset(
+    {"Грудь", "Спина", "Плечи", "Руки", "Ноги", "Пресс", "Кардио"},
+)
+_USER_CUSTOM_EQUIPMENT: frozenset[str] = frozenset(
+    {"Штанга", "Гантели", "Тренажёр", "Своё тело", "Кроссовер"},
+)
+
 
 class ExerciseListResponse(BaseModel):
     """Элемент списка упражнений (кешируемый ответ)."""
@@ -41,6 +48,48 @@ class ExerciseDetailResponse(BaseModel):
     created_by: UUID | None
     is_active: bool
     created_at: datetime
+
+
+class ExerciseUserCustomCreate(BaseModel):
+    """Создание кастомного упражнения обычным пользователем (name_ru = name на сервере)."""
+
+    name: str = Field(max_length=255)
+    muscle_group: str = Field(max_length=128)
+    equipment: str = Field(max_length=128)
+    difficulty: ExerciseDifficulty
+    description: str | None = None
+
+    @field_validator("name")
+    @classmethod
+    def name_ok(cls, v: str) -> str:
+        s = v.strip()
+        if not s:
+            raise ValueError("Укажите название")
+        return s
+
+    @field_validator("muscle_group")
+    @classmethod
+    def muscle_group_ok(cls, v: str) -> str:
+        s = v.strip()
+        if s not in _USER_CUSTOM_MUSCLE_GROUPS:
+            raise ValueError("Некорректная группа мышц")
+        return s
+
+    @field_validator("equipment")
+    @classmethod
+    def equipment_ok(cls, v: str) -> str:
+        s = v.strip()
+        if s not in _USER_CUSTOM_EQUIPMENT:
+            raise ValueError("Некорректное оборудование")
+        return s
+
+    @field_validator("description")
+    @classmethod
+    def description_optional_strip(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        s = v.strip()
+        return s if s else None
 
 
 class ExerciseCreate(BaseModel):

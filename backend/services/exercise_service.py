@@ -20,6 +20,7 @@ from schemas.exercise import (
     ExerciseDetailResponse,
     ExerciseListResponse,
     ExerciseUpdate,
+    ExerciseUserCustomCreate,
 )
 from services.cache_keys import (
     EXERCISES_LIST_CACHE_PREFIX,
@@ -202,6 +203,27 @@ async def create_exercise(
     await db.refresh(ex)
     await invalidate_exercises_list_cache(redis)
     return _to_detail_response(ex)
+
+
+async def create_user_custom_exercise(
+    db: AsyncSession,
+    redis: Redis,
+    payload: ExerciseUserCustomCreate,
+    *,
+    creator: User,
+) -> ExerciseDetailResponse:
+    """Публичное создание упражнения: name_en = name_ru = name (для авторизованного user/trainer/admin)."""
+    inner = ExerciseCreate(
+        name=payload.name,
+        name_ru=payload.name,
+        muscle_group=payload.muscle_group,
+        secondary_muscles=None,
+        equipment=payload.equipment,
+        difficulty=payload.difficulty,
+        description=payload.description,
+        technique_steps=None,
+    )
+    return await create_exercise(db, redis, inner, creator=creator)
 
 
 def _ensure_can_modify_exercise(user: User, row: Exercise) -> None:
