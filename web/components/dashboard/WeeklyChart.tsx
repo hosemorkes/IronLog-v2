@@ -18,10 +18,11 @@ export function WeeklyChart({ days }: WeeklyChartProps) {
     <section className="rounded-2xl border border-border bg-surface px-4 py-4">
       <h2 className="text-sm font-semibold text-white">Активность — 7 дней</h2>
       <p className="mt-1 text-xs text-muted">Поднято по дням (кг)</p>
-      <div className="mt-4 flex h-[70px] items-end justify-between gap-1.5">
+      <div className="mt-4 flex justify-between gap-1.5">
         {days.map((d) => {
+          const maxBarPx = 64;
           const h =
-            maxT > 0 ? Math.round((d.tonnage_kg / maxT) * 64) : 0;
+            maxT > 0 ? Math.round((d.tonnage_kg / maxT) * maxBarPx) : 0;
           const barH = Math.max(h || (d.tonnage_kg > 0 ? 4 : 3), 3);
           let barClass = "bg-[#2a2a2a]";
           if (d.is_today && d.tonnage_kg > 0) {
@@ -38,13 +39,22 @@ export function WeeklyChart({ days }: WeeklyChartProps) {
           return (
             <div
               key={d.date}
-              className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
+              className="flex min-w-0 flex-1 flex-col items-center gap-1"
             >
+              <span className="min-h-[12px] w-full text-center text-[9px] font-medium leading-none text-accent tabular-nums">
+                {d.tonnage_kg > 0
+                  ? nf.format(Math.round(d.tonnage_kg))
+                  : "\u00a0"}
+              </span>
               <div
-                className={`w-full rounded-t transition-all ${barClass}`}
-                style={{ height: barH }}
+                className="flex h-[64px] w-full items-end justify-center"
                 title={`${d.day_label}: ${nf.format(Math.round(d.tonnage_kg))} кг`}
-              />
+              >
+                <div
+                  className={`w-full rounded-t transition-all ${barClass}`}
+                  style={{ height: barH }}
+                />
+              </div>
               <span className={`text-[10px] ${labelClass}`}>{d.day_label}</span>
             </div>
           );

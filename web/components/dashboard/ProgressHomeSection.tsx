@@ -17,15 +17,16 @@ const dfPr = new Intl.DateTimeFormat("ru-RU", {
   year: "numeric",
 });
 
-function formatPrWeightReps(pr: RecentPrItemDto): { main: string; sub: string } {
+function formatPrWeightReps(pr: RecentPrItemDto): { main: string; sub: string | null } {
+  const reps = pr.reps ?? pr.reps_done;
   if (pr.weight_kg != null) {
     return {
-      main: `${nf.format(pr.weight_kg)} кг`,
-      sub: `× ${pr.reps_done} повт.`,
+      main: `${nf.format(pr.weight_kg)} кг × ${reps}`,
+      sub: null,
     };
   }
   return {
-    main: `${pr.reps_done} повт.`,
+    main: `${reps} повт.`,
     sub: "Свой вес / планка",
   };
 }
@@ -257,11 +258,12 @@ export function ProgressHomeSection({
         <p className="mb-3.5 text-[13px] font-semibold text-white">
           Поднято по дням (кг)
         </p>
-        <div className="flex h-[80px] items-end justify-between gap-1.5">
+        <div className="flex justify-between gap-1.5">
           {weekChartDays.map((d) => {
+            const maxBarPx = 74;
             const h =
               maxWeekT > 0
-                ? Math.round((d.tonnage_kg / maxWeekT) * 74)
+                ? Math.round((d.tonnage_kg / maxWeekT) * maxBarPx)
                 : 0;
             const barH = Math.max(h || (d.tonnage_kg > 0 ? 4 : 3), 3);
             let barBg = "#1a1a1a";
@@ -281,16 +283,25 @@ export function ProgressHomeSection({
             return (
               <div
                 key={d.date}
-                className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
+                className="flex min-w-0 flex-1 flex-col items-center gap-1"
               >
+                <span className="min-h-[12px] w-full text-center text-[9px] font-medium leading-none text-accent tabular-nums">
+                  {d.tonnage_kg > 0
+                    ? nf.format(Math.round(d.tonnage_kg))
+                    : "\u00a0"}
+                </span>
                 <div
-                  className="w-full rounded-t transition-all"
-                  style={{
-                    height: barH,
-                    backgroundColor: barBg,
-                  }}
+                  className="flex h-[74px] w-full items-end justify-center"
                   title={`${d.day_label}: ${nf.format(Math.round(d.tonnage_kg))} кг`}
-                />
+                >
+                  <div
+                    className="w-full rounded-t transition-all"
+                    style={{
+                      height: barH,
+                      backgroundColor: barBg,
+                    }}
+                  />
+                </div>
                 <span className={`text-[10px] ${labelClass}`}>
                   {d.day_label}
                 </span>
@@ -326,7 +337,9 @@ export function ProgressHomeSection({
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="text-base font-extrabold text-accent">{main}</p>
-                  <p className="text-[11px] text-muted">{sub}</p>
+                  {sub ? (
+                    <p className="text-[11px] text-muted">{sub}</p>
+                  ) : null}
                 </div>
               </div>
             );

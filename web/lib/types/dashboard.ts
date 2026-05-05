@@ -40,7 +40,10 @@ export interface RecentPrItemDto {
   exercise_id: string;
   exercise_name: string;
   set_num: number;
+  /** Повторы в подходе (дублирует reps_done, если есть в ответе API). */
+  reps?: number;
   reps_done: number;
+  /** Вес одного подхода (кг), не тоннаж. */
   weight_kg: number | null;
   volume_kg: number;
   achieved_at: string;

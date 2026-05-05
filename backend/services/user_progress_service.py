@@ -236,7 +236,7 @@ async def get_calendar_week_progress(
 
 
 async def get_recent_prs(db: AsyncSession, user: User, *, limit: int = 3) -> RecentPrListResponse:
-    """Последние подходы с флагом PR."""
+    """Последние подходы с флагом PR (вес и повторы — из строки workout_sets, не агрегаты)."""
     lim = max(1, min(limit, 20))
     result = await db.execute(
         select(WorkoutSet)

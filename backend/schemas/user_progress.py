@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 
 class WeeklyDayTonnage(BaseModel):
@@ -46,9 +45,17 @@ class RecentPrItemResponse(BaseModel):
     exercise_name: str
     set_num: int
     reps_done: int
-    weight_kg: float | None
-    volume_kg: float
+    weight_kg: float | None = Field(
+        description="Максимальный вес штанги/снаряда в этом подходе (кг), не тоннаж",
+    )
+    volume_kg: float = Field(description="Тоннаж подхода: вес × повторы (кг)")
     achieved_at: datetime
+
+    @computed_field
+    @property
+    def reps(self) -> int:
+        """Повторы при указанном весе (для удобства клиентов)."""
+        return self.reps_done
 
 
 class RecentPrListResponse(BaseModel):
