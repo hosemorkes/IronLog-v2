@@ -16,12 +16,20 @@
   --color-border-l: #e8e8e8;
 }
 
-html {
+html.dark {
   color-scheme: dark;
 }
 
-body {
+html:not(.dark) {
+  color-scheme: light;
+}
+
+html.dark body {
   @apply min-h-screen bg-bg-dark text-white antialiased;
+}
+
+html:not(.dark) body {
+  @apply min-h-screen bg-bg-light text-neutral-900 antialiased;
 }
 
 .no-scrollbar {

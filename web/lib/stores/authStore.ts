@@ -13,6 +13,7 @@ interface AuthState {
   login: (token: string) => Promise<void>;
   logout: () => void;
   fetchMe: () => Promise<void>;
+  updateUsername: (username: string) => Promise<void>;
 }
 
 /**
@@ -65,4 +66,40 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: null, isAuthenticated: false, isLoading: false });
     }
   },
+
+  updateUsername: async (username) => {
+    const res = await apiFetch("/auth/me", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username }),
+    });
+    if (!res.ok) {
+      const message = await extractMeError(res);
+      throw new Error(message);
+    }
+    const user = (await res.json()) as CurrentUserDto;
+    set({ user, isAuthenticated: true });
+  },
 }));
+
+async function extractMeError(res: Response): Promise<string> {
+  const raw = await res.text();
+  if (!raw) {
+    return `Ошибка ${String(res.status)}`;
+  }
+  try {
+    const data = JSON.parse(raw) as unknown;
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "detail" in data &&
+      typeof (data as { detail: unknown }).detail === "string"
+    ) {
+      return (data as { detail: string }).detail;
+    }
+  } catch {
+    /* */
+  }
+  return raw;
+}
+

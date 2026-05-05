@@ -36,7 +36,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Основная навигация"
-      className="fixed bottom-0 left-0 right-0 border-t border-border bg-surface px-2 py-2.5"
+      className="fixed bottom-0 left-0 right-0 border-t border-border-light bg-surface-light px-2 py-2.5 dark:border-border dark:bg-surface"
     >
       <ul className="flex justify-around">
         {ITEMS.map(({ href, label, Icon }) => {
@@ -48,7 +48,7 @@ export function BottomNav() {
                 className={`flex flex-col items-center gap-0.5 px-1 py-1 text-[10px] leading-tight ${
                   active
                     ? "font-semibold text-accent"
-                    : "text-muted transition-colors hover:text-white"
+                    : "text-muted transition-colors hover:text-neutral-800 dark:hover:text-white"
                 }`}
               >
                 <Icon

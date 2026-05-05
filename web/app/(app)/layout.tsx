@@ -9,7 +9,7 @@ import { AppShell } from "@/components/navigation/AppShell";
 export default function AppGroupLayout({ children }: { children: ReactNode }) {
   return (
     <AppAuthGuard>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-bg-light dark:bg-bg-dark">
         <AppShell>{children}</AppShell>
       </div>
     </AppAuthGuard>

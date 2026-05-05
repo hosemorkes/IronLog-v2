@@ -19,7 +19,7 @@ from dependencies.auth import get_current_user
 from dependencies.infra import get_redis_optional
 from models.enums import UserRole
 from models.user import User
-from schemas.auth_me import CurrentUserResponse
+from schemas.auth_me import CurrentUserResponse, CurrentUserSelfUpdate
 from schemas.auth_tokens import (
     AccessTokenResponse,
     LoginRequest,
@@ -39,6 +39,35 @@ async def read_me(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> CurrentUserResponse:
     """Текущий пользователь по JWT (имя для дашборда и профиля)."""
+    return CurrentUserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        username=current_user.username,
+        role=current_user.role,
+    )
+
+
+@router.put("/me", response_model=CurrentUserResponse)
+async def update_me(
+    body: CurrentUserSelfUpdate,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> CurrentUserResponse:
+    """Изменить имя пользователя (уникальность как при регистрации)."""
+    taken = await db.scalar(
+        select(User.id).where(
+            User.username == body.username,
+            User.id != current_user.id,
+        ),
+    )
+    if taken is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Это имя пользователя уже занято",
+        )
+    current_user.username = body.username
+    await db.commit()
+    await db.refresh(current_user)
     return CurrentUserResponse(
         id=current_user.id,
         email=current_user.email,

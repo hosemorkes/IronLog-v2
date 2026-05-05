@@ -328,4 +328,15 @@ export function useSessionHistory() {
   });
 }
 
+/** Однократная загрузка детали сессии для экспорта и т.п. */
+export async function fetchSessionDetail(
+  sessionId: string,
+): Promise<SessionDetailDto> {
+  const res = await apiFetch(`/user/sessions/${sessionId}`);
+  if (!res.ok) {
+    throw new Error(await parseErrorMessage(res));
+  }
+  return res.json() as Promise<SessionDetailDto>;
+}
+
 export { HISTORY_PAGE_SIZE };

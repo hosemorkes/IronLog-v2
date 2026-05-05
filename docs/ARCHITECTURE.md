@@ -90,7 +90,8 @@ WorkoutLog        → факт выполнения: конкретный ден
 ```
 POST   /api/auth/signup
 POST   /api/auth/login
-GET    /api/auth/me
+GET    /api/auth/me            роль в ответе
+PUT    /api/auth/me            тело: { "username" } — смена имени (3–30 символов, уникальность)
 POST   /api/auth/logout
 POST   /api/auth/refresh
 ```
@@ -99,9 +100,11 @@ POST   /api/auth/refresh
 ```
 GET    /api/exercises              фильтры: muscle_group, equipment, difficulty
 GET    /api/exercises/{id}
-POST   /api/exercises              TRAINER/ADMIN
+POST   /api/exercises              TRAINER/ADMIN (полная форма)
 PUT    /api/exercises/{id}         TRAINER/ADMIN
 DELETE /api/exercises/{id}         ADMIN
+
+POST   /api/user/exercises         любой JWT — кастомное упражнение (created_by = пользователь)
 ```
 
 ### Планы тренировок (User)

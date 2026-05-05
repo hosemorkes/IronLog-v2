@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { ExercisePickerModal } from "@/components/workouts/ExercisePickerModal";
+import { readDefaultRestSeconds, useDefaultRest } from "@/lib/hooks/useDefaultRest";
 import {
   type CreateWorkoutPlanPayload,
   type ExerciseListItem,
@@ -23,7 +24,8 @@ export interface BuilderExercise {
   restSeconds: number;
 }
 
-export const DEFAULT_REST = 90;
+/** Значение до чтения localStorage (SSR и тесты). */
+export const DEFAULT_REST_FALLBACK = 90;
 
 export function exerciseTitle(ex: ExerciseListItem): string {
   return ex.name_ru.trim() || ex.name;
@@ -67,7 +69,7 @@ export function planDetailToBuilderExercises(
       const rest =
         row.rest_seconds != null && row.rest_seconds >= 0
           ? row.rest_seconds
-          : DEFAULT_REST;
+          : readDefaultRestSeconds();
       return { exercise, sets, restSeconds: rest };
     });
 }
@@ -120,6 +122,7 @@ export function WorkoutPlanForm({
   isSubmitting,
   onSubmit,
 }: WorkoutPlanFormProps) {
+  const { seconds: defaultRestSec } = useDefaultRest();
   const [name, setName] = useState(defaultName);
   const [items, setItems] = useState<BuilderExercise[]>(defaultItems);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -151,7 +154,7 @@ export function WorkoutPlanForm({
       {
         exercise: ex,
         sets: [{ weightKg: 0, reps: 8 }],
-        restSeconds: DEFAULT_REST,
+        restSeconds: defaultRestSec,
       },
     ]);
   }
@@ -246,12 +249,12 @@ export function WorkoutPlanForm({
   }
 
   return (
-    <div className="flex min-h-full flex-1 flex-col bg-bg-dark">
-      <header className="flex shrink-0 items-center justify-between border-b border-[#232323] px-5 py-3.5">
+    <div className="flex min-h-full flex-1 flex-col bg-bg-light dark:bg-bg-dark">
+      <header className="flex shrink-0 items-center justify-between border-b border-border-light px-5 py-3.5 dark:border-[#232323]">
         <div className="flex min-w-0 items-center gap-2.5">
           <Link
             href={backHref}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-[#252525] hover:text-white"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-neutral-200 hover:text-neutral-900 dark:hover:bg-[#252525] dark:hover:text-white"
             aria-label="Назад к списку"
           >
             <svg
@@ -268,7 +271,7 @@ export function WorkoutPlanForm({
               />
             </svg>
           </Link>
-          <span className="truncate text-[17px] font-bold text-white">
+          <span className="truncate text-[17px] font-bold text-neutral-900 dark:text-white">
             {pageTitle}
           </span>
         </div>

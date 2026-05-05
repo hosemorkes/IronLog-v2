@@ -1,6 +1,6 @@
 # Web (PWA) — маршруты и ответственность
 
-Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фактическое состояние репозитория: **16 экранов** (файлов `app/**/page.tsx`). Отдельное приложение **admin** в дереве проекта может отсутствовать — страницы админки здесь не перечислены.
+Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фактическое состояние репозитория: **17 экранов** (файлов `app/**/page.tsx` в `(app)`, `(auth)` и корень). Отдельное приложение **admin** в дереве проекта может отсутствовать — страницы админки здесь не перечислены.
 
 ## Таблица маршрутов
 
@@ -13,8 +13,9 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 | `/history` | `web/app/(app)/history/page.tsx` | История тренировок; каждая карточка ведёт на `/history/[session_id]`. |
 | `/history/[session_id]` | `web/app/(app)/history/[session_id]/page.tsx` | Деталь завершённой сессии: план, дата, время, объём, таблицы подходов по упражнениям. Данные: **`GET /api/user/sessions/{session_id}`** (хук **`useSessionDetail`** в `useSessions.ts`). |
 | `/progress` | `web/app/(app)/progress/page.tsx` | Прогресс и статистика. (сейчас слился с /dashboard) |
-| `/profile` | `web/app/(app)/profile/page.tsx` | Профиль пользователя. |
-| `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека упражнений. |
+| `/profile` | `web/app/(app)/profile/page.tsx` | Профиль: **тема** (`localStorage` **`ironlog_theme`**, класс **`dark`** на `<html>`, Tailwind `darkMode: 'class'`), **имя** (**`PUT /api/auth/me`**), **отдых по умолчанию** (**`ironlog_default_rest`**, хук **`useDefaultRest`**), **экспорт** последних сессий (**`fetchSessionDetail`**, **`buildSessionExportText`**). Единицы — заглушка. |
+| `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека; «Назад» → `/workouts`, создание → `/exercises/new`. |
+| `/exercises/new` | `web/app/(app)/exercises/new/page.tsx` | Кастомное упражнение: **`POST /api/user/exercises`** (тренер/админ может **`POST /api/exercises`**), хук **`useCreateCustomExercise`**. |
 | `/exercises/[id]` | `web/app/(app)/exercises/[id]/page.tsx` | Карточка упражнения. |
 | `/workouts` | `web/app/(app)/workouts/page.tsx` | Список планов тренировок. |
 | `/workouts/new` | `web/app/(app)/workouts/new/page.tsx` | Создание плана. |
@@ -37,11 +38,22 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 
 | Компонент | Файл | Роль |
 |-----------|------|------|
-| Группа `(app)` | `web/app/(app)/layout.tsx` | Защищённая зона: `AppAuthGuard` (JWT), контейнер с `AppShell`. |
+| Корень приложения | `web/app/layout.tsx` | Глобальные стили, скрипт темы до гидрации, провайдеры. |
+| Провайдеры | `web/app/providers.tsx` | TanStack Query и **`ThemeProvider`** (`web/lib/hooks/ThemeProvider.tsx`). |
+| Группа `(app)` | `web/app/(app)/layout.tsx` | `AppAuthGuard` (JWT), `AppShell`, фон светлый/тёмный. |
 | Оболочка | `web/components/navigation/AppShell.tsx` | Отступ под нижнюю панель; на маршрутах `/session/*` нижняя навигация **не показывается**. |
 | Нижняя навигация | `web/components/navigation/BottomNav.tsx` | Четыре вкладки: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`). Остальные экраны открываются по ссылкам с этих страниц и из контента. С дашборда блок **«Последняя тренировка»** ведёт на **`/history/[session_id]`** (при активной сессии кнопка «Продолжить» остаётся ссылкой на **`/session/[plan_id]`**). |
 
 Группа `(auth)` (`login`, `signup`) не использует layout `(app)` — отдельные экраны без нижней навигации.
+
+## Ключи `localStorage` (веб-клиент)
+
+| Ключ | Назначение |
+|------|------------|
+| `ironlog_access_token` | JWT доступа (авторизация в `(app)`). |
+| `ironlog_theme` | `dark` или `light` — синхронизируется с классом **`dark`** на `<html>`. |
+| `ironlog_default_rest` | Секунды отдыха по умолчанию для новых упражнений в конструкторе плана. |
+| `workout_start_<sessionId>`, `workout_progress_<sessionId>` | Активная тренировка, см. выше. |
 
 ## Согласование с `PROJECT_STRUCTURE.md`
 

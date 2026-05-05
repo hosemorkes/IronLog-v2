@@ -27,6 +27,7 @@ ironlog/                                   # Корневая папка
 │   ├── schemas/                           # Pydantic схемы (request/response)
 │   │   ├── __init__.py
 │   │   ├── user.py
+│   │   ├── auth_me.py                     # CurrentUserResponse, CurrentUserSelfUpdate (PUT /auth/me)
 │   │   ├── exercise.py
 │   │   ├── workout.py
 │   │   ├── session.py
@@ -37,6 +38,7 @@ ironlog/                                   # Корневая папка
 │   │   ├── __init__.py
 │   │   ├── auth.py                        # /api/auth/*
 │   │   ├── exercises.py                   # /api/exercises/*
+│   │   ├── user_exercises.py              # POST /api/user/exercises — кастомное упражнение
 │   │   ├── user_plans.py                  # /api/user/plans/*
 │   │   ├── user_sessions.py               # /api/user/sessions/*
 │   │   ├── user_progress.py               # /api/user/progress/*
@@ -91,7 +93,7 @@ ironlog/                                   # Корневая папка
 │   ├── .env.local                         # NEXT_PUBLIC_API_URL=http://localhost:8000
 │   │
 │   ├── app/                               # App Router
-│   │   ├── layout.tsx                     # Root layout, ThemeProvider
+│   │   ├── layout.tsx                     # Root: стили, скрипт темы, Providers
 │   │   ├── page.tsx                       # Landing / redirect
 │   │   ├── globals.css
 │   │   │
@@ -105,7 +107,8 @@ ironlog/                                   # Корневая папка
 │   │   │   │
 │   │   │   ├── exercises/
 │   │   │   │   ├── page.tsx               # /exercises — библиотека
-│   │   │   │   └── [id]/page.tsx          # /exercises/123 — детальная карточка
+│   │   │   │   ├── new/page.tsx           # /exercises/new — кастомное упражнение
+│   │   │   │   └── [id]/page.tsx          # /exercises/[id] — карточка
 │   │   │   │
 │   │   │   ├── workouts/
 │   │   │   │   ├── page.tsx               # /workouts — мои планы
@@ -163,18 +166,17 @@ ironlog/                                   # Корневая папка
 │   │       └── ThemeToggle.tsx
 │   │
 │   ├── lib/
-│   │   ├── api.ts                         # Axios/fetch клиент с интерцептором токена
+│   │   ├── api.ts                         # apiUrl, apiFetch + Bearer
+│   │   ├── constants/theme.ts             # IRONLOG_THEME_STORAGE_KEY
 │   │   ├── hooks/
-│   │   │   ├── useAuth.ts
-│   │   │   ├── useExercises.ts
+│   │   │   ├── useExercises.ts            # каталог, useCreateCustomExercise
 │   │   │   ├── useWorkouts.ts
-│   │   │   ├── useSession.ts
-│   │   │   └── useWebSocket.ts
-│   │   ├── stores/                        # Zustand stores
-│   │   │   ├── authStore.ts
-│   │   │   ├── sessionStore.ts            # Активная тренировка
-│   │   │   └── themeStore.ts
-│   │   └── utils.ts
+│   │   │   ├── useSessions.ts             # история, деталь, fetchSessionDetail
+│   │   │   ├── useTheme.ts, ThemeProvider.tsx
+│   │   │   ├── useDefaultRest.ts
+│   │   │   └── …                          # хуки дашборда и страниц
+│   │   ├── session/buildExportText.ts     # текст экспорта сессии
+│   │   └── stores/authStore.ts            # Zustand: auth, updateUsername
 │   │
 │   └── public/
 │       ├── manifest.json                  # PWA manifest
