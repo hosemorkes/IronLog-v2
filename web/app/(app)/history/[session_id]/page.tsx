@@ -161,7 +161,7 @@ export default function SessionHistoryDetailPage() {
 
   if (!sessionId) {
     return (
-      <div className="min-h-full bg-bg-light px-4 py-6 text-gray-900 dark:bg-bg-dark dark:text-white">
+      <div className="min-h-full bg-gray-100 px-4 py-6 text-gray-900 dark:bg-[#111] dark:text-white">
         <p className="text-sm text-gray-500 dark:text-muted">Некорректная ссылка.</p>
         <Link
           href="/history"
@@ -174,8 +174,8 @@ export default function SessionHistoryDetailPage() {
   }
 
   return (
-    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-bg-light pb-10 dark:bg-bg-dark">
-      <header className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-bg-light px-4 py-3 dark:border-[#232323] dark:bg-bg-dark">
+    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-gray-100 pb-10 dark:bg-[#111]">
+      <header className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-gray-100 px-4 py-3 dark:border-[#232323] dark:bg-[#111]">
         <Link
           href="/history"
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-200 hover:text-gray-900 dark:text-muted dark:hover:bg-[#252525] dark:hover:text-white"
@@ -204,19 +204,19 @@ export default function SessionHistoryDetailPage() {
       <main className="flex-1 px-4 pt-4">
         {isPending ? (
           <div className="space-y-3" aria-busy aria-label="Загрузка">
-            <div className="h-20 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
+            <div className="h-20 animate-pulse rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]" />
             <div className="grid grid-cols-3 gap-2.5">
               {[0, 1, 2].map((k) => (
                 <div
                   key={k}
-                  className="h-[72px] animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]"
+                  className="h-[72px] animate-pulse rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]"
                 />
               ))}
             </div>
-            <div className="h-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
+            <div className="h-40 animate-pulse rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]" />
           </div>
         ) : isError ? (
-          <div className="rounded-2xl border border-rose-500/35 bg-gray-100 px-4 py-4 dark:bg-[#1a1a1a]">
+          <div className="rounded-2xl border border-rose-500/35 bg-white px-4 py-4 shadow-sm dark:bg-[#1a1a1a] dark:shadow-none">
             <p className="text-sm text-rose-300">{(error as Error).message}</p>
             <Link
               href="/history"
@@ -252,7 +252,7 @@ export default function SessionHistoryDetailPage() {
               ).map((c) => (
                 <div
                   key={c.l}
-                  className="rounded-2xl border border-gray-200 bg-gray-100 px-1.5 py-3 text-center dark:border-[#232323] dark:bg-[#1a1a1a]"
+                  className="rounded-2xl border border-gray-200 bg-white px-1.5 py-3 text-center shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
                 >
                   <p className="text-sm font-extrabold leading-tight text-[#7c6ef2]">
                     {c.v}
@@ -267,7 +267,7 @@ export default function SessionHistoryDetailPage() {
             </p>
 
             {exerciseBlocks.length === 0 ? (
-              <p className="rounded-2xl border border-gray-200 bg-gray-100 px-4 py-6 text-center text-sm text-gray-500 dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-muted">
+              <p className="rounded-2xl border border-gray-200 bg-white px-4 py-6 text-center text-sm text-gray-500 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-muted dark:shadow-none">
                 Нет записанных подходов.
               </p>
             ) : (
@@ -275,7 +275,7 @@ export default function SessionHistoryDetailPage() {
                 {exerciseBlocks.map((ex) => (
                   <div
                     key={ex.exercise_id}
-                    className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#232323] dark:bg-[#1a1a1a]"
+                    className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
                   >
                     <p className="border-b border-gray-200 px-4 py-3 text-sm font-bold text-gray-900 dark:border-[#232323] dark:text-white">
                       {ex.exercise_name}

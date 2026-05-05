@@ -118,8 +118,8 @@ export default function HistoryPage() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-bg-light pb-10 dark:bg-bg-dark">
-      <header className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-bg-light px-4 py-3 dark:border-[#232323] dark:bg-bg-dark">
+    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-gray-100 pb-10 dark:bg-[#111]">
+      <header className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-gray-100 px-4 py-3 dark:border-[#232323] dark:bg-[#111]">
         <Link
           href="/dashboard"
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-[#888] dark:hover:bg-[#252525] dark:hover:text-white"
@@ -150,7 +150,7 @@ export default function HistoryPage() {
             {[0, 1, 2, 3].map((k) => (
               <li
                 key={k}
-                className="h-28 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]"
+                className="h-28 animate-pulse rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]"
               />
             ))}
           </ul>
@@ -159,7 +159,7 @@ export default function HistoryPage() {
             {(error as Error).message}
           </p>
         ) : sessions.length === 0 ? (
-          <div className="rounded-2xl border border-gray-200 bg-gray-100 px-5 py-8 text-center dark:border-[#232323] dark:bg-[#1a1a1a]">
+          <div className="rounded-2xl border border-gray-200 bg-white px-5 py-8 text-center shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
             <p className="text-sm text-gray-500 dark:text-[#888]">
               Тренировок пока нет. Начни первую!
             </p>
@@ -185,7 +185,7 @@ export default function HistoryPage() {
                   <li key={s.session_id}>
                     <Link
                       href={`/history/${s.session_id}`}
-                      className="block rounded-2xl border border-gray-200 bg-gray-100 p-4 transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7c6ef2] dark:border-[#232323] dark:bg-[#1a1a1a]"
+                      className="block rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7c6ef2] dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
                     >
                       <article>
                         <div className="mb-2.5 flex justify-between gap-2">

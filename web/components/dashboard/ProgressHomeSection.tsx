@@ -200,7 +200,7 @@ export function ProgressHomeSection({
         ].map((s) => (
           <div
             key={s.lbl}
-            className="rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-border dark:bg-surface"
+            className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
           >
             <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-gray-500 dark:text-[#888]">
               {s.lbl}
@@ -214,7 +214,7 @@ export function ProgressHomeSection({
       </div>
 
       <SectionLabel label="Поднято — путь к рекорду" />
-      <div className="rounded-[18px] border border-accent/35 bg-gradient-to-br from-violet-100 via-white to-indigo-50 p-[18px] dark:from-[#1d1630] dark:to-[#1a1a2e]">
+      <div className="rounded-[18px] border border-accent/35 bg-gradient-to-br from-violet-100 via-white to-indigo-50 p-[18px] shadow-sm dark:from-[#1d1630] dark:to-[#1a1a2e] dark:shadow-none">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
             <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-violet-700 dark:text-[#6b5ea8]">
@@ -254,7 +254,7 @@ export function ProgressHomeSection({
       </div>
 
       <SectionLabel label="Активность — 7 дней" />
-      <div className="rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-border dark:bg-surface">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
         <p className="mb-3.5 text-[13px] font-semibold text-gray-900 dark:text-white">
           Поднято по дням (кг)
         </p>
@@ -308,7 +308,7 @@ export function ProgressHomeSection({
       </div>
 
       <SectionLabel label="Личные рекорды" />
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
         {prItems.length === 0 ? (
           <p className="px-4 py-5 text-sm text-gray-500 dark:text-[#888]">
             Установи первый рекорд на тренировке
@@ -320,7 +320,7 @@ export function ProgressHomeSection({
               <div
                 key={`${pr.exercise_id}-${pr.achieved_at}-${pr.set_num}`}
                 className={`flex items-center justify-between gap-3 px-3.5 py-3 ${
-                  i > 0 ? "border-t border-gray-200 dark:border-border" : ""
+                  i > 0 ? "border-t border-gray-200 dark:border-[#232323]" : ""
                 }`}
               >
                 <div className="min-w-0">
@@ -355,7 +355,7 @@ export function ProgressHomeSection({
             return (
               <div
                 key={a.achievement_id}
-                className="w-[90px] shrink-0 rounded-[14px] border border-gray-200 bg-gray-100 px-2 py-3 text-center transition-opacity dark:border-border dark:bg-surface"
+                className="w-[90px] shrink-0 rounded-[14px] border border-gray-200 bg-white px-2 py-3 text-center shadow-sm transition-opacity dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
                 style={{ opacity: unlocked ? 1 : 0.3 }}
               >
                 <div className="mb-1.5 text-[26px]" aria-hidden>

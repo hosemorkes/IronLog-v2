@@ -43,12 +43,12 @@ function ExerciseCardRow({
   return (
     <Link
       href={`/exercises/${exercise.id}`}
-      className="exercise-card-animate mb-3 flex touch-manipulation items-center gap-3 rounded-2xl border border-gray-200 bg-gray-100 p-3 pr-2 transition hover:border-accent/40 dark:border-border dark:bg-surface"
+      className="exercise-card-animate mb-3 flex touch-manipulation items-center gap-3 rounded-2xl border border-gray-200 bg-white p-3 pr-2 shadow-sm transition hover:border-accent/40 dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
       style={{
         animationDelay: `${Math.min(staggerIndex, 24) * 50}ms`,
       }}
     >
-      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-200 dark:border-border dark:bg-[#252525]">
+      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-200 dark:border-[#232323] dark:bg-[#252525]">
         {exercise.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element -- внешние URL из API
           <img
@@ -171,12 +171,12 @@ export default function ExercisesLibraryPage() {
   const isLoading = status === "pending";
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden pb-4">
-      <header className="shrink-0 bg-bg-light px-5 pb-3 pt-3 dark:bg-bg-dark">
+    <div className="flex flex-1 flex-col overflow-hidden bg-gray-100 pb-4 dark:bg-[#111]">
+      <header className="shrink-0 bg-gray-100 px-5 pb-3 pt-3 dark:bg-[#111]">
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/workouts"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:text-gray-900 dark:bg-[#1a1a1a] dark:text-[#888] dark:hover:text-white"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition hover:text-gray-900 dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-[#888] dark:shadow-none dark:hover:text-white"
             aria-label="Назад к тренировкам"
           >
             <svg
@@ -205,7 +205,7 @@ export default function ExercisesLibraryPage() {
             Создать упражнение +
           </Link>
         </div>
-        <label className="mt-3 flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-3 py-2.5 dark:border-border dark:bg-surface">
+        <label className="mt-3 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
           <SearchIcon />
           <input
             value={searchDraft}
@@ -218,7 +218,7 @@ export default function ExercisesLibraryPage() {
         </label>
       </header>
 
-      <div className="no-scrollbar shrink-0 bg-bg-light pb-3 pl-5 dark:bg-bg-dark">
+      <div className="no-scrollbar shrink-0 bg-gray-100 pb-3 pl-5 dark:bg-[#111]">
         <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-0.5 no-scrollbar">
           {MUSCLE_FILTER_CHIPS.map((c) => {
             const selected = chipId === c.id;
@@ -230,7 +230,7 @@ export default function ExercisesLibraryPage() {
                 className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   selected
                     ? "bg-accent text-white"
-                    : "bg-gray-100 text-gray-500 hover:text-gray-900 dark:bg-surface dark:text-[#888] dark:hover:text-white"
+                    : "border border-gray-200 bg-white text-gray-500 shadow-sm hover:text-gray-900 dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-[#888] dark:shadow-none dark:hover:text-white"
                 }`}
               >
                 {c.label}
@@ -246,7 +246,7 @@ export default function ExercisesLibraryPage() {
             {[0, 1, 2, 3, 4].map((s) => (
               <li
                 key={`sk-${String(s)}`}
-                className="h-[88px] animate-pulse rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface"
+                className="h-[88px] animate-pulse rounded-2xl border border-gray-200 bg-gray-200 dark:border-[#232323] dark:bg-[#1a1a1a]"
               />
             ))}
           </ul>
@@ -284,7 +284,7 @@ export default function ExercisesLibraryPage() {
 
             <section
               aria-labelledby="all-heading"
-              className="border-t border-gray-200 pt-4 dark:border-border"
+              className="border-t border-gray-200 pt-4 dark:border-[#232323]"
             >
               <h2
                 id="all-heading"
@@ -335,7 +335,7 @@ function PopularCard({ exercise, index }: PopularProps) {
       className="exercise-card-animate shrink-0"
       style={{ animationDelay: `${index * 50}ms`, width: "min(100%,260px)" }}
     >
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
         <div className="aspect-[16/11] bg-gray-200 dark:bg-[#252525]">
           {exercise.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element -- внешние URL

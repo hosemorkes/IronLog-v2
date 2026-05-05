@@ -14,8 +14,8 @@ export default function WorkoutPlanDetailPage() {
   const { data: plan, error, isPending } = useWorkoutPlan(planId);
 
   return (
-    <div className="flex min-h-full flex-1 flex-col bg-bg-light pb-8 dark:bg-bg-dark">
-      <header className="flex shrink-0 items-center gap-2 border-b border-gray-200 px-4 py-3 dark:border-[#232323]">
+    <div className="flex min-h-full flex-1 flex-col bg-gray-100 pb-8 dark:bg-[#111]">
+      <header className="flex shrink-0 items-center gap-2 border-b border-gray-200 bg-gray-100 px-4 py-3 dark:border-[#232323] dark:bg-[#111]">
         <Link
           href="/workouts"
           className="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-muted dark:hover:bg-[#252525] dark:hover:text-white"
@@ -33,9 +33,9 @@ export default function WorkoutPlanDetailPage() {
           <p className="text-sm text-gray-500 dark:text-muted">Некорректная ссылка.</p>
         ) : isPending ? (
           <div className="space-y-3" aria-busy aria-label="Загрузка">
-            <div className="h-10 animate-pulse rounded-xl bg-gray-100 dark:bg-[#1a1a1a]" />
-            <div className="h-24 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
-            <div className="h-24 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
+            <div className="h-10 animate-pulse rounded-xl bg-gray-200 dark:bg-[#1a1a1a]" />
+            <div className="h-24 animate-pulse rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]" />
+            <div className="h-24 animate-pulse rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]" />
           </div>
         ) : error ? (
           <p className="rounded-xl border border-rose-500/35 px-4 py-4 text-sm text-rose-300">
@@ -43,7 +43,7 @@ export default function WorkoutPlanDetailPage() {
           </p>
         ) : plan ? (
           <>
-            <div className="rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-[#232323] dark:bg-[#1a1a1a]">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{plan.name}</h2>
               {plan.description ? (
                 <p className="mt-2 text-sm text-gray-500 dark:text-muted">{plan.description}</p>
@@ -73,7 +73,7 @@ export default function WorkoutPlanDetailPage() {
                       : "—";
                   return (
                     <li key={row.id}>
-                      <article className="rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-[#232323] dark:bg-[#1a1a1a]">
+                      <article className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
                         <div className="flex gap-3">
                           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/20 text-sm font-bold text-accent">
                             {idx + 1}
@@ -136,7 +136,7 @@ export default function WorkoutPlanDetailPage() {
               )}
               <Link
                 href="/workouts/new"
-                className="block rounded-2xl border border-gray-200 bg-gray-100 py-3 text-center text-sm font-semibold text-gray-900 hover:border-accent/40 dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-white"
+                className="block rounded-2xl border border-gray-200 bg-white py-3 text-center text-sm font-semibold text-gray-900 shadow-sm hover:border-accent/40 dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-white dark:shadow-none"
               >
                 Создать новый план
               </Link>

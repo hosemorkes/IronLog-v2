@@ -54,7 +54,7 @@ docker-compose exec api python -m seeds.achievements
 
 **Главная `/`** — публичный лендинг с переходами на вход и регистрацию; при наличии **`ironlog_access_token`** выполняется редирект на **`/dashboard`**.
 
-В веб-клиенте основное приложение (маршруты под `(app)` — дашборд, упражнения, планы, сессии и т.д.) защищено: без JWT в **`ironlog_access_token`** выполняется редирект на **`/login`**. Нижняя навигация: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`); на экранах **`/session/*`** (активная тренировка) панель скрыта. Дополнительно в браузере (помимо токена): **`ironlog_theme`** — тёмная/светлая тема (класс **`dark`** на `<html>`, Tailwind `darkMode: 'class'`); **`ironlog_default_rest`** — отдых по умолчанию в секундах для новых строк конструктора плана. Войти можно через **`/`**, **`/login`** или **`/signup`** (после успеха токен пишется в `localStorage` автоматически). Для отладки API вручную можно задать тот же ключ: `localStorage.setItem("ironlog_access_token", "<jwt>")`.
+В веб-клиенте основное приложение (маршруты под `(app)` — дашборд, упражнения, планы, сессии и т.д.) защищено: без JWT в **`ironlog_access_token`** выполняется редирект на **`/login`**. Нижняя навигация: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`); на экранах **`/session/*`** (активная тренировка) панель скрыта. Дополнительно в браузере (помимо токена): **`ironlog_theme`** — светлая или тёмная тема (переключатель в **`/profile`**; класс **`dark`** на `<html>`, Tailwind **`darkMode: 'class'`**, утилиты вида **`bg-* dark:bg-*`** на основных экранах); **`ironlog_default_rest`** — отдых по умолчанию в секундах для новых строк конструктора плана. Войти можно через **`/`**, **`/login`** или **`/signup`** (после успеха токен пишется в `localStorage` автоматически). Для отладки API вручную можно задать тот же ключ: `localStorage.setItem("ironlog_access_token", "<jwt>")`.
 
 ---
 
@@ -154,7 +154,7 @@ docker-compose exec api python -m seeds.achievements
 
 **Backend:** Python 3.11 · FastAPI · PostgreSQL 15 · Redis · RabbitMQ · MinIO · Dramatiq · SQLAlchemy 2 async · Alembic
 
-**Frontend:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · **тёмная тема: `darkMode: 'class'`, ключ `ironlog_theme`** · TanStack Query · Zustand · Lucide React (иконки навигации)
+**Frontend:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · **`darkMode: 'class'`** (светлая и тёмная тема, ключ **`ironlog_theme`**) · TanStack Query · Zustand · Lucide React (иконки навигации)
 
 **Infra:** Docker Compose (сеть **ironlog**) · multi-stage Dockerfile (api, web) · (опционально) Prometheus · Grafana
 

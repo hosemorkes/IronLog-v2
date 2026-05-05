@@ -7,13 +7,13 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 | URL | Файл | Назначение |
 |-----|------|------------|
 | `/` | `web/app/page.tsx` | Лендинг; при наличии access-токена — редирект на `/dashboard`. |
-| `/login` | `web/app/(auth)/login/page.tsx` | Вход. |
-| `/signup` | `web/app/(auth)/signup/page.tsx` | Регистрация. |
+| `/login` | `web/app/(auth)/login/page.tsx` | Вход; форма на Tailwind (светлая/тёмная по **`ironlog_theme`**, layout **`(auth)`**). |
+| `/signup` | `web/app/(auth)/signup/page.tsx` | Регистрация; то же. |
 | `/dashboard` | `web/app/(app)/dashboard/page.tsx` | Главный дашборд после входа. |
 | `/history` | `web/app/(app)/history/page.tsx` | История тренировок; каждая карточка ведёт на `/history/[session_id]`. |
 | `/history/[session_id]` | `web/app/(app)/history/[session_id]/page.tsx` | Деталь завершённой сессии: план, дата, время, объём, таблицы подходов по упражнениям. Данные: **`GET /api/user/sessions/{session_id}`** (хук **`useSessionDetail`** в `useSessions.ts`). |
 | `/progress` | `web/app/(app)/progress/page.tsx` | Прогресс и статистика. (сейчас слился с /dashboard) |
-| `/profile` | `web/app/(app)/profile/page.tsx` | Профиль: **тема** (`localStorage` **`ironlog_theme`**, класс **`dark`** на `<html>`, Tailwind `darkMode: 'class'`), **имя** (**`PUT /api/auth/me`**), **отдых по умолчанию** (**`ironlog_default_rest`**, хук **`useDefaultRest`**), **экспорт** последних сессий (**`fetchSessionDetail`**, **`buildSessionExportText`**). Единицы — заглушка. |
+| `/profile` | `web/app/(app)/profile/page.tsx` | Профиль: переключатель **светлой/тёмной темы** (**`ironlog_theme`**, класс **`dark`** на `<html>`, Tailwind **`darkMode: 'class'`**), **имя** (**`PUT /api/auth/me`**), **отдых по умолчанию** (**`ironlog_default_rest`**, хук **`useDefaultRest`**), **экспорт** последних сессий (**`fetchSessionDetail`**, **`buildSessionExportText`**). Единицы — заглушка. |
 | `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека; «Назад» → `/workouts`, создание → `/exercises/new`. |
 | `/exercises/new` | `web/app/(app)/exercises/new/page.tsx` | Кастомное упражнение: **`POST /api/user/exercises`** (тренер/админ может **`POST /api/exercises`**), хук **`useCreateCustomExercise`**. |
 | `/exercises/[id]` | `web/app/(app)/exercises/[id]/page.tsx` | Карточка упражнения. |
@@ -44,7 +44,12 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 | Оболочка | `web/components/navigation/AppShell.tsx` | Отступ под нижнюю панель; на маршрутах `/session/*` нижняя навигация **не показывается**. |
 | Нижняя навигация | `web/components/navigation/BottomNav.tsx` | Четыре вкладки: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`). Остальные экраны открываются по ссылкам с этих страниц и из контента. С дашборда блок **«Последняя тренировка»** ведёт на **`/history/[session_id]`** (при активной сессии кнопка «Продолжить» остаётся ссылкой на **`/session/[plan_id]`**). |
 
-Группа `(auth)` (`login`, `signup`) не использует layout `(app)` — отдельные экраны без нижней навигации.
+Группа `(auth)` (`login`, `signup`) не использует layout `(app)` — отдельные экраны без нижней навигации; фон и карточка формы следуют выбранной теме (см. **`web/app/(auth)/layout.tsx`**).
+
+### Тема оформления
+
+- Источник истины: **`ironlog_theme`** в **`localStorage`** (`dark` | `light`), синхронизация с классом **`dark`** на **`<html>`** до гидрации (скрипт в **`web/app/layout.tsx`**) и через **`ThemeProvider`** (**`web/lib/hooks/ThemeProvider.tsx`**).
+- Стили: Tailwind с парами **`… dark:…`** для фонов, границ и текста на экранах **`(app)`** и формах **`(auth)`**; палитра расширена в **`web/tailwind.config.ts`** (**`bg-dark`**, **`surface`**, **`border`**, **`bg-light`**, **`border-light`** и т.д.).
 
 ## Ключи `localStorage` (веб-клиент)
 

@@ -101,15 +101,15 @@ function ChevronRight({
 function ProfileSkeleton() {
   return (
     <div className="animate-pulse space-y-4 px-4 pb-10">
-      <div className="h-[108px] rounded-[18px] bg-gray-100 dark:bg-[#1a1a1a]" />
+      <div className="h-[108px] rounded-[18px] bg-gray-200 dark:bg-[#1a1a1a]" />
       <div className="grid grid-cols-3 gap-2.5">
         {[0, 1, 2].map((k) => (
-          <div key={k} className="h-[72px] rounded-xl bg-gray-100 dark:bg-[#1a1a1a]" />
+          <div key={k} className="h-[72px] rounded-xl bg-gray-200 dark:bg-[#1a1a1a]" />
         ))}
       </div>
-      <div className="h-40 rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
-      <div className="h-32 rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
-      <div className="h-28 rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
+      <div className="h-40 rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]" />
+      <div className="h-32 rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]" />
+      <div className="h-28 rounded-2xl bg-gray-200 dark:bg-[#1a1a1a]" />
     </div>
   );
 }
@@ -137,7 +137,7 @@ function Overlay({
           onClose();
         }}
       />
-      <div className="relative z-[121] flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 shadow-xl dark:border-[#232323] dark:bg-[#1a1a1a]">
+      <div className="relative z-[121] flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl dark:border-[#232323] dark:bg-[#1a1a1a]">
         <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-[#232323]">
           <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{title}</h2>
           <button
@@ -339,8 +339,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="no-scrollbar min-h-full overflow-y-auto bg-bg-light pb-8 dark:bg-bg-dark">
-      <header className="bg-bg-light px-5 pb-2.5 pt-3 dark:bg-bg-dark">
+    <main className="no-scrollbar min-h-full overflow-y-auto bg-gray-100 pb-8 dark:bg-[#111]">
+      <header className="bg-gray-100 px-5 pb-2.5 pt-3 dark:bg-[#111]">
         <h1 className="text-[22px] font-extrabold text-neutral-900 dark:text-white">
           Профиль
         </h1>
@@ -350,7 +350,7 @@ export default function ProfilePage() {
         <ProfileSkeleton />
       ) : (
         <>
-          <div className="mx-4 mb-4 flex items-center gap-4 rounded-[18px] border border-gray-200 bg-gray-100 p-5 dark:border-[#252525] dark:bg-[#1a1a1a]">
+          <div className="mx-4 mb-4 flex items-center gap-4 rounded-[18px] border border-gray-200 bg-white p-5 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
             <div
               className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full border-2 border-accent bg-accent/15 text-[28px]"
               aria-hidden
@@ -372,7 +372,7 @@ export default function ProfilePage() {
             {stats.map((s) => (
               <div
                 key={s.l}
-                className="rounded-xl border border-gray-200 bg-gray-100 px-2 py-3.5 text-center dark:border-[#252525] dark:bg-[#1a1a1a]"
+                className="rounded-xl border border-gray-200 bg-white px-2 py-3.5 text-center shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
               >
                 <p className="text-xl font-extrabold text-accent">{s.v}</p>
                 <p className="mt-0.5 text-[10px] leading-snug text-gray-500 dark:text-[#888]">
@@ -384,7 +384,7 @@ export default function ProfilePage() {
 
           <div className="mb-4">
             <SectionLabel label="Тренировки" />
-            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#252525] dark:bg-[#1a1a1a]">
+            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
               <div className="border-b border-gray-200 dark:border-[#232323]">
                 <button
                   type="button"
@@ -447,7 +447,7 @@ export default function ProfilePage() {
 
           <div className="mb-4">
             <SectionLabel label="Приложение" />
-            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#252525] dark:bg-[#1a1a1a]">
+            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
               <button
                 type="button"
                 onClick={() => {
@@ -484,7 +484,7 @@ export default function ProfilePage() {
 
           <div className="mb-4">
             <SectionLabel label="Аккаунт" />
-            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#252525] dark:bg-[#1a1a1a]">
+            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
               <div className="border-b border-gray-200 dark:border-[#232323]">
                 <button
                   type="button"
@@ -634,7 +634,7 @@ export default function ProfilePage() {
                   return (
                     <li
                       key={s.session_id}
-                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-100 px-3 py-2 dark:border-[#232323] dark:bg-[#232323]/40"
+                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-3 py-2 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
                     >
                       <input
                         type="checkbox"

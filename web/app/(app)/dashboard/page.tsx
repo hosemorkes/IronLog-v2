@@ -166,7 +166,7 @@ export default function DashboardPage() {
   const showStreakBadge = hasToken && !loadingDash && streak > 0;
 
   return (
-    <main className="no-scrollbar min-h-full overflow-y-auto pb-6">
+    <main className="no-scrollbar min-h-full overflow-y-auto bg-gray-100 pb-6 dark:bg-[#111]">
       <header className="flex items-start justify-between gap-3 px-5 pt-3">
         <div>
           <p className="text-[13px] text-gray-500 dark:text-[#888]">{greetingByHour()},</p>
@@ -267,7 +267,7 @@ export default function DashboardPage() {
             ].map((s) => (
               <div
                 key={s.lbl}
-                className="rounded-2xl border border-gray-200 bg-gray-100 px-2.5 py-3 dark:border-border dark:bg-surface"
+                className="rounded-2xl border border-gray-200 bg-white px-2.5 py-3 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none"
               >
                 <p className="text-lg font-extrabold tracking-tight text-gray-900 dark:text-white">
                   {hasToken ? s.val : "—"}
@@ -288,7 +288,7 @@ export default function DashboardPage() {
           />
         ) : hasToken ? (
           lastCompletedSession ? (
-            <section className="relative rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-border dark:bg-surface">
+            <section className="relative rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
               <Link
                 href={`/history/${lastCompletedSession.session_id}`}
                 className="absolute inset-0 z-0 rounded-2xl"
@@ -337,7 +337,7 @@ export default function DashboardPage() {
           ) : (
             <Link
               href="/workouts"
-              className="block rounded-2xl border border-accent/35 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-4 transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:from-[#1d1630] dark:to-[#1a1a2e]"
+              className="block rounded-2xl border border-accent/35 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-4 shadow-sm transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:from-[#1d1630] dark:to-[#1a1a2e] dark:shadow-none"
             >
               <div className="flex items-center justify-between gap-3">
                 <div>

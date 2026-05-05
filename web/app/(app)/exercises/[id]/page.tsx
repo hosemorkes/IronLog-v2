@@ -52,7 +52,7 @@ export default function ExerciseDetailPage() {
 
   if (!id) {
     return (
-      <main className="px-5 pt-12 text-center text-gray-500 dark:text-muted">
+      <main className="min-h-full bg-gray-100 px-5 pt-12 text-center text-gray-500 dark:bg-[#111] dark:text-muted">
         Некорректный адрес упражнения.
       </main>
     );
@@ -60,7 +60,7 @@ export default function ExerciseDetailPage() {
 
   if (isPending) {
     return (
-      <div className="min-h-[50vh] animate-pulse space-y-4 p-5">
+      <div className="min-h-[50vh] animate-pulse space-y-4 bg-gray-100 p-5 dark:bg-[#111]">
         <div className="h-52 rounded-2xl bg-gray-200 dark:bg-surface" />
         <div className="h-8 rounded-lg bg-gray-200 dark:bg-surface" />
         <div className="h-24 rounded-xl bg-gray-200 dark:bg-surface" />
@@ -70,7 +70,7 @@ export default function ExerciseDetailPage() {
 
   if (error || !data) {
     return (
-      <main className="px-5 pt-12 text-center text-sm text-rose-400">
+      <main className="min-h-full bg-gray-100 px-5 pt-12 text-center text-sm text-rose-400 dark:bg-[#111]">
         {(error as Error).message ?? "Не удалось загрузить упражнение"}
       </main>
     );
@@ -83,8 +83,8 @@ export default function ExerciseDetailPage() {
 
   return (
     <>
-      <div className="pb-36">
-        <header className="relative min-h-[240px] bg-gray-100/80 dark:bg-surface/80">
+      <div className="min-h-full bg-gray-100 pb-36 dark:bg-[#111]">
+        <header className="relative min-h-[240px] bg-gray-100/90 dark:bg-[#1a1a1a]/90">
           {data.image_url ? (
             <div
               aria-hidden
@@ -151,7 +151,7 @@ export default function ExerciseDetailPage() {
             <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-muted">
               Личный рекорд
             </h2>
-            <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-border dark:bg-surface">
+            <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
               <div>
                 <p className="text-xs text-gray-500 dark:text-muted">Лучший результат</p>
                 <p className="mt-1 text-[22px] font-bold leading-tight text-gray-900 dark:text-white">
@@ -182,7 +182,7 @@ export default function ExerciseDetailPage() {
               {secondaryList.map((m) => (
                 <span
                   key={m}
-                  className="rounded-full border border-gray-200 bg-gray-100 px-3 py-1.5 text-[13px] text-gray-600 dark:border-border dark:bg-bg-dark dark:text-muted"
+                  className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-[13px] text-gray-600 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-muted dark:shadow-none"
                 >
                   {m}
                 </span>
@@ -222,7 +222,7 @@ export default function ExerciseDetailPage() {
       </div>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 pb-[env(safe-area-inset-bottom,0)]">
-        <div className="pointer-events-auto border-t border-gray-200 bg-gray-100/95 px-5 py-3 backdrop-blur-md dark:border-border dark:bg-surface/95">
+        <div className="pointer-events-auto border-t border-gray-200 bg-white/95 px-5 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] backdrop-blur-md dark:border-[#232323] dark:bg-[#1a1a1a]/95 dark:shadow-none">
           <button
             type="button"
             className="w-full rounded-2xl bg-accent py-4 text-[16px] font-bold text-white shadow-lg shadow-accent/25 transition hover:bg-accent-dark"
@@ -246,7 +246,7 @@ function Divider() {
 
 function StatBox({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-gray-100 px-2 py-3 text-center dark:border-border dark:bg-bg-dark">
+    <div className="rounded-xl border border-gray-200 bg-white px-2 py-3 text-center shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
       <div className="mb-1 text-lg font-bold text-accent">{value}</div>
       <div className="text-[11px] text-gray-500 dark:text-muted">{label}</div>
     </div>
@@ -275,7 +275,7 @@ function ModalWorkoutStub({ onClose }: { onClose: () => void }) {
       aria-modal="true"
       aria-labelledby="workout-modal-title"
     >
-      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-gray-100 px-6 py-5 shadow-xl dark:border-border dark:bg-surface">
+      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-xl dark:border-[#232323] dark:bg-[#1a1a1a]">
         <h2
           id="workout-modal-title"
           className="text-lg font-semibold text-gray-900 dark:text-white"

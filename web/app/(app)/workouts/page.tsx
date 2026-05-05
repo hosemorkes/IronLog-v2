@@ -11,7 +11,7 @@ export default function WorkoutsListPage() {
   const { data: plans, error, isPending } = useWorkoutPlans();
 
   return (
-    <div className="flex min-h-full flex-1 flex-col bg-bg-light pb-4 dark:bg-bg-dark">
+    <div className="flex min-h-full flex-1 flex-col bg-gray-100 pb-4 dark:bg-[#111]">
       <header className="flex shrink-0 items-start justify-between gap-3 px-5 pb-4 pt-4">
         <div>
           <h1 className="text-[22px] font-extrabold tracking-tight text-gray-900 dark:text-white">
@@ -43,7 +43,7 @@ export default function WorkoutsListPage() {
             {[0, 1, 2].map((s) => (
               <li
                 key={`sk-${String(s)}`}
-                className="h-[100px] animate-pulse rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#232323] dark:bg-[#1a1a1a]"
+                className="h-[100px] animate-pulse rounded-2xl border border-gray-200 bg-gray-200 dark:border-[#232323] dark:bg-[#1a1a1a]"
               />
             ))}
           </ul>
@@ -52,7 +52,7 @@ export default function WorkoutsListPage() {
             {(error as Error).message}
           </p>
         ) : !plans?.length ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-100 px-6 py-14 text-center dark:border-[#232323] dark:bg-[#1a1a1a]">
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-14 text-center shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
             <p className="text-sm text-gray-500 dark:text-[#888]">Пока нет сохранённых планов.</p>
             <Link
               href="/workouts/new"
@@ -65,7 +65,7 @@ export default function WorkoutsListPage() {
           <ul className="space-y-3 pb-8">
             {plans.map((plan) => (
               <li key={plan.id}>
-                <article className="rounded-2xl border border-gray-200 bg-gray-100 p-4 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a]">
+                <article className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <h2 className="truncate text-[17px] font-bold text-gray-900 dark:text-white">
