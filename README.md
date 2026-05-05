@@ -46,7 +46,9 @@ docker-compose exec api python -m seeds.achievements
 # История тренировок — http://localhost:3000/history
 # /progress — редирект на /dashboard
 # Активная тренировка по плану (JWT) — http://localhost:3000/session/<plan_id>
-#   (при открытии создаётся сессия POST /api/user/sessions; итоги — /session/<plan_id>/complete?sessionId=…)
+#   (POST /api/user/sessions через apiFetch при монте; при 409 с активной сессией подставляется active_session_id из ответа;
+#   шаги строятся из GET плана, не из тела POST; клиент: workout_progress_* и workout_start_* в localStorage)
+#   Итоги — /session/<plan_id>/complete?session_id=<uuid-сессии> (устаревший параметр sessionId тоже читается)
 ```
 
 **Главная `/`** — публичный лендинг с переходами на вход и регистрацию; при наличии **`ironlog_access_token`** выполняется редирект на **`/dashboard`**.
@@ -82,7 +84,7 @@ docker-compose exec api python -m seeds.achievements
 | Профиль | http://localhost:3000/profile |
 | История тренировок | http://localhost:3000/history |
 | Активная тренировка | http://localhost:3000/session/[plan_id] (`plan_id` из карточки плана; не UUID сессии) |
-| Итоги тренировки | `/session/[plan_id]/complete?sessionId=…` (редирект после завершения) |
+| Итоги тренировки | `/session/[plan_id]/complete?session_id=<uuid>` (`sessionId` — устаревший алиас) |
 | Admin Panel (:3002) | сервис **`admin` в compose по умолчанию закомментирован**; после раскомментирования — http://localhost:3002 |
 | API | http://localhost:8000 |
 | API Docs (Swagger) | http://localhost:8000/docs |

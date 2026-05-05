@@ -20,9 +20,17 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 | `/workouts/[id]` | `web/app/(app)/workouts/[id]/page.tsx` | Просмотр плана. |
 | `/workouts/[id]/edit` | `web/app/(app)/workouts/[id]/edit/page.tsx` | Редактирование плана. |
 | `/session/[id]` | `web/app/(app)/session/[id]/page.tsx` | Активная тренировка (план `id`). |
-| `/session/[id]/complete` | `web/app/(app)/session/[id]/complete/page.tsx` | Завершение сессии. |
+| `/session/[id]/complete` | `web/app/(app)/session/[id]/complete/page.tsx` | Экран итогов. Query: **`session_id`** (UUID сессии; опционально **`sessionId`**). При необходимости доводит сессию до завершения (PUT) и инвалидирует прогресс в React Query. |
 
-`[id]` — динамический сегмент (UUID плана или упражнения и т.д.).
+### Поведение экрана активной тренировки (`/session/[id]`)
+
+- **`[id]`** в URL — UUID **плана** (`plan_id`), не сессии.
+- Старт: один **`POST /api/user/sessions`** с телом `{ plan_id }` (через **`apiFetch`**). Успех **200** — новый `session_id`; **409** с `detail.active_session_id` — используется этот id; отдельный «resume» к API для списка упражнений не вызывается.
+- Список подходов строится из **`useWorkoutPlan(planId)`**, а не из ответа POST.
+- В **`localStorage`** (только в браузере, см. **`getStorage()`** в коде страницы):
+  - **`workout_start_<sessionId>`** — `Date.now()` начала тренировки для таймера (если ключа ещё нет — пишется при появлении `sessionId`).
+  - **`workout_progress_<sessionId>`** — JSON: `currentIdx`, `completedSets`, `tonnageDone`, `savedAt` (восстановление при возрасте записи менее 24 ч).
+- По **завершении** сессии оба ключа удаляются; инвалидация **`GET /api/user/progress`** и связанных запросов — в хуках после PUT.
 
 ## Оболочка и навигация
 
