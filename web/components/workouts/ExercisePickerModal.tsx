@@ -93,29 +93,29 @@ export function ExercisePickerModal({
       aria-modal="true"
       aria-labelledby="exercise-picker-title"
     >
-      <div className="flex min-h-0 flex-1 flex-col bg-bg-dark pt-2">
-        <div className="flex shrink-0 items-center justify-between border-b border-[#232323] px-5 py-3">
-          <h2 id="exercise-picker-title" className="text-lg font-bold text-white">
+      <div className="flex min-h-0 flex-1 flex-col bg-bg-light pt-2 dark:bg-bg-dark">
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-5 py-3 dark:border-[#232323]">
+          <h2 id="exercise-picker-title" className="text-lg font-bold text-gray-900 dark:text-white">
             Добавить упражнение
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full px-3 py-1.5 text-sm font-semibold text-muted hover:text-white"
+            className="rounded-full px-3 py-1.5 text-sm font-semibold text-gray-500 hover:text-gray-900 dark:text-[#888] dark:hover:text-white"
           >
             Закрыть
           </button>
         </div>
 
         <div className="shrink-0 px-5 pb-2 pt-3">
-          <label className="flex items-center gap-2 rounded-xl border border-[#232323] bg-[#252525] px-3 py-2.5">
+          <label className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-200 px-3 py-2.5 dark:border-[#232323] dark:bg-[#252525]">
             <svg
               aria-hidden
               width={16}
               height={16}
               viewBox="0 0 16 16"
               fill="none"
-              className="shrink-0 text-muted"
+              className="shrink-0 text-gray-500 dark:text-[#888]"
             >
               <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth={2} />
               <path
@@ -129,7 +129,7 @@ export function ExercisePickerModal({
               value={searchDraft}
               onChange={(e) => setSearchDraft(e.target.value)}
               placeholder="Поиск упражнений..."
-              className="flex-1 border-0 bg-transparent text-sm text-white outline-none placeholder:text-muted"
+              className="flex-1 border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-white dark:placeholder:text-[#888]"
               type="search"
             />
           </label>
@@ -147,7 +147,7 @@ export function ExercisePickerModal({
                   className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                     selected
                       ? "bg-accent text-white"
-                      : "bg-[#252525] text-muted hover:text-white"
+                      : "bg-gray-200 text-gray-600 hover:text-gray-900 dark:bg-[#252525] dark:text-[#888] dark:hover:text-white"
                   }`}
                 >
                   {c.label}
@@ -163,7 +163,7 @@ export function ExercisePickerModal({
               {[0, 1, 2, 3, 4].map((s) => (
                 <li
                   key={`sk-${String(s)}`}
-                  className="h-[72px] animate-pulse rounded-2xl border border-[#232323] bg-[#1a1a1a]"
+                  className="h-[72px] animate-pulse rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#232323] dark:bg-[#1a1a1a]"
                 />
               ))}
             </ul>
@@ -172,7 +172,7 @@ export function ExercisePickerModal({
               {(error as Error).message}
             </p>
           ) : flat.length === 0 ? (
-            <p className="py-12 text-center text-sm text-muted">Ничего не найдено</p>
+            <p className="py-12 text-center text-sm text-gray-500 dark:text-[#888]">Ничего не найдено</p>
           ) : (
             <ul className="space-y-2 py-2">
               {flat.map((ex) => {
@@ -187,13 +187,13 @@ export function ExercisePickerModal({
                         onPick(ex);
                         onClose();
                       }}
-                      className={`flex w-full touch-manipulation items-center gap-3 rounded-2xl border border-[#232323] bg-[#1a1a1a] p-3 text-left transition ${
+                      className={`flex w-full touch-manipulation items-center gap-3 rounded-2xl border border-gray-200 bg-gray-100 p-3 text-left transition dark:border-[#232323] dark:bg-[#1a1a1a] ${
                         excluded
                           ? "cursor-not-allowed opacity-40"
                           : "hover:border-accent/50 active:border-accent/70"
                       }`}
                     >
-                      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-[#232323] bg-[#252525]">
+                      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-200 dark:border-[#232323] dark:bg-[#252525]">
                         {ex.image_url ? (
                           // eslint-disable-next-line @next/next/no-img-element -- URL из API
                           <img
@@ -204,24 +204,24 @@ export function ExercisePickerModal({
                         ) : (
                           <span
                             aria-hidden
-                            className="flex h-full w-full items-center justify-center text-lg text-muted"
+                            className="flex h-full w-full items-center justify-center text-lg text-gray-500 dark:text-[#888]"
                           >
                             ◎
                           </span>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[15px] font-semibold text-white">
+                        <p className="truncate text-[15px] font-semibold text-gray-900 dark:text-white">
                           {title}
                         </p>
-                        <p className="mt-0.5 truncate text-[12px] text-muted">
+                        <p className="mt-0.5 truncate text-[12px] text-gray-500 dark:text-[#888]">
                           <span className="font-medium text-accent">{ex.muscle_group}</span>
                           <span className="mx-1">·</span>
                           <span>{ex.equipment}</span>
                         </p>
                       </div>
                       {excluded ? (
-                        <span className="shrink-0 text-[11px] text-muted">В плане</span>
+                        <span className="shrink-0 text-[11px] text-gray-500 dark:text-[#888]">В плане</span>
                       ) : (
                         <span aria-hidden className="shrink-0 text-accent">
                           +
@@ -233,7 +233,7 @@ export function ExercisePickerModal({
               })}
               <div ref={loadMoreRef} className="h-4 w-full" />
               {isFetchingNextPage ? (
-                <p className="py-2 text-center text-xs text-muted">Загрузка…</p>
+                <p className="py-2 text-center text-xs text-gray-500 dark:text-[#888]">Загрузка…</p>
               ) : null}
             </ul>
           )}

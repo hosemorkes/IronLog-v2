@@ -118,11 +118,11 @@ export default function HistoryPage() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-bg-dark pb-10">
-      <header className="flex shrink-0 items-center gap-3 border-b border-[#232323] bg-bg-dark px-4 py-3">
+    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-bg-light pb-10 dark:bg-bg-dark">
+      <header className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-bg-light px-4 py-3 dark:border-[#232323] dark:bg-bg-dark">
         <Link
           href="/dashboard"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-[#252525] hover:text-white"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-[#888] dark:hover:bg-[#252525] dark:hover:text-white"
           aria-label="Назад на главную"
         >
           <svg
@@ -139,7 +139,7 @@ export default function HistoryPage() {
             />
           </svg>
         </Link>
-        <h1 className="truncate text-lg font-bold text-white">
+        <h1 className="truncate text-lg font-bold text-gray-900 dark:text-white">
           История тренировок
         </h1>
       </header>
@@ -150,7 +150,7 @@ export default function HistoryPage() {
             {[0, 1, 2, 3].map((k) => (
               <li
                 key={k}
-                className="h-28 animate-pulse rounded-2xl bg-[#1a1a1a]"
+                className="h-28 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]"
               />
             ))}
           </ul>
@@ -159,8 +159,8 @@ export default function HistoryPage() {
             {(error as Error).message}
           </p>
         ) : sessions.length === 0 ? (
-          <div className="rounded-2xl border border-[#232323] bg-[#1a1a1a] px-5 py-8 text-center">
-            <p className="text-sm text-muted">
+          <div className="rounded-2xl border border-gray-200 bg-gray-100 px-5 py-8 text-center dark:border-[#232323] dark:bg-[#1a1a1a]">
+            <p className="text-sm text-gray-500 dark:text-[#888]">
               Тренировок пока нет. Начни первую!
             </p>
             <Link
@@ -185,15 +185,15 @@ export default function HistoryPage() {
                   <li key={s.session_id}>
                     <Link
                       href={`/history/${s.session_id}`}
-                      className="block rounded-2xl border border-[#232323] bg-[#1a1a1a] p-4 transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7c6ef2]"
+                      className="block rounded-2xl border border-gray-200 bg-gray-100 p-4 transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7c6ef2] dark:border-[#232323] dark:bg-[#1a1a1a]"
                     >
                       <article>
                         <div className="mb-2.5 flex justify-between gap-2">
                           <div className="min-w-0">
-                            <h2 className="text-base font-bold text-white">
+                            <h2 className="text-base font-bold text-gray-900 dark:text-white">
                               {title}
                             </h2>
-                            <p className="mt-1 text-xs text-muted">
+                            <p className="mt-1 text-xs text-gray-500 dark:text-[#888]">
                               {dateStr}
                               {dur !== "—" ? ` · ${dur}` : ""}
                             </p>
@@ -219,7 +219,7 @@ export default function HistoryPage() {
                               <div className="text-[15px] font-bold text-[#7c6ef2]">
                                 {row.v}
                               </div>
-                              <div className="mt-0.5 text-[11px] text-muted">
+                              <div className="mt-0.5 text-[11px] text-gray-500 dark:text-[#888]">
                                 {row.l}
                               </div>
                             </div>
@@ -233,7 +233,7 @@ export default function HistoryPage() {
             </ul>
             <div ref={sentinelRef} className="h-4 w-full" aria-hidden />
             {isFetchingNextPage ? (
-              <p className="pb-4 pt-2 text-center text-xs text-muted">
+              <p className="pb-4 pt-2 text-center text-xs text-gray-500 dark:text-[#888]">
                 Загрузка…
               </p>
             ) : null}

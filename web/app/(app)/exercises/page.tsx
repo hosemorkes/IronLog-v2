@@ -20,7 +20,7 @@ function difficultyLabel(slug: string): string {
 }
 
 function difficultyClass(slug: string): string {
-  return DIFFICULTY_TAILWIND[slug] ?? "text-muted";
+  return DIFFICULTY_TAILWIND[slug] ?? "text-gray-500 dark:text-muted";
 }
 
 interface ExerciseCardRowProps {
@@ -43,12 +43,12 @@ function ExerciseCardRow({
   return (
     <Link
       href={`/exercises/${exercise.id}`}
-      className="exercise-card-animate mb-3 flex touch-manipulation items-center gap-3 rounded-2xl border border-border bg-surface p-3 pr-2 transition hover:border-accent/40"
+      className="exercise-card-animate mb-3 flex touch-manipulation items-center gap-3 rounded-2xl border border-gray-200 bg-gray-100 p-3 pr-2 transition hover:border-accent/40 dark:border-border dark:bg-surface"
       style={{
         animationDelay: `${Math.min(staggerIndex, 24) * 50}ms`,
       }}
     >
-      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-border bg-[#252525]">
+      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-200 dark:border-border dark:bg-[#252525]">
         {exercise.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element -- внешние URL из API
           <img
@@ -59,14 +59,14 @@ function ExerciseCardRow({
         ) : (
           <span
             aria-hidden
-            className="flex h-full w-full items-center justify-center text-xl text-muted"
+            className="flex h-full w-full items-center justify-center text-xl text-gray-500 dark:text-[#888]"
           >
             ◎
           </span>
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[15px] font-semibold leading-snug text-white">
+        <p className="truncate text-[15px] font-semibold leading-snug text-gray-900 dark:text-white">
           {title}
         </p>
         <div className="mt-1 flex flex-wrap gap-1">
@@ -79,7 +79,7 @@ function ExerciseCardRow({
             </span>
           ))}
         </div>
-        <p className="mt-1.5 truncate text-[12px] text-muted">
+        <p className="mt-1.5 truncate text-[12px] text-gray-500 dark:text-[#888]">
           <span className="font-medium text-accent">{category}</span>
           <span className="mx-1.5">·</span>
           <span>{exercise.equipment}</span>
@@ -89,7 +89,7 @@ function ExerciseCardRow({
           </span>
         </p>
       </div>
-      <span aria-hidden className="shrink-0 text-muted">
+      <span aria-hidden className="shrink-0 text-gray-500 dark:text-[#888]">
         <ChevronRightIcon />
       </span>
     </Link>
@@ -172,11 +172,11 @@ export default function ExercisesLibraryPage() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden pb-4">
-      <header className="shrink-0 bg-bg-dark px-5 pb-3 pt-3">
+      <header className="shrink-0 bg-bg-light px-5 pb-3 pt-3 dark:bg-bg-dark">
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/workouts"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-muted transition hover:text-white"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:text-gray-900 dark:bg-[#1a1a1a] dark:text-[#888] dark:hover:text-white"
             aria-label="Назад к тренировкам"
           >
             <svg
@@ -195,7 +195,7 @@ export default function ExercisesLibraryPage() {
               />
             </svg>
           </Link>
-          <h1 className="min-w-0 flex-1 text-[22px] font-extrabold tracking-tight text-white">
+          <h1 className="min-w-0 flex-1 text-[22px] font-extrabold tracking-tight text-gray-900 dark:text-white">
             Упражнения <span className="text-accent">·</span>
           </h1>
           <Link
@@ -205,20 +205,20 @@ export default function ExercisesLibraryPage() {
             Создать упражнение +
           </Link>
         </div>
-        <label className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5">
+        <label className="mt-3 flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-3 py-2.5 dark:border-border dark:bg-surface">
           <SearchIcon />
           <input
             value={searchDraft}
             onChange={(e) => setSearchDraft(e.target.value)}
             placeholder="Поиск упражнений..."
-            className="flex-1 border-0 bg-transparent text-sm text-white outline-none placeholder:text-muted"
+            className="flex-1 border-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-white dark:placeholder:text-[#888]"
             type="search"
             autoCapitalize="off"
           />
         </label>
       </header>
 
-      <div className="no-scrollbar shrink-0 bg-bg-dark pb-3 pl-5">
+      <div className="no-scrollbar shrink-0 bg-bg-light pb-3 pl-5 dark:bg-bg-dark">
         <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-0.5 no-scrollbar">
           {MUSCLE_FILTER_CHIPS.map((c) => {
             const selected = chipId === c.id;
@@ -230,7 +230,7 @@ export default function ExercisesLibraryPage() {
                 className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   selected
                     ? "bg-accent text-white"
-                    : "bg-surface text-muted hover:text-white"
+                    : "bg-gray-100 text-gray-500 hover:text-gray-900 dark:bg-surface dark:text-[#888] dark:hover:text-white"
                 }`}
               >
                 {c.label}
@@ -246,7 +246,7 @@ export default function ExercisesLibraryPage() {
             {[0, 1, 2, 3, 4].map((s) => (
               <li
                 key={`sk-${String(s)}`}
-                className="h-[88px] animate-pulse rounded-2xl border border-border bg-surface"
+                className="h-[88px] animate-pulse rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface"
               />
             ))}
           </ul>
@@ -261,18 +261,18 @@ export default function ExercisesLibraryPage() {
                 <div className="flex items-baseline justify-between gap-2">
                   <h2
                     id="popular-heading"
-                    className="text-[11px] font-semibold uppercase tracking-[0.55px] text-muted"
+                    className="text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-[#888]"
                   >
                     Популярные
                   </h2>
                 </div>
-                <p className="text-[10px] leading-snug text-muted/90">
+                <p className="text-[10px] leading-snug text-gray-500/90 dark:text-[#888]">
                   TODO: топ по частоте использования после появления метрик API;
                   сейчас — первые три записи загрузки.
                 </p>
               </div>
               {popular.length === 0 ? (
-                <p className="text-sm text-muted">Ничего по текущим фильтрам.</p>
+                <p className="text-sm text-gray-500 dark:text-[#888]">Ничего по текущим фильтрам.</p>
               ) : (
                 <div className="-mx-5 flex gap-3 overflow-x-auto pb-2 pl-5 pr-5 no-scrollbar">
                   {popular.map((ex, i) => (
@@ -284,16 +284,16 @@ export default function ExercisesLibraryPage() {
 
             <section
               aria-labelledby="all-heading"
-              className="border-t border-border pt-4"
+              className="border-t border-gray-200 pt-4 dark:border-border"
             >
               <h2
                 id="all-heading"
-                className="mb-3 text-[11px] font-semibold uppercase tracking-[0.55px] text-muted"
+                className="mb-3 text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-[#888]"
               >
                 Все упражнения
               </h2>
               {scrollList.length === 0 && flat.length > 0 && flat.length <= 3 ? (
-                <p className="mb-4 text-sm text-muted">
+                <p className="mb-4 text-sm text-gray-500 dark:text-[#888]">
                   Весь список показан в блоке «Популярные» выше.
                 </p>
               ) : null}
@@ -309,10 +309,10 @@ export default function ExercisesLibraryPage() {
               </div>
               <div ref={loadMoreRef} className="h-6 w-full shrink-0" />
               {isFetchingNextPage ? (
-                <p className="pb-4 text-center text-xs text-muted">Загрузка…</p>
+                <p className="pb-4 text-center text-xs text-gray-500 dark:text-[#888]">Загрузка…</p>
               ) : null}
               {!hasNextPage && scrollList.length > 0 ? (
-                <p className="pb-24 text-center text-xs text-muted">Конец списка</p>
+                <p className="pb-24 text-center text-xs text-gray-500 dark:text-[#888]">Конец списка</p>
               ) : null}
             </section>
           </>
@@ -335,8 +335,8 @@ function PopularCard({ exercise, index }: PopularProps) {
       className="exercise-card-animate shrink-0"
       style={{ animationDelay: `${index * 50}ms`, width: "min(100%,260px)" }}
     >
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-        <div className="aspect-[16/11] bg-[#252525]">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface">
+        <div className="aspect-[16/11] bg-gray-200 dark:bg-[#252525]">
           {exercise.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element -- внешние URL
             <img
@@ -345,13 +345,13 @@ function PopularCard({ exercise, index }: PopularProps) {
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-3xl text-muted">
+            <div className="flex h-full items-center justify-center text-3xl text-gray-500 dark:text-[#888]">
               ◎
             </div>
           )}
         </div>
         <div className="p-3">
-          <p className="line-clamp-2 text-sm font-semibold text-white">{title}</p>
+          <p className="line-clamp-2 text-sm font-semibold text-gray-900 dark:text-white">{title}</p>
           <p className="mt-1 text-[11px] text-accent">{exercise.muscle_group}</p>
         </div>
       </div>
@@ -368,7 +368,7 @@ function SearchIcon() {
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0 text-muted"
+      className="shrink-0 text-gray-500 dark:text-[#888]"
     >
       <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth={2} />
       <path

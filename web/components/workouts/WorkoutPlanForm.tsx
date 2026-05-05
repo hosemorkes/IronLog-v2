@@ -254,7 +254,7 @@ export function WorkoutPlanForm({
         <div className="flex min-w-0 items-center gap-2.5">
           <Link
             href={backHref}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-neutral-200 hover:text-neutral-900 dark:hover:bg-[#252525] dark:hover:text-white"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 hover:bg-neutral-200 hover:text-neutral-900 dark:text-muted dark:hover:bg-[#252525] dark:hover:text-white"
             aria-label="Назад к списку"
           >
             <svg
@@ -294,7 +294,7 @@ export function WorkoutPlanForm({
             id="plan-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-xl border border-transparent bg-[#1a1a1a] px-3.5 py-3 text-lg font-semibold text-white caret-accent outline-none ring-1 ring-[#232323] focus:ring-accent/50"
+            className="w-full rounded-xl border border-transparent bg-gray-100 px-3.5 py-3 text-lg font-semibold text-gray-900 caret-accent outline-none ring-1 ring-gray-200 focus:ring-accent/50 dark:bg-[#1a1a1a] dark:text-white dark:ring-[#232323]"
             placeholder="Название тренировки"
           />
         </div>
@@ -306,10 +306,10 @@ export function WorkoutPlanForm({
         ) : null}
 
         <div className="flex items-center justify-between px-5 pb-1 pt-5">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.55px] text-muted">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-[#888]">
             Упражнения
           </span>
-          <span className="text-xs text-muted">
+          <span className="text-xs text-gray-500 dark:text-[#888]">
             {totals.exCount} упр · {totals.setCount}{" "}
             {totals.setCount === 1
               ? "раунд"
@@ -322,9 +322,9 @@ export function WorkoutPlanForm({
         <ul className="space-y-1 px-4">
           {items.map((item, itemIdx) => (
             <li key={`${item.exercise.id}-${String(itemIdx)}`}>
-              <div className="overflow-hidden rounded-2xl border border-[#232323] bg-[#1a1a1a]">
+              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#232323] dark:bg-[#1a1a1a]">
                 <div className="flex items-center gap-2.5 px-3.5 py-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#252525]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-gray-200 dark:bg-[#252525]">
                     {item.exercise.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -333,21 +333,21 @@ export function WorkoutPlanForm({
                         className="h-full w-full rounded-[10px] object-cover"
                       />
                     ) : (
-                      <span className="text-xs text-muted">◎</span>
+                      <span className="text-xs text-gray-500 dark:text-[#888]">◎</span>
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[15px] font-semibold text-white">
+                    <p className="truncate text-[15px] font-semibold text-gray-900 dark:text-white">
                       {exerciseTitle(item.exercise)}
                     </p>
-                    <p className="mt-0.5 truncate text-xs text-muted">
+                    <p className="mt-0.5 truncate text-xs text-gray-500 dark:text-[#888]">
                       {item.exercise.muscle_group} · {item.exercise.equipment}
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeItem(itemIdx)}
-                    className="shrink-0 p-2 text-muted hover:text-white"
+                    className="shrink-0 p-2 text-gray-500 hover:text-gray-900 dark:text-muted dark:hover:text-white"
                     aria-label="Удалить упражнение"
                   >
                     <CloseIcon />
@@ -359,10 +359,10 @@ export function WorkoutPlanForm({
                   <div
                     key={`${item.exercise.id}-set-${String(setIdx)}`}
                     className={`grid grid-cols-[28px_1fr_1fr_32px] items-center gap-1.5 px-3.5 py-1 ${
-                      setIdx % 2 === 0 ? "bg-[#141414]/90" : ""
+                      setIdx % 2 === 0 ? "bg-neutral-100 dark:bg-[#141414]/90" : ""
                     }`}
                   >
-                    <span className="text-center text-[13px] font-semibold text-muted">
+                    <span className="text-center text-[13px] font-semibold text-gray-500 dark:text-[#888]">
                       {setIdx + 1}
                     </span>
                     <input
@@ -374,7 +374,7 @@ export function WorkoutPlanForm({
                         updateSet(itemIdx, setIdx, "weightKg", e.target.value)
                       }
                       inputMode="decimal"
-                      className="rounded-lg border-0 bg-[#252525] px-1 py-1.5 text-center text-sm font-semibold text-white outline-none"
+                      className="rounded-lg border-0 bg-gray-100 px-1 py-1.5 text-center text-sm font-semibold text-gray-900 outline-none dark:bg-[#252525] dark:text-white"
                     />
                     <input
                       aria-label={`Повторы, сет ${String(setIdx + 1)}`}
@@ -383,7 +383,7 @@ export function WorkoutPlanForm({
                         updateSet(itemIdx, setIdx, "reps", e.target.value)
                       }
                       inputMode="numeric"
-                      className="rounded-lg border-0 bg-[#252525] px-1 py-1.5 text-center text-sm font-semibold text-white outline-none"
+                      className="rounded-lg border-0 bg-gray-100 px-1 py-1.5 text-center text-sm font-semibold text-gray-900 outline-none dark:bg-[#252525] dark:text-white"
                     />
                     <button
                       type="button"
@@ -399,7 +399,7 @@ export function WorkoutPlanForm({
                   <button
                     type="button"
                     onClick={() => addSet(itemIdx)}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-dashed border-[#232323] py-2 text-xs font-medium text-muted hover:border-accent/40 hover:text-white"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-[10px] border border-dashed border-gray-200 py-2 text-xs font-medium text-gray-500 hover:border-accent/40 hover:text-gray-900 dark:border-[#232323] dark:text-[#888] dark:hover:text-white"
                   >
                     <PlusTiny />
                     Добавить сет
@@ -420,7 +420,7 @@ export function WorkoutPlanForm({
           <button
             type="button"
             onClick={() => setPickerOpen(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#232323] py-3.5 text-[15px] font-semibold text-muted hover:border-accent/40 hover:text-white"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-200 py-3.5 text-[15px] font-semibold text-gray-500 hover:border-accent/40 hover:text-gray-900 dark:border-[#232323] dark:text-[#888] dark:hover:text-white"
           >
             <PlusIcon />
             Добавить упражнение
@@ -428,11 +428,11 @@ export function WorkoutPlanForm({
         </div>
 
         <div className="px-5 pb-2 pt-6">
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.55px] text-muted">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-[#888]">
             Итого
           </h3>
         </div>
-        <div className="mx-4 mb-6 flex justify-around rounded-xl border border-[#232323] bg-[#1a1a1a] px-3 py-3">
+        <div className="mx-4 mb-6 flex justify-around rounded-xl border border-gray-200 bg-gray-100 px-3 py-3 dark:border-[#232323] dark:bg-[#1a1a1a]">
           {[
             { v: totals.exCount, l: "упражнения" },
             { v: totals.setCount, l: "раундов" },
@@ -447,7 +447,7 @@ export function WorkoutPlanForm({
           ].map((s) => (
             <div key={s.l} className="text-center">
               <div className="text-base font-bold text-accent">{s.v}</div>
-              <div className="mt-0.5 text-[11px] text-muted">{s.l}</div>
+              <div className="mt-0.5 text-[11px] text-gray-500 dark:text-[#888]">{s.l}</div>
             </div>
           ))}
         </div>
@@ -469,7 +469,7 @@ function SetsTableHeader() {
       {["#", "Вес (кг)", "Повторы", ""].map((h, i) => (
         <span
           key={`h-${String(i)}`}
-          className="text-center text-[11px] font-semibold text-muted"
+          className="text-center text-[11px] font-semibold text-gray-500 dark:text-[#888]"
         >
           {h}
         </span>
@@ -494,7 +494,7 @@ function RestRow({ value, onChange, label }: RestRowProps) {
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 pb-3.5 pt-2">
-      <span className="text-xs text-muted">{label}</span>
+      <span className="text-xs text-gray-500 dark:text-[#888]">{label}</span>
       <div className="flex flex-wrap justify-end gap-1.5">
         {options.map((r) => {
           const active = value === r;
@@ -506,7 +506,7 @@ function RestRow({ value, onChange, label }: RestRowProps) {
               className={`rounded-full px-2.5 py-1 text-xs font-medium transition ${
                 active
                   ? "bg-accent text-white"
-                  : "bg-[#252525] text-muted hover:text-white"
+                  : "bg-gray-200 text-gray-600 hover:text-gray-900 dark:bg-[#252525] dark:text-[#888] dark:hover:text-white"
               }`}
             >
               {r}с

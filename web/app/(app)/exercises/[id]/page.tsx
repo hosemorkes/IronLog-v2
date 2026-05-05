@@ -41,7 +41,7 @@ function difficultyAccentClass(slug: string): string {
         : slug === "advanced"
           ? " bg-rose-500/15 "
           : " bg-muted/20 ";
-  return base + bg + (tint ?? "text-muted");
+  return base + bg + (tint ?? "text-gray-500 dark:text-muted");
 }
 
 export default function ExerciseDetailPage() {
@@ -52,7 +52,7 @@ export default function ExerciseDetailPage() {
 
   if (!id) {
     return (
-      <main className="px-5 pt-12 text-center text-muted">
+      <main className="px-5 pt-12 text-center text-gray-500 dark:text-muted">
         Некорректный адрес упражнения.
       </main>
     );
@@ -61,9 +61,9 @@ export default function ExerciseDetailPage() {
   if (isPending) {
     return (
       <div className="min-h-[50vh] animate-pulse space-y-4 p-5">
-        <div className="h-52 rounded-2xl bg-surface" />
-        <div className="h-8 rounded-lg bg-surface" />
-        <div className="h-24 rounded-xl bg-surface" />
+        <div className="h-52 rounded-2xl bg-gray-200 dark:bg-surface" />
+        <div className="h-8 rounded-lg bg-gray-200 dark:bg-surface" />
+        <div className="h-24 rounded-xl bg-gray-200 dark:bg-surface" />
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function ExerciseDetailPage() {
   return (
     <>
       <div className="pb-36">
-        <header className="relative min-h-[240px] bg-surface/80">
+        <header className="relative min-h-[240px] bg-gray-100/80 dark:bg-surface/80">
           {data.image_url ? (
             <div
               aria-hidden
@@ -115,7 +115,7 @@ export default function ExerciseDetailPage() {
         </header>
 
         <article className="space-y-5 px-5 pt-5">
-          <h1 className="text-2xl font-bold leading-tight tracking-tight text-white">
+          <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
             {title}
           </h1>
 
@@ -132,7 +132,7 @@ export default function ExerciseDetailPage() {
           </div>
 
           {data.description ? (
-            <p className="text-sm leading-relaxed text-muted">{data.description}</p>
+            <p className="text-sm leading-relaxed text-gray-500 dark:text-muted">{data.description}</p>
           ) : null}
 
           <div className="grid grid-cols-3 gap-2.5">
@@ -140,7 +140,7 @@ export default function ExerciseDetailPage() {
             <StatBox value={STATS_PLACEHOLDER.workouts} label="тренировок" />
             <StatBox value={STATS_PLACEHOLDER.tonnageKg} label="кг поднято" />
           </div>
-          <p className="text-[10px] leading-snug text-muted/90">
+          <p className="text-[10px] leading-snug text-gray-500/90 dark:text-muted/90">
             TODO: агрегаты по данным пользователя после эндпоинтов прогресса /
             журнала подходов.
           </p>
@@ -148,22 +148,22 @@ export default function ExerciseDetailPage() {
           <Divider />
 
           <section>
-            <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-muted">
+            <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-muted">
               Личный рекорд
             </h2>
-            <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-border dark:bg-surface">
               <div>
-                <p className="text-xs text-muted">Лучший результат</p>
-                <p className="mt-1 text-[22px] font-bold leading-tight text-white">
+                <p className="text-xs text-gray-500 dark:text-muted">Лучший результат</p>
+                <p className="mt-1 text-[22px] font-bold leading-tight text-gray-900 dark:text-white">
                   {PR_PLACEHOLDER.display}
                 </p>
-                <p className="mt-0.5 text-xs text-muted">{PR_PLACEHOLDER.dateLabel}</p>
+                <p className="mt-0.5 text-xs text-gray-500 dark:text-muted">{PR_PLACEHOLDER.dateLabel}</p>
               </div>
               <span className="inline-flex shrink-0 self-start rounded-full border border-amber-500/35 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-400 sm:self-center">
                 PR
               </span>
             </div>
-            <p className="mt-2 text-[10px] text-muted/90">
+            <p className="mt-2 text-[10px] text-gray-500/90 dark:text-muted/90">
               TODO: отдать с API связку вес × повторы и дату (personal_records /
               workout_sets с is_pr).
             </p>
@@ -172,7 +172,7 @@ export default function ExerciseDetailPage() {
           <Divider />
 
           <section>
-            <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-muted">
+            <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-muted">
               Мышцы
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -182,7 +182,7 @@ export default function ExerciseDetailPage() {
               {secondaryList.map((m) => (
                 <span
                   key={m}
-                  className="rounded-full border border-border bg-bg-dark px-3 py-1.5 text-[13px] text-muted"
+                  className="rounded-full border border-gray-200 bg-gray-100 px-3 py-1.5 text-[13px] text-gray-600 dark:border-border dark:bg-bg-dark dark:text-muted"
                 >
                   {m}
                 </span>
@@ -193,12 +193,12 @@ export default function ExerciseDetailPage() {
           <Divider />
 
           <section>
-            <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-muted">
+            <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-muted">
               Техника выполнения
             </h2>
             <ol className="space-y-3">
               {steps.length === 0 ? (
-                <li className="text-sm text-muted">
+                <li className="text-sm text-gray-500 dark:text-muted">
                   Шаги пока не добавлены в справочник.
                 </li>
               ) : (
@@ -210,7 +210,7 @@ export default function ExerciseDetailPage() {
                     >
                       {i + 1}
                     </span>
-                    <p className="pt-0.5 text-[14px] leading-relaxed text-white/85">
+                    <p className="pt-0.5 text-[14px] leading-relaxed text-gray-800/90 dark:text-white/85">
                       {step}
                     </p>
                   </li>
@@ -222,7 +222,7 @@ export default function ExerciseDetailPage() {
       </div>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 pb-[env(safe-area-inset-bottom,0)]">
-        <div className="pointer-events-auto border-t border-border bg-surface/95 px-5 py-3 backdrop-blur-md">
+        <div className="pointer-events-auto border-t border-gray-200 bg-gray-100/95 px-5 py-3 backdrop-blur-md dark:border-border dark:bg-surface/95">
           <button
             type="button"
             className="w-full rounded-2xl bg-accent py-4 text-[16px] font-bold text-white shadow-lg shadow-accent/25 transition hover:bg-accent-dark"
@@ -241,14 +241,14 @@ export default function ExerciseDetailPage() {
 }
 
 function Divider() {
-  return <div className="my-5 h-px bg-border" role="presentation" />;
+  return <div className="my-5 h-px bg-gray-200 dark:bg-border" role="presentation" />;
 }
 
 function StatBox({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-xl border border-border bg-bg-dark px-2 py-3 text-center">
+    <div className="rounded-xl border border-gray-200 bg-gray-100 px-2 py-3 text-center dark:border-border dark:bg-bg-dark">
       <div className="mb-1 text-lg font-bold text-accent">{value}</div>
-      <div className="text-[11px] text-muted">{label}</div>
+      <div className="text-[11px] text-gray-500 dark:text-muted">{label}</div>
     </div>
   );
 }
@@ -275,14 +275,14 @@ function ModalWorkoutStub({ onClose }: { onClose: () => void }) {
       aria-modal="true"
       aria-labelledby="workout-modal-title"
     >
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface px-6 py-5 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-gray-100 px-6 py-5 shadow-xl dark:border-border dark:bg-surface">
         <h2
           id="workout-modal-title"
-          className="text-lg font-semibold text-white"
+          className="text-lg font-semibold text-gray-900 dark:text-white"
         >
           Тренировка
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-muted">
+        <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-muted">
           Здесь будет выбор плана или создание тренировки после появления API
           планов и конструктора. Пока используйте этот диалог как заглушку.
         </p>

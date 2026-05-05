@@ -2,34 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type CSSProperties, type FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 
 import { apiUrl } from "@/lib/api";
-import { AUTH_UI_COLORS, AUTH_UI_RADIUS } from "@/lib/constants/auth-ui";
 import { getFastApiErrorMessage } from "@/lib/get-fastapi-error-message";
 import { useAuthStore } from "@/lib/stores/authStore";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "12px 14px",
-  borderRadius: AUTH_UI_RADIUS.input,
-  border: `1px solid ${AUTH_UI_COLORS.border}`,
-  backgroundColor: AUTH_UI_COLORS.bg2,
-  color: AUTH_UI_COLORS.text,
-  fontSize: 15,
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const labelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 13,
-  fontWeight: 600,
-  color: AUTH_UI_COLORS.text2,
-  marginBottom: 6,
-};
 
 /**
  * Регистрация: проверка email и совпадения паролей, автологин при успехе.
@@ -98,33 +77,24 @@ export default function SignupPage() {
     }
   }
 
+  const inputClass =
+    "w-full rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-[15px] text-gray-900 outline-none ring-1 ring-transparent transition placeholder:text-gray-400 focus:border-accent/40 focus:ring-accent/35 dark:border-[#232323] dark:bg-[#232323]/60 dark:text-white dark:placeholder:text-[#888]";
+
   return (
-    <div
-      style={{
-        borderRadius: AUTH_UI_RADIUS.card,
-        border: `1px solid ${AUTH_UI_COLORS.border}`,
-        backgroundColor: AUTH_UI_COLORS.bg2,
-        padding: 28,
-      }}
-    >
-      <h1
-        style={{
-          fontSize: 24,
-          fontWeight: 800,
-          letterSpacing: "-0.5px",
-          color: AUTH_UI_COLORS.text,
-          marginBottom: 8,
-        }}
-      >
+    <div className="w-full rounded-2xl border border-gray-200 bg-gray-100 p-7 dark:border-[#232323] dark:bg-[#1a1a1a]">
+      <h1 className="mb-2 text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
         Регистрация
       </h1>
-      <p style={{ fontSize: 14, color: AUTH_UI_COLORS.text2, marginBottom: 24 }}>
+      <p className="mb-6 text-sm text-gray-500 dark:text-[#888]">
         Создайте аккаунт IronLog
       </p>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="signup-username" style={labelStyle}>
+        <div className="mb-4">
+          <label
+            htmlFor="signup-username"
+            className="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-white"
+          >
             Имя пользователя
           </label>
           <input
@@ -137,11 +107,14 @@ export default function SignupPage() {
             maxLength={64}
             value={username}
             onChange={(ev) => setUsername(ev.target.value)}
-            style={inputStyle}
+            className={inputClass}
           />
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="signup-email" style={labelStyle}>
+        <div className="mb-4">
+          <label
+            htmlFor="signup-email"
+            className="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-white"
+          >
             Email
           </label>
           <input
@@ -152,11 +125,14 @@ export default function SignupPage() {
             required
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
-            style={inputStyle}
+            className={inputClass}
           />
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="signup-password" style={labelStyle}>
+        <div className="mb-4">
+          <label
+            htmlFor="signup-password"
+            className="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-white"
+          >
             Пароль
           </label>
           <input
@@ -169,11 +145,14 @@ export default function SignupPage() {
             maxLength={128}
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
-            style={inputStyle}
+            className={inputClass}
           />
         </div>
-        <div style={{ marginBottom: 20 }}>
-          <label htmlFor="signup-password2" style={labelStyle}>
+        <div className="mb-5">
+          <label
+            htmlFor="signup-password2"
+            className="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-white"
+          >
             Подтверждение пароля
           </label>
           <input
@@ -186,25 +165,14 @@ export default function SignupPage() {
             maxLength={128}
             value={password2}
             onChange={(ev) => setPassword2(ev.target.value)}
-            style={inputStyle}
+            className={inputClass}
           />
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          style={{
-            width: "100%",
-            padding: "14px 16px",
-            borderRadius: AUTH_UI_RADIUS.input,
-            border: "none",
-            backgroundColor: AUTH_UI_COLORS.accent,
-            color: "#fff",
-            fontSize: 15,
-            fontWeight: 700,
-            cursor: submitting ? "wait" : "pointer",
-            opacity: submitting ? 0.85 : 1,
-          }}
+          className="w-full rounded-xl bg-accent px-4 py-3.5 text-[15px] font-bold text-white transition hover:bg-accent-dark disabled:cursor-wait disabled:opacity-85"
         >
           {submitting ? "Регистрация…" : "Зарегистрироваться"}
         </button>
@@ -213,26 +181,15 @@ export default function SignupPage() {
       {error ? (
         <p
           role="alert"
-          style={{
-            marginTop: 16,
-            padding: "10px 12px",
-            borderRadius: AUTH_UI_RADIUS.input,
-            backgroundColor: AUTH_UI_COLORS.errorBg,
-            border: `1px solid ${AUTH_UI_COLORS.errorBorder}`,
-            color: AUTH_UI_COLORS.errorText,
-            fontSize: 14,
-          }}
+          className="mt-4 rounded-xl border border-rose-300 bg-rose-50 px-3 py-2.5 text-sm text-rose-700 dark:border-[#3d2020] dark:bg-[#2d1a1a] dark:text-[#e06060]"
         >
           {error}
         </p>
       ) : null}
 
-      <p style={{ marginTop: 22, textAlign: "center", fontSize: 14 }}>
-        <span style={{ color: AUTH_UI_COLORS.text2 }}>Уже есть аккаунт? </span>
-        <Link
-          href="/login"
-          style={{ color: AUTH_UI_COLORS.accent, fontWeight: 600 }}
-        >
+      <p className="mt-[22px] text-center text-sm">
+        <span className="text-gray-500 dark:text-[#888]">Уже есть аккаунт? </span>
+        <Link href="/login" className="font-semibold text-accent">
           Войти
         </Link>
       </p>

@@ -34,7 +34,7 @@ function formatPrWeightReps(pr: RecentPrItemDto): { main: string; sub: string | 
 function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center justify-between px-1 pb-2 pt-1">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500 dark:text-[#888]">
         {label}
       </span>
     </div>
@@ -46,13 +46,13 @@ function ProgressSectionSkeleton() {
     <div className="animate-pulse space-y-3 pb-2">
       <div className="grid grid-cols-2 gap-2.5">
         {[0, 1, 2, 3].map((k) => (
-          <div key={k} className="h-[118px] rounded-2xl bg-surface" />
+          <div key={k} className="h-[118px] rounded-2xl bg-gray-200 dark:bg-surface" />
         ))}
       </div>
-      <div className="h-[170px] rounded-[18px] bg-surface" />
-      <div className="h-[156px] rounded-2xl bg-surface" />
-      <div className="h-[200px] rounded-2xl bg-surface" />
-      <div className="h-[112px] rounded-2xl bg-surface" />
+      <div className="h-[170px] rounded-[18px] bg-gray-200 dark:bg-surface" />
+      <div className="h-[156px] rounded-2xl bg-gray-200 dark:bg-surface" />
+      <div className="h-[200px] rounded-2xl bg-gray-200 dark:bg-surface" />
+      <div className="h-[112px] rounded-2xl bg-gray-200 dark:bg-surface" />
     </div>
   );
 }
@@ -200,31 +200,31 @@ export function ProgressHomeSection({
         ].map((s) => (
           <div
             key={s.lbl}
-            className="rounded-2xl border border-border bg-surface p-4"
+            className="rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-border dark:bg-surface"
           >
-            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">
+            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-gray-500 dark:text-[#888]">
               {s.lbl}
             </p>
-            <p className="text-[26px] font-extrabold tracking-tight text-white">
+            <p className="text-[26px] font-extrabold tracking-tight text-gray-900 dark:text-white">
               {s.val}
             </p>
-            <p className="mt-1 text-xs text-muted">{s.sub}</p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-[#888]">{s.sub}</p>
           </div>
         ))}
       </div>
 
       <SectionLabel label="Поднято — путь к рекорду" />
-      <div className="rounded-[18px] border border-accent/35 bg-gradient-to-br from-[#1d1630] to-[#1a1a2e] p-[18px]">
+      <div className="rounded-[18px] border border-accent/35 bg-gradient-to-br from-violet-100 via-white to-indigo-50 p-[18px] dark:from-[#1d1630] dark:to-[#1a1a2e]">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-[#6b5ea8]">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.07em] text-violet-700 dark:text-[#6b5ea8]">
               Всего поднято
             </p>
             <p>
-              <span className="text-[32px] font-black tracking-tight text-[#c4b8f8]">
+              <span className="text-[32px] font-black tracking-tight text-violet-950 dark:text-[#c4b8f8]">
                 {nf.format(Math.round(lifetimeKg))}
               </span>
-              <span className="ml-0.5 text-sm font-semibold text-[#7060b0]">
+              <span className="ml-0.5 text-sm font-semibold text-violet-700 dark:text-[#7060b0]">
                 {" "}
                 кг
               </span>
@@ -234,28 +234,28 @@ export function ProgressHomeSection({
             {Math.round(scale.segmentProgress * 100)}%
           </div>
         </div>
-        <div className="mb-2 h-2 w-full overflow-hidden rounded bg-[#2a2040]">
+        <div className="mb-2 h-2 w-full overflow-hidden rounded bg-violet-200 dark:bg-[#2a2040]">
           <div
             className="h-full rounded bg-gradient-to-r from-[#5b4ff0] to-[#9b87e8] transition-[width] duration-500"
             style={{ width: `${Math.round(scale.segmentProgress * 100)}%` }}
           />
         </div>
         <div className="flex items-start justify-between gap-1 text-[11px]">
-          <span className="min-w-0 shrink text-[#6050a0]">
+          <span className="min-w-0 shrink text-violet-700 dark:text-[#6050a0]">
             {scaleFooter.left}
           </span>
           <span className="shrink-0 text-center font-bold text-accent">
             {scaleFooter.center}
           </span>
-          <span className="min-w-0 shrink text-right text-[#6050a0]">
+          <span className="min-w-0 shrink text-right text-violet-700 dark:text-[#6050a0]">
             {scaleFooter.right}
           </span>
         </div>
       </div>
 
       <SectionLabel label="Активность — 7 дней" />
-      <div className="rounded-2xl border border-border bg-surface p-4">
-        <p className="mb-3.5 text-[13px] font-semibold text-white">
+      <div className="rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-border dark:bg-surface">
+        <p className="mb-3.5 text-[13px] font-semibold text-gray-900 dark:text-white">
           Поднято по дням (кг)
         </p>
         <div className="flex justify-between gap-1.5">
@@ -266,15 +266,12 @@ export function ProgressHomeSection({
                 ? Math.round((d.tonnage_kg / maxWeekT) * maxBarPx)
                 : 0;
             const barH = Math.max(h || (d.tonnage_kg > 0 ? 4 : 3), 3);
-            let barBg = "#1a1a1a";
-            if (d.is_today) {
-              barBg = "#22c55e";
-            } else if (d.tonnage_kg > 0) {
-              barBg = "#7c6ef2";
-            } else {
-              barBg = "#2a2a2a";
-            }
-            let labelClass = "font-semibold text-[#555]";
+            const barTone = d.is_today
+              ? "bg-emerald-500"
+              : d.tonnage_kg > 0
+                ? "bg-accent"
+                : "bg-gray-200 dark:bg-[#2a2a2a]";
+            let labelClass = "font-semibold text-gray-500 dark:text-[#555]";
             if (d.is_today) {
               labelClass = "font-semibold text-emerald-400";
             } else if (d.tonnage_kg > 0) {
@@ -295,10 +292,9 @@ export function ProgressHomeSection({
                   title={`${d.day_label}: ${nf.format(Math.round(d.tonnage_kg))} кг`}
                 >
                   <div
-                    className="w-full rounded-t transition-all"
+                    className={`w-full rounded-t transition-all ${barTone}`}
                     style={{
                       height: barH,
-                      backgroundColor: barBg,
                     }}
                   />
                 </div>
@@ -312,9 +308,9 @@ export function ProgressHomeSection({
       </div>
 
       <SectionLabel label="Личные рекорды" />
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface">
         {prItems.length === 0 ? (
-          <p className="px-4 py-5 text-sm text-muted">
+          <p className="px-4 py-5 text-sm text-gray-500 dark:text-[#888]">
             Установи первый рекорд на тренировке
           </p>
         ) : (
@@ -324,21 +320,21 @@ export function ProgressHomeSection({
               <div
                 key={`${pr.exercise_id}-${pr.achieved_at}-${pr.set_num}`}
                 className={`flex items-center justify-between gap-3 px-3.5 py-3 ${
-                  i > 0 ? "border-t border-border" : ""
+                  i > 0 ? "border-t border-gray-200 dark:border-border" : ""
                 }`}
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
                     {pr.exercise_name}
                   </p>
-                  <p className="text-[11px] text-muted">
+                  <p className="text-[11px] text-gray-500 dark:text-[#888]">
                     {dfPr.format(new Date(pr.achieved_at))}
                   </p>
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="text-base font-extrabold text-accent">{main}</p>
                   {sub ? (
-                    <p className="text-[11px] text-muted">{sub}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-[#888]">{sub}</p>
                   ) : null}
                 </div>
               </div>
@@ -349,7 +345,7 @@ export function ProgressHomeSection({
 
       <SectionLabel label="Достижения" />
       {achItems.length === 0 ? (
-        <p className="pb-2 text-sm text-muted">
+        <p className="pb-2 text-sm text-gray-500 dark:text-[#888]">
           Достижения появятся по мере тренировок
         </p>
       ) : (
@@ -359,13 +355,13 @@ export function ProgressHomeSection({
             return (
               <div
                 key={a.achievement_id}
-                className="w-[90px] shrink-0 rounded-[14px] border border-border bg-surface px-2 py-3 text-center transition-opacity"
+                className="w-[90px] shrink-0 rounded-[14px] border border-gray-200 bg-gray-100 px-2 py-3 text-center transition-opacity dark:border-border dark:bg-surface"
                 style={{ opacity: unlocked ? 1 : 0.3 }}
               >
                 <div className="mb-1.5 text-[26px]" aria-hidden>
                   {a.icon?.trim() || "🏅"}
                 </div>
-                <p className="text-[11px] font-semibold leading-snug text-white/90">
+                <p className="text-[11px] font-semibold leading-snug text-gray-900 dark:text-white/90">
                   {a.name}
                 </p>
               </div>

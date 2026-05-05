@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { getAccessToken } from "@/lib/auth";
-import { AUTH_UI_COLORS } from "@/lib/constants/auth-ui";
 import { useAuthStore } from "@/lib/stores/authStore";
 
 interface AppAuthGuardProps {
@@ -52,13 +51,8 @@ export function AppAuthGuard({ children }: AppAuthGuardProps) {
 
   if (!ready) {
     return (
-      <div
-        className="flex min-h-screen flex-col items-center justify-center"
-        style={{ backgroundColor: AUTH_UI_COLORS.bg }}
-      >
-        <p className="text-sm" style={{ color: AUTH_UI_COLORS.text2 }}>
-          Загрузка…
-        </p>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-[#111]">
+        <p className="text-sm text-gray-500 dark:text-[#888]">Загрузка…</p>
       </div>
     );
   }

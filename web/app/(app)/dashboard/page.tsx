@@ -169,19 +169,19 @@ export default function DashboardPage() {
     <main className="no-scrollbar min-h-full overflow-y-auto pb-6">
       <header className="flex items-start justify-between gap-3 px-5 pt-3">
         <div>
-          <p className="text-[13px] text-muted">{greetingByHour()},</p>
-          <h1 className="mt-0.5 text-[26px] font-extrabold tracking-tight text-white">
+          <p className="text-[13px] text-gray-500 dark:text-[#888]">{greetingByHour()},</p>
+          <h1 className="mt-0.5 text-[26px] font-extrabold tracking-tight text-gray-900 dark:text-white">
             {displayName} <span className="text-accent">·</span>
           </h1>
           {!hasToken ? (
-            <p className="mt-2 max-w-sm text-xs text-muted">
+            <p className="mt-2 max-w-sm text-xs text-gray-500 dark:text-[#888]">
               Войдите в аккаунт — загрузим поднятый вес, рекорды и ачивки с сервера.
             </p>
           ) : null}
         </div>
         {loadingDash && hasToken ? (
           <div
-            className="h-9 w-24 shrink-0 animate-pulse rounded-full bg-surface"
+            className="h-9 w-24 shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-surface"
             aria-hidden
           />
         ) : showStreakBadge ? (
@@ -208,7 +208,7 @@ export default function DashboardPage() {
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
                     Активная тренировка
                   </p>
-                  <p className="mt-0.5 text-sm font-semibold text-white">
+                  <p className="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">
                     Есть незавершённая сессия
                   </p>
                 </div>
@@ -224,7 +224,7 @@ export default function DashboardPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
                   Активная тренировка
                 </p>
-                <p className="mt-0.5 text-sm text-muted">
+                <p className="mt-0.5 text-sm text-gray-500 dark:text-[#888]">
                   Откройте историю, если нужно найти эту тренировку.
                 </p>
                 <Link
@@ -244,7 +244,7 @@ export default function DashboardPage() {
           ? [0, 1, 2].map((k) => (
               <div
                 key={k}
-                className="h-[88px] animate-pulse rounded-2xl bg-surface"
+                className="h-[88px] animate-pulse rounded-2xl bg-gray-200 dark:bg-surface"
                 aria-hidden
               />
             ))
@@ -267,12 +267,12 @@ export default function DashboardPage() {
             ].map((s) => (
               <div
                 key={s.lbl}
-                className="rounded-2xl border border-border bg-surface px-2.5 py-3"
+                className="rounded-2xl border border-gray-200 bg-gray-100 px-2.5 py-3 dark:border-border dark:bg-surface"
               >
-                <p className="text-lg font-extrabold tracking-tight text-white">
+                <p className="text-lg font-extrabold tracking-tight text-gray-900 dark:text-white">
                   {hasToken ? s.val : "—"}
                 </p>
-                <p className="text-[10px] text-muted">{s.lbl}</p>
+                <p className="text-[10px] text-gray-500 dark:text-[#888]">{s.lbl}</p>
                 <p className="mt-1 text-[10px] font-semibold text-emerald-400/90">
                   {hasToken ? s.sub : ""}
                 </p>
@@ -283,12 +283,12 @@ export default function DashboardPage() {
       <div className="mt-4 px-4">
         {loadingDash && hasToken ? (
           <div
-            className="h-40 animate-pulse rounded-2xl bg-surface"
+            className="h-40 animate-pulse rounded-2xl bg-gray-200 dark:bg-surface"
             aria-hidden
           />
         ) : hasToken ? (
           lastCompletedSession ? (
-            <section className="relative rounded-2xl border border-border bg-surface p-4">
+            <section className="relative rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-border dark:bg-surface">
               <Link
                 href={`/history/${lastCompletedSession.session_id}`}
                 className="absolute inset-0 z-0 rounded-2xl"
@@ -299,7 +299,7 @@ export default function DashboardPage() {
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
                     Последняя тренировка
                   </p>
-                  <p className="mt-1 text-lg font-bold text-white">
+                  <p className="mt-1 text-lg font-bold text-gray-900 dark:text-white">
                     {lastPlanName}
                   </p>
                 </div>
@@ -312,7 +312,7 @@ export default function DashboardPage() {
                   </Link>
                 ) : null}
               </div>
-              <p className="pointer-events-none relative z-[1] mt-2 capitalize text-xs text-muted">
+              <p className="pointer-events-none relative z-[1] mt-2 capitalize text-xs text-gray-500 dark:text-[#888]">
                 {lastCompletedSession.completed_at
                   ? dfSession.format(
                       new Date(lastCompletedSession.completed_at),
@@ -324,7 +324,7 @@ export default function DashboardPage() {
                   lastCompletedSession.completed_at,
                 )}
               </p>
-              <p className="pointer-events-none relative z-[1] mt-1 text-sm text-white">
+              <p className="pointer-events-none relative z-[1] mt-1 text-sm text-gray-900 dark:text-white">
                 Поднято:{" "}
                 {(() => {
                   const v = parseVolumeKg(
@@ -337,14 +337,14 @@ export default function DashboardPage() {
           ) : (
             <Link
               href="/workouts"
-              className="block rounded-2xl border border-accent/35 bg-gradient-to-br from-[#1d1630] to-[#1a1a2e] p-4 transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="block rounded-2xl border border-accent/35 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-4 transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent dark:from-[#1d1630] dark:to-[#1a1a2e]"
             >
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
                     Старт
                   </p>
-                  <p className="text-lg font-bold text-white">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">
                     Начни первую тренировку
                   </p>
                 </div>

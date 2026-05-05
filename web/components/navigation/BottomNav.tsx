@@ -48,7 +48,7 @@ export function BottomNav() {
                 className={`flex flex-col items-center gap-0.5 px-1 py-1 text-[10px] leading-tight ${
                   active
                     ? "font-semibold text-accent"
-                    : "text-muted transition-colors hover:text-neutral-800 dark:hover:text-white"
+                    : "text-gray-500 transition-colors hover:text-neutral-800 dark:text-[#888] dark:hover:text-white"
                 }`}
               >
                 <Icon

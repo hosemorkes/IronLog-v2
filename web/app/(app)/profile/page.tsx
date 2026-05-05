@@ -64,7 +64,7 @@ function downloadText(filename: string, body: string): void {
 function SectionLabel({ label }: { label: string }) {
   return (
     <div className="px-5 pb-2 pt-1">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted dark:text-muted">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500 dark:text-[#888]">
         {label}
       </span>
     </div>
@@ -84,7 +84,7 @@ function ChevronRight({
       fill="none"
       aria-hidden
       className={
-        variant === "danger" ? "shrink-0 text-red-400/70" : "shrink-0 text-muted"
+        variant === "danger" ? "shrink-0 text-red-400/70" : "shrink-0 text-gray-500 dark:text-[#888]"
       }
     >
       <polyline
@@ -101,15 +101,15 @@ function ChevronRight({
 function ProfileSkeleton() {
   return (
     <div className="animate-pulse space-y-4 px-4 pb-10">
-      <div className="h-[108px] rounded-[18px] bg-[#1a1a1a]" />
+      <div className="h-[108px] rounded-[18px] bg-gray-100 dark:bg-[#1a1a1a]" />
       <div className="grid grid-cols-3 gap-2.5">
         {[0, 1, 2].map((k) => (
-          <div key={k} className="h-[72px] rounded-xl bg-[#1a1a1a]" />
+          <div key={k} className="h-[72px] rounded-xl bg-gray-100 dark:bg-[#1a1a1a]" />
         ))}
       </div>
-      <div className="h-40 rounded-2xl bg-[#1a1a1a]" />
-      <div className="h-32 rounded-2xl bg-[#1a1a1a]" />
-      <div className="h-28 rounded-2xl bg-[#1a1a1a]" />
+      <div className="h-40 rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
+      <div className="h-32 rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
+      <div className="h-28 rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
     </div>
   );
 }
@@ -137,15 +137,15 @@ function Overlay({
           onClose();
         }}
       />
-      <div className="relative z-[121] flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-[#232323] bg-[#1a1a1a] shadow-xl">
-        <div className="flex shrink-0 items-center justify-between border-b border-[#232323] px-4 py-3">
-          <h2 className="text-[16px] font-bold text-white">{title}</h2>
+      <div className="relative z-[121] flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 shadow-xl dark:border-[#232323] dark:bg-[#1a1a1a]">
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-[#232323]">
+          <h2 className="text-[16px] font-bold text-gray-900 dark:text-white">{title}</h2>
           <button
             type="button"
             onClick={() => {
               onClose();
             }}
-            className="rounded-lg px-2 py-1 text-sm text-muted transition hover:text-white"
+            className="rounded-lg px-2 py-1 text-sm text-gray-500 transition hover:text-gray-900 dark:text-[#888] dark:hover:text-white"
           >
             Закрыть
           </button>
@@ -350,7 +350,7 @@ export default function ProfilePage() {
         <ProfileSkeleton />
       ) : (
         <>
-          <div className="mx-4 mb-4 flex items-center gap-4 rounded-[18px] border border-[#252525] bg-[#1a1a1a] p-5">
+          <div className="mx-4 mb-4 flex items-center gap-4 rounded-[18px] border border-gray-200 bg-gray-100 p-5 dark:border-[#252525] dark:bg-[#1a1a1a]">
             <div
               className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full border-2 border-accent bg-accent/15 text-[28px]"
               aria-hidden
@@ -358,8 +358,8 @@ export default function ProfilePage() {
               💪
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xl font-bold text-white">{username}</p>
-              <p className="mt-0.5 truncate text-[13px] text-muted">{email}</p>
+              <p className="truncate text-xl font-bold text-gray-900 dark:text-white">{username}</p>
+              <p className="mt-0.5 truncate text-[13px] text-gray-500 dark:text-[#888]">{email}</p>
               {hasToken && streak > 0 ? (
                 <p className="mt-2 text-xs font-semibold text-amber-400">
                   🔥 {streak}-дневный стрик
@@ -372,10 +372,10 @@ export default function ProfilePage() {
             {stats.map((s) => (
               <div
                 key={s.l}
-                className="rounded-xl border border-[#252525] bg-[#1a1a1a] px-2 py-3.5 text-center"
+                className="rounded-xl border border-gray-200 bg-gray-100 px-2 py-3.5 text-center dark:border-[#252525] dark:bg-[#1a1a1a]"
               >
                 <p className="text-xl font-extrabold text-accent">{s.v}</p>
-                <p className="mt-0.5 text-[10px] leading-snug text-muted">
+                <p className="mt-0.5 text-[10px] leading-snug text-gray-500 dark:text-[#888]">
                   {s.l}
                 </p>
               </div>
@@ -384,27 +384,27 @@ export default function ProfilePage() {
 
           <div className="mb-4">
             <SectionLabel label="Тренировки" />
-            <div className="mx-4 overflow-hidden rounded-2xl border border-[#252525] bg-[#1a1a1a]">
-              <div className="border-b border-[#232323]">
+            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#252525] dark:bg-[#1a1a1a]">
+              <div className="border-b border-gray-200 dark:border-[#232323]">
                 <button
                   type="button"
                   onClick={() => {
                     setRestOpen((o) => !o);
                   }}
-                  className="flex w-full items-center px-4 py-3.5 text-left text-white transition-colors hover:bg-white/[0.03]"
+                  className="flex w-full items-center px-4 py-3.5 text-left text-gray-900 transition-colors hover:bg-neutral-100 dark:text-white dark:hover:bg-white/[0.03]"
                 >
                   <span className="mr-3 w-6 shrink-0 text-center text-lg" aria-hidden>
                     ⏱
                   </span>
                   <span className="flex-1 text-[15px]">Отдых по умолчанию</span>
-                  <span className="mr-2 shrink-0 text-[13px] text-muted">
+                  <span className="mr-2 shrink-0 text-[13px] text-gray-500 dark:text-[#888]">
                     {String(restSec)} с
                   </span>
                   <ChevronRight />
                 </button>
                 {restOpen ? (
-                  <div className="border-t border-[#232323] px-4 pb-4 pt-3">
-                    <p className="mb-2 text-xs text-muted">
+                  <div className="border-t border-gray-200 px-4 pb-4 pt-3 dark:border-[#232323]">
+                    <p className="mb-2 text-xs text-gray-500 dark:text-[#888]">
                       Для новых упражнений в конструкторе планов
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -420,7 +420,7 @@ export default function ProfilePage() {
                             className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                               sel
                                 ? "bg-accent text-white"
-                                : "bg-[#232323] text-muted hover:text-white"
+                                : "bg-gray-200 text-gray-600 hover:text-gray-900 dark:bg-[#232323] dark:text-[#888] dark:hover:text-white"
                             }`}
                           >
                             {String(sec)} с
@@ -432,12 +432,12 @@ export default function ProfilePage() {
                 ) : null}
               </div>
 
-              <div className="flex w-full items-center px-4 py-3.5 text-left text-[15px] text-white">
+              <div className="flex w-full items-center px-4 py-3.5 text-left text-[15px] text-gray-900 dark:text-white">
                 <span className="mr-3 w-6 shrink-0 text-center text-lg" aria-hidden>
                   ⚖️
                 </span>
                 <span className="flex-1 text-[15px]">Единицы измерения</span>
-                <span className="mr-2 max-w-[45%] shrink-0 truncate text-[13px] text-muted">
+                <span className="mr-2 max-w-[45%] shrink-0 truncate text-[13px] text-gray-500 dark:text-[#888]">
                   кг
                 </span>
                 <ChevronRight />
@@ -447,19 +447,19 @@ export default function ProfilePage() {
 
           <div className="mb-4">
             <SectionLabel label="Приложение" />
-            <div className="mx-4 overflow-hidden rounded-2xl border border-[#252525] bg-[#1a1a1a]">
+            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#252525] dark:bg-[#1a1a1a]">
               <button
                 type="button"
                 onClick={() => {
                   setThemeOpen(true);
                 }}
-                className="flex w-full items-center border-b border-[#232323] px-4 py-3.5 text-left text-white transition-colors hover:bg-white/[0.03]"
+                className="flex w-full items-center border-b border-gray-200 px-4 py-3.5 text-left text-gray-900 transition-colors hover:bg-neutral-100 dark:border-[#232323] dark:text-white dark:hover:bg-white/[0.03]"
               >
                 <span className="mr-3 w-6 shrink-0 text-center text-lg" aria-hidden>
                   🎨
                 </span>
                 <span className="flex-1 text-[15px]">Тема</span>
-                <span className="mr-2 shrink-0 text-[13px] text-muted">
+                <span className="mr-2 shrink-0 text-[13px] text-gray-500 dark:text-[#888]">
                   {themeLabel}
                 </span>
                 <ChevronRight />
@@ -471,7 +471,7 @@ export default function ProfilePage() {
                   setExportError(null);
                   setExportOpen(true);
                 }}
-                className="flex w-full items-center px-4 py-3.5 text-left text-white transition-colors hover:bg-white/[0.03]"
+                className="flex w-full items-center px-4 py-3.5 text-left text-gray-900 transition-colors hover:bg-neutral-100 dark:text-white dark:hover:bg-white/[0.03]"
               >
                 <span className="mr-3 w-6 shrink-0 text-center text-lg" aria-hidden>
                   📤
@@ -484,28 +484,28 @@ export default function ProfilePage() {
 
           <div className="mb-4">
             <SectionLabel label="Аккаунт" />
-            <div className="mx-4 overflow-hidden rounded-2xl border border-[#252525] bg-[#1a1a1a]">
-              <div className="border-b border-[#232323]">
+            <div className="mx-4 overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#252525] dark:bg-[#1a1a1a]">
+              <div className="border-b border-gray-200 dark:border-[#232323]">
                 <button
                   type="button"
                   onClick={() => {
                     openUsernameEdit();
                   }}
-                  className="flex w-full items-center px-4 py-3.5 text-left text-white transition-colors hover:bg-white/[0.03]"
+                  className="flex w-full items-center px-4 py-3.5 text-left text-gray-900 transition-colors hover:bg-neutral-100 dark:text-white dark:hover:bg-white/[0.03]"
                 >
                   <span className="mr-3 w-6 shrink-0 text-center text-lg" aria-hidden>
                     👤
                   </span>
                   <span className="flex-1 text-[15px]">Имя пользователя</span>
                   {username !== "—" ? (
-                    <span className="mr-2 max-w-[40%] shrink-0 truncate text-[13px] text-muted">
+                    <span className="mr-2 max-w-[40%] shrink-0 truncate text-[13px] text-gray-500 dark:text-[#888]">
                       {username}
                     </span>
                   ) : null}
                   <ChevronRight />
                 </button>
                 {usernameOpen ? (
-                  <div className="border-t border-[#232323] px-4 pb-4 pt-3">
+                  <div className="border-t border-gray-200 px-4 pb-4 pt-3 dark:border-[#232323]">
                     <input
                       value={usernameDraft}
                       onChange={(e) => {
@@ -513,14 +513,14 @@ export default function ProfilePage() {
                         setUsernameError(null);
                       }}
                       maxLength={LABEL_MAX}
-                      className="w-full rounded-xl border border-[#232323] bg-[#232323]/60 px-3 py-2.5 text-[15px] text-white caret-accent outline-none focus:border-accent/50"
+                      className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-[15px] text-gray-900 caret-accent outline-none focus:border-accent/50 dark:border-[#232323] dark:bg-[#232323]/60 dark:text-white"
                       placeholder="Новое имя"
                       autoComplete="username"
                     />
                     {usernameError ? (
                       <p className="mt-2 text-xs text-rose-400">{usernameError}</p>
                     ) : (
-                      <p className="mt-1.5 text-[11px] text-muted">
+                      <p className="mt-1.5 text-[11px] text-gray-500 dark:text-[#888]">
                         От {LABEL_MIN} до {LABEL_MAX} символов
                       </p>
                     )}
@@ -541,7 +541,7 @@ export default function ProfilePage() {
                         onClick={() => {
                           setUsernameOpen(false);
                         }}
-                        className="flex-1 rounded-xl border border-[#232323] py-2.5 text-sm font-semibold text-white"
+                        className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-semibold text-gray-900 dark:border-[#232323] dark:text-white"
                       >
                         Отмена
                       </button>
@@ -553,7 +553,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="flex w-full items-center px-4 py-3.5 text-left text-red-400 transition-colors hover:bg-white/[0.03]"
+                className="flex w-full items-center px-4 py-3.5 text-left text-red-400 transition-colors hover:bg-neutral-100 dark:hover:bg-white/[0.03]"
               >
                 <span className="mr-3 w-6 shrink-0 text-center text-lg" aria-hidden>
                   🚪
@@ -566,7 +566,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <p className="px-5 pb-7 pt-2 text-center text-xs text-muted">
+          <p className="px-5 pb-7 pt-2 text-center text-xs text-gray-500 dark:text-[#888]">
             IronLog v1.0.0
           </p>
         </>
@@ -574,7 +574,7 @@ export default function ProfilePage() {
 
       {themeOpen ? (
         <Overlay title="Тема" onClose={() => setThemeOpen(false)}>
-          <p className="mb-4 text-sm text-muted">
+          <p className="mb-4 text-sm text-gray-500 dark:text-[#888]">
             Оформление применяется сразу и сохраняется на устройстве.
           </p>
           <div className="flex gap-3">
@@ -585,8 +585,8 @@ export default function ProfilePage() {
               }}
               className={`flex-1 rounded-2xl border py-3 text-sm font-semibold transition ${
                 theme === "dark"
-                  ? "border-accent bg-accent/20 text-white ring-1 ring-accent"
-                  : "border-[#232323] bg-[#232323] text-muted hover:text-white"
+                  ? "border-accent bg-accent/20 text-gray-900 ring-1 ring-accent dark:text-white"
+                  : "border-gray-200 bg-gray-200 text-gray-600 hover:text-gray-900 dark:border-[#232323] dark:bg-[#232323] dark:text-[#888] dark:hover:text-white"
               }`}
             >
               Тёмная
@@ -598,8 +598,8 @@ export default function ProfilePage() {
               }}
               className={`flex-1 rounded-2xl border py-3 text-sm font-semibold transition ${
                 theme === "light"
-                  ? "border-accent bg-accent/20 text-white ring-1 ring-accent"
-                  : "border-[#232323] bg-[#232323] text-muted hover:text-white"
+                  ? "border-accent bg-accent/20 text-gray-900 ring-1 ring-accent dark:text-white"
+                  : "border-gray-200 bg-gray-200 text-gray-600 hover:text-gray-900 dark:border-[#232323] dark:bg-[#232323] dark:text-[#888] dark:hover:text-white"
               }`}
             >
               Светлая
@@ -611,12 +611,12 @@ export default function ProfilePage() {
       {exportOpen ? (
         <Overlay title="Экспорт тренировок" onClose={() => setExportOpen(false)}>
           {sessionHistory.isPending ? (
-            <p className="text-sm text-muted">Загрузка списка…</p>
+            <p className="text-sm text-gray-500 dark:text-[#888]">Загрузка списка…</p>
           ) : lastTenSessions.length === 0 ? (
-            <p className="text-sm text-muted">Пока нет завершённых тренировок.</p>
+            <p className="text-sm text-gray-500 dark:text-[#888]">Пока нет завершённых тренировок.</p>
           ) : (
             <>
-              <p className="mb-3 text-sm text-muted">
+              <p className="mb-3 text-sm text-gray-500 dark:text-[#888]">
                 Последние {String(lastTenSessions.length)} записей. Отметьте
                 нужные или экспортируйте все.
               </p>
@@ -634,7 +634,7 @@ export default function ProfilePage() {
                   return (
                     <li
                       key={s.session_id}
-                      className="flex items-start gap-3 rounded-xl border border-[#232323] bg-[#232323]/40 px-3 py-2"
+                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-100 px-3 py-2 dark:border-[#232323] dark:bg-[#232323]/40"
                     >
                       <input
                         type="checkbox"
@@ -648,10 +648,10 @@ export default function ProfilePage() {
                         }}
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-white">
+                        <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
                           {title}
                         </p>
-                        <p className="text-xs text-muted">{date}</p>
+                        <p className="text-xs text-gray-500 dark:text-[#888]">{date}</p>
                       </div>
                     </li>
                   );
@@ -675,7 +675,7 @@ export default function ProfilePage() {
                   type="button"
                   disabled={exportBusy || lastTenSessions.length === 0}
                   onClick={() => void runExportAll()}
-                  className="w-full rounded-2xl border border-[#232323] py-3 text-sm font-semibold text-white disabled:opacity-45"
+                  className="w-full rounded-2xl border border-gray-200 py-3 text-sm font-semibold text-gray-900 disabled:opacity-45 dark:border-[#232323] dark:text-white"
                 >
                   Экспортировать все
                 </button>
@@ -689,7 +689,7 @@ export default function ProfilePage() {
                     }
                     setExportSelected(all);
                   }}
-                  className="w-full rounded-2xl border border-[#232323]/80 py-2.5 text-xs font-semibold text-muted hover:text-white disabled:opacity-45"
+                  className="w-full rounded-2xl border border-gray-200/80 py-2.5 text-xs font-semibold text-gray-500 transition hover:text-gray-900 disabled:opacity-45 dark:border-[#232323]/80 dark:text-[#888] dark:hover:text-white"
                 >
                   Выбрать все в списке
                 </button>

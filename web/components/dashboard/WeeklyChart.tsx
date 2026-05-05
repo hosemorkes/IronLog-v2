@@ -15,22 +15,22 @@ export function WeeklyChart({ days }: WeeklyChartProps) {
   const maxT = Math.max(...days.map((d) => d.tonnage_kg), 1);
 
   return (
-    <section className="rounded-2xl border border-border bg-surface px-4 py-4">
-      <h2 className="text-sm font-semibold text-white">Активность — 7 дней</h2>
-      <p className="mt-1 text-xs text-muted">Поднято по дням (кг)</p>
+    <section className="rounded-2xl border border-gray-200 bg-gray-100 px-4 py-4 dark:border-border dark:bg-surface">
+      <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Активность — 7 дней</h2>
+      <p className="mt-1 text-xs text-gray-500 dark:text-[#888]">Поднято по дням (кг)</p>
       <div className="mt-4 flex justify-between gap-1.5">
         {days.map((d) => {
           const maxBarPx = 64;
           const h =
             maxT > 0 ? Math.round((d.tonnage_kg / maxT) * maxBarPx) : 0;
           const barH = Math.max(h || (d.tonnage_kg > 0 ? 4 : 3), 3);
-          let barClass = "bg-[#2a2a2a]";
+          let barClass = "bg-gray-200 dark:bg-[#2a2a2a]";
           if (d.is_today && d.tonnage_kg > 0) {
             barClass = "bg-emerald-500";
           } else if (d.tonnage_kg > 0) {
             barClass = "bg-accent";
           }
-          let labelClass = "text-[#555]";
+          let labelClass = "font-semibold text-gray-500 dark:text-[#555]";
           if (d.is_today) {
             labelClass = "font-semibold text-emerald-400";
           } else if (d.tonnage_kg > 0) {

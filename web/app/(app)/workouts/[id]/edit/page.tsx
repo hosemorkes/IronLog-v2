@@ -22,8 +22,8 @@ export default function WorkoutPlanEditPage() {
 
   if (!planId) {
     return (
-      <div className="flex min-h-full flex-col bg-bg-dark px-4 py-6">
-        <p className="text-sm text-muted">Некорректная ссылка.</p>
+      <div className="flex min-h-full flex-col bg-bg-light px-4 py-6 dark:bg-bg-dark">
+        <p className="text-sm text-gray-500 dark:text-muted">Некорректная ссылка.</p>
         <Link
           href="/workouts"
           className="mt-4 text-sm font-semibold text-accent"
@@ -36,14 +36,14 @@ export default function WorkoutPlanEditPage() {
 
   if (isPending) {
     return (
-      <div className="flex min-h-full flex-col bg-bg-dark">
-        <header className="border-b border-[#232323] px-5 py-3.5">
-          <div className="h-7 w-40 animate-pulse rounded-lg bg-[#1a1a1a]" />
+      <div className="flex min-h-full flex-col bg-bg-light dark:bg-bg-dark">
+        <header className="border-b border-gray-200 px-5 py-3.5 dark:border-[#232323]">
+          <div className="h-7 w-40 animate-pulse rounded-lg bg-gray-100 dark:bg-[#1a1a1a]" />
         </header>
         <div className="space-y-3 p-5" aria-busy aria-label="Загрузка плана">
-          <div className="h-12 animate-pulse rounded-xl bg-[#1a1a1a]" />
-          <div className="h-32 animate-pulse rounded-2xl bg-[#1a1a1a]" />
-          <div className="h-32 animate-pulse rounded-2xl bg-[#1a1a1a]" />
+          <div className="h-12 animate-pulse rounded-xl bg-gray-100 dark:bg-[#1a1a1a]" />
+          <div className="h-32 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
+          <div className="h-32 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
         </div>
       </div>
     );
@@ -51,7 +51,7 @@ export default function WorkoutPlanEditPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-full flex-col bg-bg-dark px-4 py-6">
+      <div className="flex min-h-full flex-col bg-bg-light px-4 py-6 dark:bg-bg-dark">
         <p className="rounded-xl border border-rose-500/35 px-4 py-4 text-sm text-rose-300">
           {(error as Error).message}
         </p>
@@ -67,8 +67,8 @@ export default function WorkoutPlanEditPage() {
 
   if (!plan) {
     return (
-      <div className="flex min-h-full flex-col bg-bg-dark px-4 py-6">
-        <p className="text-sm text-muted">План не найден.</p>
+      <div className="flex min-h-full flex-col bg-bg-light px-4 py-6 dark:bg-bg-dark">
+        <p className="text-sm text-gray-500 dark:text-muted">План не найден.</p>
         <Link
           href="/workouts"
           className="mt-4 text-sm font-semibold text-accent"
@@ -81,8 +81,8 @@ export default function WorkoutPlanEditPage() {
 
   if (plan.assigned_by_trainer) {
     return (
-      <div className="flex min-h-full flex-col bg-bg-dark px-4 py-6">
-        <p className="text-sm text-muted">
+      <div className="flex min-h-full flex-col bg-bg-light px-4 py-6 dark:bg-bg-dark">
+        <p className="text-sm text-gray-500 dark:text-muted">
           План, назначенный тренером, нельзя редактировать.
         </p>
         <Link

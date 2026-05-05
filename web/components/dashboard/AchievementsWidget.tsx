@@ -18,12 +18,12 @@ interface AchievementsWidgetProps {
  */
 export function AchievementsWidget({ items }: AchievementsWidgetProps) {
   return (
-    <section className="rounded-2xl border border-border bg-surface px-4 py-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
+    <section className="rounded-2xl border border-gray-200 bg-gray-100 px-4 py-4 dark:border-border dark:bg-surface">
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-[#888]">
         Достижения
       </h2>
       {items.length === 0 ? (
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-sm text-gray-500 dark:text-[#888]">
           Здесь появятся ачивки по мере тренировок.
         </p>
       ) : (
@@ -31,17 +31,17 @@ export function AchievementsWidget({ items }: AchievementsWidgetProps) {
           {items.map((a) => (
             <li
               key={a.achievement_id}
-              className="flex items-center gap-3 rounded-xl border border-border bg-bg-dark/50 px-3 py-2"
+              className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 dark:border-border dark:bg-bg-dark/50"
             >
               <span className="text-xl" aria-hidden>
                 {a.icon?.trim() || "🏅"}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-white">{a.name}</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{a.name}</p>
                 {a.description ? (
-                  <p className="truncate text-xs text-muted">{a.description}</p>
+                  <p className="truncate text-xs text-gray-500 dark:text-[#888]">{a.description}</p>
                 ) : null}
-                <p className="text-[10px] text-muted">
+                <p className="text-[10px] text-gray-500 dark:text-[#888]">
                   {df.format(new Date(a.unlocked_at))}
                 </p>
               </div>

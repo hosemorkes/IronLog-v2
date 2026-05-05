@@ -415,8 +415,8 @@ export default function ActiveSessionPage() {
 
   if (!planId) {
     return (
-      <div className="flex flex-1 flex-col bg-bg-dark p-6">
-        <p className="text-sm text-muted">Некорректная ссылка.</p>
+      <div className="flex flex-1 flex-col bg-bg-light p-6 dark:bg-bg-dark">
+        <p className="text-sm text-gray-500 dark:text-muted">Некорректная ссылка.</p>
         <Link href="/workouts" className="mt-4 text-accent">
           К планам
         </Link>
@@ -426,9 +426,9 @@ export default function ActiveSessionPage() {
 
   if (startError) {
     return (
-      <div className="flex flex-1 flex-col bg-bg-dark px-6 py-10">
+      <div className="flex flex-1 flex-col bg-bg-light px-6 py-10 dark:bg-bg-dark">
         <p className="text-center text-sm text-rose-300">{startError}</p>
-        <p className="mt-3 text-center text-xs text-muted">
+        <p className="mt-3 text-center text-xs text-gray-500 dark:text-muted">
           Если проблема не исчезла, откройте главную и начните снова.
         </p>
         <Link
@@ -449,17 +449,17 @@ export default function ActiveSessionPage() {
 
   if (!startSettled || planPending || !sessionId) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center bg-bg-dark px-6">
+      <div className="flex flex-1 flex-col items-center justify-center bg-bg-light px-6 dark:bg-bg-dark">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-        <p className="mt-4 text-sm text-muted">Подготовка тренировки…</p>
+        <p className="mt-4 text-sm text-gray-500 dark:text-muted">Подготовка тренировки…</p>
       </div>
     );
   }
 
   if (totalSteps === 0) {
     return (
-      <div className="flex flex-1 flex-col bg-bg-dark px-6 py-10">
-        <p className="text-center text-sm text-muted">
+      <div className="flex flex-1 flex-col bg-bg-light px-6 py-10 dark:bg-bg-dark">
+        <p className="text-center text-sm text-gray-500 dark:text-muted">
           В плане нет упражнений для выполнения.
         </p>
         <Link
@@ -476,13 +476,13 @@ export default function ActiveSessionPage() {
   const nextStep = steps[currentIdx + 1];
 
   return (
-    <div className="flex min-h-full flex-1 flex-col overflow-hidden bg-bg-dark pb-28">
+    <div className="flex min-h-full flex-1 flex-col overflow-hidden bg-bg-light pb-28 dark:bg-bg-dark">
       <header className="flex shrink-0 items-start justify-between gap-3 px-5 pb-3 pt-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-muted">
             В процессе
           </p>
-          <h1 className="truncate text-[15px] font-bold text-white">{planTitle}</h1>
+          <h1 className="truncate text-[15px] font-bold text-gray-900 dark:text-white">{planTitle}</h1>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2 sm:flex-row sm:items-center">
           <div className="rounded-full bg-accent/15 px-3 py-1 text-[13px] font-bold text-accent">
@@ -500,13 +500,13 @@ export default function ActiveSessionPage() {
       </header>
 
       <div className="shrink-0 px-5 pb-3">
-        <div className="h-1 overflow-hidden rounded-full bg-[#252525]">
+        <div className="h-1 overflow-hidden rounded-full bg-gray-200 dark:bg-[#252525]">
           <div
             className="h-full rounded-full bg-accent transition-[width] duration-300"
             style={{ width: `${String(progressPct)}%` }}
           />
         </div>
-        <div className="mt-1.5 flex justify-between text-[11px] text-muted">
+        <div className="mt-1.5 flex justify-between text-[11px] text-gray-500 dark:text-muted">
           <span>
             Подход {Math.min(completedSets + 1, totalSteps)} из {totalSteps}
           </span>
@@ -516,7 +516,7 @@ export default function ActiveSessionPage() {
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4">
         {restActive ? (
-          <div className="mb-4 rounded-2xl border border-accent/35 bg-[#1a1420] px-4 py-4">
+          <div className="mb-4 rounded-2xl border border-accent/35 bg-violet-50 px-4 py-4 dark:bg-[#1a1420]">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.55px] text-accent">
@@ -525,7 +525,7 @@ export default function ActiveSessionPage() {
                 <p className="mt-1 text-[34px] font-extrabold leading-none tracking-tight text-accent">
                   {formatClock(restRemaining)}
                 </p>
-                <p className="mt-2 text-xs text-muted">Цель: {restGoal}с</p>
+                <p className="mt-2 text-xs text-gray-500 dark:text-muted">Цель: {restGoal}с</p>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <div className="relative h-[58px] w-[58px]">
@@ -542,7 +542,7 @@ export default function ActiveSessionPage() {
                       r={RING_R}
                       fill="none"
                       strokeWidth={4}
-                      className="stroke-[#2a2040]"
+                      className="stroke-violet-200 dark:stroke-[#2a2040]"
                     />
                     <circle
                       cx={30}
@@ -574,19 +574,19 @@ export default function ActiveSessionPage() {
 
         {!restActive && curStep ? (
           <>
-            <section className="rounded-2xl border border-[#232323] bg-[#1a1a1a] p-4 text-center">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.55px] text-muted">
+            <section className="rounded-2xl border border-gray-200 bg-gray-100 p-4 text-center dark:border-[#232323] dark:bg-[#1a1a1a]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-muted">
                 Сейчас · Сет {curStep.setNum}
               </p>
-              <h2 className="mx-auto mt-3 max-w-[22ch] text-[22px] font-extrabold leading-tight text-white">
+              <h2 className="mx-auto mt-3 max-w-[22ch] text-[22px] font-extrabold leading-tight text-gray-900 dark:text-white">
                 {exerciseTitle(curStep.exercise)}
               </h2>
-              <p className="mt-2 text-sm text-muted">
+              <p className="mt-2 text-sm text-gray-500 dark:text-muted">
                 {curStep.exercise.muscle_group} · {curStep.exercise.equipment}
               </p>
-              <div className="mx-auto mt-5 flex max-w-xs justify-center gap-6 rounded-xl bg-[#252525] py-4">
+              <div className="mx-auto mt-5 flex max-w-xs justify-center gap-6 rounded-xl bg-gray-200 py-4 dark:bg-[#252525]">
                 <div>
-                  <p className="text-[11px] text-muted">План вес</p>
+                  <p className="text-[11px] text-gray-500 dark:text-muted">План вес</p>
                   <p className="mt-1 text-xl font-bold text-accent">
                     {curStep.targetWeightKg !== null
                       ? `${String(curStep.targetWeightKg)} кг`
@@ -594,7 +594,7 @@ export default function ActiveSessionPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] text-muted">План повторы</p>
+                  <p className="text-[11px] text-gray-500 dark:text-muted">План повторы</p>
                   <p className="mt-1 text-xl font-bold text-accent">
                     {curStep.targetReps}
                   </p>
@@ -602,8 +602,8 @@ export default function ActiveSessionPage() {
               </div>
             </section>
 
-            <section className="mt-4 space-y-3 rounded-2xl border border-[#232323] bg-[#1a1a1a] p-4">
-              <p className="text-center text-[11px] font-semibold uppercase tracking-wide text-muted">
+            <section className="mt-4 space-y-3 rounded-2xl border border-gray-200 bg-gray-100 p-4 dark:border-[#232323] dark:bg-[#1a1a1a]">
+              <p className="text-center text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-muted">
                 Факт
               </p>
               <label className="block">
@@ -612,7 +612,7 @@ export default function ActiveSessionPage() {
                   inputMode="decimal"
                   value={weightDraft}
                   onChange={(e) => setWeightDraft(e.target.value)}
-                  className="w-full rounded-xl border border-[#232323] bg-[#141414] px-4 py-3 text-center text-2xl font-bold text-white caret-accent outline-none focus:border-accent/50"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-center text-2xl font-bold text-gray-900 caret-accent outline-none focus:border-accent/50 dark:border-[#232323] dark:bg-[#141414] dark:text-white"
                   placeholder="Вес (кг)"
                 />
               </label>
@@ -622,7 +622,7 @@ export default function ActiveSessionPage() {
                   inputMode="numeric"
                   value={repsDraft}
                   onChange={(e) => setRepsDraft(e.target.value)}
-                  className="w-full rounded-xl border border-[#232323] bg-[#141414] px-4 py-3 text-center text-2xl font-bold text-white caret-accent outline-none focus:border-accent/50"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-center text-2xl font-bold text-gray-900 caret-accent outline-none focus:border-accent/50 dark:border-[#232323] dark:bg-[#141414] dark:text-white"
                   placeholder="Повторы"
                 />
               </label>
@@ -639,22 +639,22 @@ export default function ActiveSessionPage() {
               ].map((s) => (
                 <div
                   key={s.l}
-                  className="rounded-xl border border-[#232323] bg-[#1a1a1a] py-2.5 text-center"
+                  className="rounded-xl border border-gray-200 bg-gray-100 py-2.5 text-center dark:border-[#232323] dark:bg-[#1a1a1a]"
                 >
                   <div className="text-[13px] font-bold text-accent">{s.v}</div>
-                  <div className="mt-0.5 text-[10px] text-muted">{s.l}</div>
+                  <div className="mt-0.5 text-[10px] text-gray-500 dark:text-muted">{s.l}</div>
                 </div>
               ))}
             </div>
 
             {nextStep ? (
-              <div className="mt-4 flex items-center gap-3 rounded-xl border border-[#232323] bg-[#1a1a1a] px-3 py-3">
-                <span className="text-muted" aria-hidden>
+              <div className="mt-4 flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-100 px-3 py-3 dark:border-[#232323] dark:bg-[#1a1a1a]">
+                <span className="text-gray-500 dark:text-muted" aria-hidden>
                   →
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] text-muted">Следующее</p>
-                  <p className="truncate text-[13px] font-semibold text-white">
+                  <p className="text-[10px] text-gray-500 dark:text-muted">Следующее</p>
+                  <p className="truncate text-[13px] font-semibold text-gray-900 dark:text-white">
                     {exerciseTitle(nextStep.exercise)} · сет {nextStep.setNum}
                   </p>
                 </div>
@@ -665,7 +665,7 @@ export default function ActiveSessionPage() {
       </div>
 
       {!restActive && curStep ? (
-        <div className="fixed bottom-0 left-0 right-0 border-t border-[#232323] bg-bg-dark p-4 pb-8">
+        <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-bg-light p-4 pb-8 dark:border-[#232323] dark:bg-bg-dark">
           <button
             type="button"
             onClick={() => void handleCompleteSet()}

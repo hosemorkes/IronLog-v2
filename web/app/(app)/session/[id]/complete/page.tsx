@@ -131,8 +131,8 @@ function SessionCompleteContent() {
 
   if (!resolvedSessionId) {
     return (
-      <div className="flex min-h-full flex-1 flex-col bg-bg-dark px-6 py-16">
-        <p className="text-center text-sm text-muted">
+      <div className="flex min-h-full flex-1 flex-col bg-bg-light dark:bg-bg-dark px-6 py-16">
+        <p className="text-center text-sm text-gray-500 dark:text-muted">
           Не указана сессия (параметр session_id). Откройте экран из
           завершённой тренировки.
         </p>
@@ -148,16 +148,16 @@ function SessionCompleteContent() {
 
   if (isPending) {
     return (
-      <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-bg-dark px-6">
+      <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-bg-light dark:bg-bg-dark px-6">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-        <p className="mt-4 text-sm text-muted">Загрузка итогов…</p>
+        <p className="mt-4 text-sm text-gray-500 dark:text-muted">Загрузка итогов…</p>
       </div>
     );
   }
 
   if (error || !detail) {
     return (
-      <div className="flex min-h-full flex-1 flex-col bg-bg-dark px-6 py-16">
+      <div className="flex min-h-full flex-1 flex-col bg-bg-light dark:bg-bg-dark px-6 py-16">
         <p className="text-center text-sm text-rose-300">
           {(error as Error)?.message ?? "Не удалось загрузить сессию"}
         </p>
@@ -173,17 +173,17 @@ function SessionCompleteContent() {
 
   if (!detail.completed_at && ensurePending) {
     return (
-      <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-bg-dark px-6">
+      <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-bg-light dark:bg-bg-dark px-6">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-        <p className="mt-4 text-sm text-muted">Завершаем тренировку…</p>
+        <p className="mt-4 text-sm text-gray-500 dark:text-muted">Завершаем тренировку…</p>
       </div>
     );
   }
 
   if (!detail.completed_at) {
     return (
-      <div className="flex min-h-full flex-1 flex-col bg-bg-dark px-6 py-16">
-        <p className="text-center text-sm text-muted">
+      <div className="flex min-h-full flex-1 flex-col bg-bg-light dark:bg-bg-dark px-6 py-16">
+        <p className="text-center text-sm text-gray-500 dark:text-muted">
           Тренировка ещё не завершена.
         </p>
         {planId ? (
@@ -199,12 +199,12 @@ function SessionCompleteContent() {
   }
 
   return (
-    <div className="flex min-h-full flex-1 flex-col items-center bg-bg-dark px-6 pb-16 pt-10">
+    <div className="flex min-h-full flex-1 flex-col items-center bg-bg-light dark:bg-bg-dark px-6 pb-16 pt-10">
       <div className="text-[64px] leading-none">🏆</div>
-      <h1 className="mt-4 text-center text-[26px] font-extrabold text-white">
+      <h1 className="mt-4 text-center text-[26px] font-extrabold text-gray-900 dark:text-white">
         Тренировка завершена!
       </h1>
-      <p className="mt-2 text-center text-[15px] text-muted">Отличная работа!</p>
+      <p className="mt-2 text-center text-[15px] text-gray-500 dark:text-muted">Отличная работа!</p>
 
       {stats ? (
         <div className="mt-8 grid w-full max-w-md grid-cols-2 gap-3">
@@ -219,31 +219,31 @@ function SessionCompleteContent() {
           ].map((card) => (
             <div
               key={card.l}
-              className="rounded-2xl border border-[#232323] bg-[#1a1a1a] px-4 py-4 text-center"
+              className="rounded-2xl border border-gray-200 bg-gray-100 px-4 py-4 text-center dark:border-[#232323] dark:bg-[#1a1a1a]"
             >
               <div className="text-[22px] font-extrabold text-accent">{card.v}</div>
-              <div className="mt-1 text-xs text-muted">{card.l}</div>
+              <div className="mt-1 text-xs text-gray-500 dark:text-muted">{card.l}</div>
             </div>
           ))}
         </div>
       ) : null}
 
-      <div className="mt-8 w-full max-w-md overflow-hidden rounded-2xl border border-[#232323] bg-[#1a1a1a]">
-        <div className="border-b border-[#232323] px-4 py-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.55px] text-muted">
+      <div className="mt-8 w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#232323] dark:bg-[#1a1a1a]">
+        <div className="border-b border-gray-200 px-4 py-3 dark:border-[#232323]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-muted">
             Поделиться тренировкой
           </p>
-          <p className="mt-1 text-xs text-muted">
+          <p className="mt-1 text-xs text-gray-500 dark:text-muted">
             Скопируй и отправь в Telegram, заметки или куда угодно
           </p>
         </div>
-        <div className="relative max-h-[120px] overflow-hidden px-4 py-2.5 font-mono text-[11px] leading-relaxed text-muted">
+        <div className="relative max-h-[120px] overflow-hidden px-4 py-2.5 font-mono text-[11px] leading-relaxed text-gray-500 dark:text-muted">
           {exportPreviewLines.map((line, i) => (
             <p key={`pv-${String(i)}`} className="truncate">
               {line}
             </p>
           ))}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#1a1a1a] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-gray-100 to-transparent dark:from-[#1a1a1a]" />
         </div>
         <div className="p-3 pt-0">
           <button
@@ -255,7 +255,7 @@ function SessionCompleteContent() {
             Поделиться
           </button>
           {copyHint ? (
-            <p className="mt-2 text-center text-xs text-muted">{copyHint}</p>
+            <p className="mt-2 text-center text-xs text-gray-500 dark:text-muted">{copyHint}</p>
           ) : null}
         </div>
       </div>
@@ -290,8 +290,8 @@ export default function SessionCompletePage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-full flex-1 items-center justify-center bg-bg-dark">
-          <p className="text-sm text-muted">Загрузка…</p>
+        <div className="flex min-h-full flex-1 items-center justify-center bg-bg-light dark:bg-bg-dark">
+          <p className="text-sm text-gray-500 dark:text-muted">Загрузка…</p>
         </div>
       }
     >

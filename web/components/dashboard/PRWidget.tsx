@@ -17,12 +17,12 @@ interface PRWidgetProps {
  */
 export function PRWidget({ items }: PRWidgetProps) {
   return (
-    <section className="rounded-2xl border border-border bg-surface px-4 py-4">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
+    <section className="rounded-2xl border border-gray-200 bg-gray-100 px-4 py-4 dark:border-border dark:bg-surface">
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-[#888]">
         Личные рекорды
       </h2>
       {items.length === 0 ? (
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-sm text-gray-500 dark:text-[#888]">
           Рекорды появятся, когда вы побите прошлый объём по упражнению в
           тренировке.
         </p>
@@ -31,19 +31,19 @@ export function PRWidget({ items }: PRWidgetProps) {
           {items.slice(0, 3).map((pr) => (
             <li
               key={`${pr.exercise_id}-${pr.achieved_at}-${pr.set_num}`}
-              className="flex items-start justify-between gap-3 rounded-xl border border-border bg-bg-dark/50 px-3 py-2.5"
+              className="flex items-start justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 dark:border-border dark:bg-bg-dark/50"
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-white">
+                <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
                   {pr.exercise_name}
                 </p>
-                <p className="text-xs text-muted">
+                <p className="text-xs text-gray-500 dark:text-[#888]">
                   Подход {pr.set_num}:{" "}
                   {pr.weight_kg != null
                     ? `${nf.format(pr.weight_kg)} кг × ${pr.reps_done}`
                     : `${pr.reps_done} повт.`}
                 </p>
-                <p className="text-[11px] text-muted/90">
+                <p className="text-[11px] text-gray-500/90 dark:text-[#888]">
                   Объём {nf.format(Math.round(pr.volume_kg))} кг ·{" "}
                   {df.format(new Date(pr.achieved_at))}
                 </p>

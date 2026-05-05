@@ -12,7 +12,7 @@ import {
 import { useCreateCustomExercise } from "@/lib/hooks/useExercises";
 
 const cardClass =
-  "rounded-2xl border border-[#232323] bg-[#1a1a1a] p-4 sm:p-5";
+  "rounded-2xl border border-gray-200 bg-gray-100 p-4 sm:p-5 dark:border-[#232323] dark:bg-[#1a1a1a]";
 
 export default function NewCustomExercisePage() {
   const router = useRouter();
@@ -57,12 +57,15 @@ export default function NewCustomExercisePage() {
     );
   };
 
+  const fieldInputClass =
+    "mt-2 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-3 text-[15px] text-gray-900 caret-accent outline-none ring-1 ring-transparent transition placeholder:text-gray-400 focus:border-accent/40 focus:ring-accent/35 dark:border-[#232323] dark:bg-[#232323]/60 dark:text-white dark:placeholder:text-[#888]";
+
   return (
-    <div className="flex min-h-full flex-1 flex-col bg-bg-dark pb-28 pt-4">
+    <div className="flex min-h-full flex-1 flex-col bg-bg-light pb-28 pt-4 dark:bg-bg-dark">
       <header className="flex shrink-0 flex-wrap items-center gap-3 px-5 pb-4">
         <Link
           href="/exercises"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-muted transition hover:text-white"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:text-gray-900 dark:bg-[#1a1a1a] dark:text-[#888] dark:hover:text-white"
           aria-label="Назад к каталогу"
         >
           <svg width={18} height={18} viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -75,14 +78,14 @@ export default function NewCustomExercisePage() {
             />
           </svg>
         </Link>
-        <h1 className="text-[22px] font-extrabold tracking-tight text-white">
+        <h1 className="text-[22px] font-extrabold tracking-tight text-gray-900 dark:text-white">
           Новое упражнение
         </h1>
       </header>
 
       <main className="flex flex-1 flex-col gap-4 px-5">
         <section className={cardClass}>
-          <label className="block text-[13px] font-semibold text-white">
+          <label className="block text-[13px] font-semibold text-gray-900 dark:text-white">
             Название
             <span className="text-rose-400"> *</span>
           </label>
@@ -90,7 +93,7 @@ export default function NewCustomExercisePage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Например: Сгибания на бицепс стоя"
-            className="mt-2 w-full rounded-xl border border-[#232323] bg-[#232323]/60 px-3.5 py-3 text-[15px] text-white caret-accent outline-none ring-1 ring-transparent transition placeholder:text-muted focus:border-accent/40 focus:ring-accent/35"
+            className={fieldInputClass}
           />
         </section>
 
@@ -128,15 +131,16 @@ export default function NewCustomExercisePage() {
         />
 
         <section className={cardClass}>
-          <label className="block text-[13px] font-semibold text-white">
-            Описание <span className="font-normal text-muted">(необязательно)</span>
+          <label className="block text-[13px] font-semibold text-gray-900 dark:text-white">
+            Описание{" "}
+            <span className="font-normal text-gray-500 dark:text-muted">(необязательно)</span>
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={5}
             placeholder="Техника, заметки..."
-            className="mt-2 w-full resize-y rounded-xl border border-[#232323] bg-[#232323]/60 px-3.5 py-3 text-[15px] leading-relaxed text-white caret-accent outline-none ring-1 ring-transparent transition placeholder:text-muted focus:border-accent/40 focus:ring-accent/35"
+            className={`${fieldInputClass} resize-y leading-relaxed`}
           />
         </section>
 
@@ -147,7 +151,7 @@ export default function NewCustomExercisePage() {
         ) : null}
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 z-[1] border-t border-[#232323] bg-bg-dark/95 px-5 pb-[max(env(safe-area-inset-bottom,0px),1rem)] pt-3 backdrop-blur-sm">
+      <footer className="fixed bottom-0 left-0 right-0 z-[1] border-t border-gray-200 bg-bg-light/95 px-5 pb-[max(env(safe-area-inset-bottom,0px),1rem)] pt-3 backdrop-blur-sm dark:border-[#232323] dark:bg-bg-dark/95">
         <button
           type="button"
           disabled={!canSubmit || createMut.isPending}
@@ -176,7 +180,7 @@ function ChipSection<T extends string>({
 }) {
   return (
     <section className={cardClass}>
-      <h2 className="text-[13px] font-semibold text-white">
+      <h2 className="text-[13px] font-semibold text-gray-900 dark:text-white">
         {title}
         {required ? <span className="text-rose-400"> *</span> : null}
       </h2>
@@ -193,7 +197,7 @@ function ChipSection<T extends string>({
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                 sel
                   ? "bg-accent text-white"
-                  : "bg-[#232323] text-muted hover:text-white"
+                  : "bg-gray-200 text-gray-600 hover:text-gray-900 dark:bg-[#232323] dark:text-[#888] dark:hover:text-white"
               }`}
             >
               {opt.label}

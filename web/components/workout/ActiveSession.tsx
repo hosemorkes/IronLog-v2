@@ -267,7 +267,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
   if (isLoading || !detail) {
     return (
       <div className="flex flex-1 items-center justify-center px-6 py-16">
-        <p className="text-sm text-muted">Загрузка тренировки…</p>
+        <p className="text-sm text-gray-500 dark:text-muted">Загрузка тренировки…</p>
       </div>
     );
   }
@@ -292,17 +292,17 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center px-6 py-16">
         <p className="text-6xl mb-4">🏆</p>
-        <h2 className="mb-6 text-xl font-bold text-white">Тренировка завершена</h2>
+        <h2 className="mb-6 text-xl font-bold text-gray-900 dark:text-white">Тренировка завершена</h2>
         <dl className="grid w-full grid-cols-2 gap-3 text-center text-sm">
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <dt className="text-muted">Объём</dt>
+          <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface p-4">
+            <dt className="text-gray-500 dark:text-muted">Объём</dt>
             <dd className="text-lg font-bold text-accent">
               {detail.total_volume_kg ?? "—"} кг
             </dd>
           </div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
-            <dt className="text-muted">Подходов</dt>
-            <dd className="text-lg font-bold text-white">{detail.sets.length}</dd>
+          <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface p-4">
+            <dt className="text-gray-500 dark:text-muted">Подходов</dt>
+            <dd className="text-lg font-bold text-gray-900 dark:text-white">{detail.sets.length}</dd>
           </div>
         </dl>
         <Link
@@ -321,7 +321,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
         exerciseOptions.find((e) => e.id === workspace.freestyleExerciseId));
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden bg-bg-dark pb-28">
+    <div className="flex flex-1 flex-col overflow-hidden bg-bg-light pb-28 dark:bg-bg-dark">
       {workspace.prHighlight && (
         <div className="border-b border-amber-500/45 bg-amber-500/20 px-4 py-2 text-center text-sm font-bold text-amber-200">
           Новый рекорд!
@@ -330,10 +330,10 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
 
       <header className="flex shrink-0 items-start justify-between gap-3 px-5 pb-4 pt-3">
         <div className="min-w-0">
-          <p className="mb-0.5 text-[11px] font-semibold uppercase tracking-wide text-muted">
+          <p className="mb-0.5 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-muted">
             В процессе
           </p>
-          <h1 className="truncate text-base font-bold text-white">
+          <h1 className="truncate text-base font-bold text-gray-900 dark:text-white">
             {planQuery.data?.name ?? "Тренировка"}
           </h1>
         </div>
@@ -352,7 +352,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
       </header>
 
       <section className="shrink-0 px-5 pb-3">
-        <div className="h-1 overflow-hidden rounded bg-white/10">
+        <div className="h-1 overflow-hidden rounded bg-gray-200 dark:bg-white/10">
           <div
             className="h-full rounded bg-accent transition-[width] duration-500"
             style={{
@@ -363,7 +363,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
             }}
           />
         </div>
-        <div className="mt-2 flex justify-between text-[11px] text-muted">
+        <div className="mt-2 flex justify-between text-[11px] text-gray-500 dark:text-muted">
           <span>
             {hasPlanSteps
               ? `Шаг ${Math.min(workspace.currentStepIndex + 1, steps.length)} из ${steps.length}`
@@ -375,8 +375,8 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4">
         {/* Карточка текущего упражнения */}
-        <article className="flex gap-3 rounded-2xl border border-border bg-surface p-3">
-          <div className="h-28 w-28 shrink-0 overflow-hidden rounded-xl border border-border bg-[#252525]">
+        <article className="flex gap-3 rounded-2xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface p-3">
+          <div className="h-28 w-28 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-200 dark:border-border dark:bg-[#252525]">
             {displayExercise && "image_url" in displayExercise && displayExercise.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -387,23 +387,23 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
             ) : (
               <span
                 aria-hidden
-                className="flex h-full w-full items-center justify-center text-2xl text-muted"
+                className="flex h-full w-full items-center justify-center text-2xl text-gray-500 dark:text-muted"
               >
                 ◎
               </span>
             )}
           </div>
           <div className="min-w-0 flex-1 py-1">
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-muted">
               Сейчас
             </p>
-            <h2 className="truncate text-lg font-bold leading-tight">
+            <h2 className="truncate text-lg font-bold leading-tight text-gray-900 dark:text-white">
               {!hasPlanSteps
                 ? freestyleTitle
                 : exerciseCardTitle(activePlanStep)}
             </h2>
             {displayExercise && (
-              <p className="mt-1 line-clamp-2 text-[12px] text-muted">
+              <p className="mt-1 line-clamp-2 text-[12px] text-gray-500 dark:text-muted">
                 {displayExercise.muscle_group} ·{" "}
                 {"equipment" in displayExercise ? displayExercise.equipment : ""}
               </p>
@@ -413,7 +413,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
 
         {!hasPlanSteps && (
           <label className="block space-y-1">
-            <span className="text-[11px] font-semibold text-muted">
+            <span className="text-[11px] font-semibold text-gray-500 dark:text-muted">
               Упражнение
             </span>
             <select
@@ -423,7 +423,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
                   .getState()
                   .setFreestyleExerciseId(e.target.value || null)
               }
-              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-white"
+              className="w-full rounded-xl border border-gray-200 bg-gray-100 px-3 py-2 text-gray-900 dark:border-border dark:bg-surface dark:text-white"
             >
               <option value="">Выберите…</option>
               {exerciseOptions.map((e) => (
@@ -440,7 +440,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="flex-1 rounded-xl border border-border py-3 text-white disabled:opacity-40"
+              className="flex-1 rounded-xl border border-gray-200 py-3 text-gray-900 disabled:opacity-40 dark:border-border dark:text-white"
               disabled={
                 workspace.currentStepIndex <= 0 || workspace.restActive
               }
@@ -452,7 +452,7 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
             </button>
             <button
               type="button"
-              className="flex-1 rounded-xl border border-border py-3 text-white disabled:opacity-40"
+              className="flex-1 rounded-xl border border-gray-200 py-3 text-gray-900 disabled:opacity-40 dark:border-border dark:text-white"
               disabled={
                 workspace.currentStepIndex >= steps.length - 1 ||
                 workspace.restActive
@@ -468,14 +468,14 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
 
         <div className="grid grid-cols-2 gap-3">
           <label className="space-y-1">
-            <span className="text-[11px] font-semibold text-muted">
+            <span className="text-[11px] font-semibold text-gray-500 dark:text-muted">
               Повторы
             </span>
             <input
               type="number"
               min={1}
               inputMode="numeric"
-              className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-white"
+              className="w-full rounded-xl border border-gray-200 bg-gray-100 px-3 py-3 text-gray-900 dark:border-border dark:bg-surface dark:text-white"
               value={workspace.repsDraft}
               onChange={(e) =>
                 useSessionWorkspace.setState({ repsDraft: e.target.value })
@@ -486,14 +486,14 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
             />
           </label>
           <label className="space-y-1">
-            <span className="text-[11px] font-semibold text-muted">
+            <span className="text-[11px] font-semibold text-gray-500 dark:text-muted">
               Вес, кг
             </span>
             <input
               type="text"
               inputMode="decimal"
               placeholder="—"
-              className="w-full rounded-xl border border-border bg-surface px-3 py-3 text-white"
+              className="w-full rounded-xl border border-gray-200 bg-gray-100 px-3 py-3 text-gray-900 dark:border-border dark:bg-surface dark:text-white"
               value={workspace.weightDraft}
               onChange={(e) =>
                 useSessionWorkspace.setState({ weightDraft: e.target.value })
@@ -515,35 +515,35 @@ export function ActiveSession({ sessionId }: ActiveSessionProps) {
         )}
 
         <div className="grid grid-cols-3 gap-2 pb-2 text-center">
-          <div className="rounded-xl border border-border bg-surface p-2">
+          <div className="rounded-xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface p-2">
             <p className="text-[13px] font-bold text-accent">
               {formatDuration(workspace.elapsedSeconds)}
             </p>
-            <p className="text-[10px] text-muted">время</p>
+            <p className="text-[10px] text-gray-500 dark:text-muted">время</p>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-2">
+          <div className="rounded-xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface p-2">
             <p className="text-[13px] font-bold text-accent">
               {new Intl.NumberFormat("ru-RU").format(tonnageKg)} кг
             </p>
-            <p className="text-[10px] text-muted">поднято*</p>
+            <p className="text-[10px] text-gray-500 dark:text-muted">поднято*</p>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-2">
+          <div className="rounded-xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface p-2">
             <p className="text-[13px] font-bold text-accent">
               {completedProgress}/{steps.length || "—"}
             </p>
-            <p className="text-[10px] text-muted">шаги</p>
+            <p className="text-[10px] text-gray-500 dark:text-muted">шаги</p>
           </div>
         </div>
-        <p className="pb-14 text-[10px] text-muted">
+        <p className="pb-14 text-[10px] text-gray-500 dark:text-muted">
           *Приближённо: суммируются только подходы с указанным весом согласно API.
         </p>
 
         {nextStepPreview && (
-          <div className="flex items-start gap-2 rounded-xl border border-border bg-surface/80 p-3 text-left text-[13px]">
-            <span className="text-muted">›</span>
+          <div className="flex items-start gap-2 rounded-xl border border-gray-200 bg-gray-100 dark:border-border dark:bg-surface/80 p-3 text-left text-[13px]">
+            <span className="text-gray-500 dark:text-muted">›</span>
             <div>
-              <div className="text-[10px] text-muted">Следующее</div>
-              <div className="font-semibold text-white">
+              <div className="text-[10px] text-gray-500 dark:text-muted">Следующее</div>
+              <div className="font-semibold text-gray-900 dark:text-white">
                 {exerciseCardTitle(nextStepPreview)}
               </div>
             </div>

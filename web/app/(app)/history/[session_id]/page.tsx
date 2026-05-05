@@ -161,8 +161,8 @@ export default function SessionHistoryDetailPage() {
 
   if (!sessionId) {
     return (
-      <div className="min-h-full bg-bg-dark px-4 py-6 text-white">
-        <p className="text-sm text-muted">Некорректная ссылка.</p>
+      <div className="min-h-full bg-bg-light px-4 py-6 text-gray-900 dark:bg-bg-dark dark:text-white">
+        <p className="text-sm text-gray-500 dark:text-muted">Некорректная ссылка.</p>
         <Link
           href="/history"
           className="mt-4 inline-block text-sm font-semibold text-[#7c6ef2] hover:underline"
@@ -174,11 +174,11 @@ export default function SessionHistoryDetailPage() {
   }
 
   return (
-    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-bg-dark pb-10">
-      <header className="flex shrink-0 items-center gap-3 border-b border-[#232323] bg-bg-dark px-4 py-3">
+    <div className="no-scrollbar flex min-h-full flex-1 flex-col bg-bg-light pb-10 dark:bg-bg-dark">
+      <header className="flex shrink-0 items-center gap-3 border-b border-gray-200 bg-bg-light px-4 py-3 dark:border-[#232323] dark:bg-bg-dark">
         <Link
           href="/history"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition hover:bg-[#252525] hover:text-white"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-200 hover:text-gray-900 dark:text-muted dark:hover:bg-[#252525] dark:hover:text-white"
           aria-label="Назад к истории"
         >
           <svg
@@ -196,7 +196,7 @@ export default function SessionHistoryDetailPage() {
             />
           </svg>
         </Link>
-        <h1 className="min-w-0 truncate text-lg font-bold text-white">
+        <h1 className="min-w-0 truncate text-lg font-bold text-gray-900 dark:text-white">
           Тренировка
         </h1>
       </header>
@@ -204,19 +204,19 @@ export default function SessionHistoryDetailPage() {
       <main className="flex-1 px-4 pt-4">
         {isPending ? (
           <div className="space-y-3" aria-busy aria-label="Загрузка">
-            <div className="h-20 animate-pulse rounded-2xl bg-[#1a1a1a]" />
+            <div className="h-20 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
             <div className="grid grid-cols-3 gap-2.5">
               {[0, 1, 2].map((k) => (
                 <div
                   key={k}
-                  className="h-[72px] animate-pulse rounded-2xl bg-[#1a1a1a]"
+                  className="h-[72px] animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]"
                 />
               ))}
             </div>
-            <div className="h-40 animate-pulse rounded-2xl bg-[#1a1a1a]" />
+            <div className="h-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-[#1a1a1a]" />
           </div>
         ) : isError ? (
-          <div className="rounded-2xl border border-rose-500/35 bg-[#1a1a1a] px-4 py-4">
+          <div className="rounded-2xl border border-rose-500/35 bg-gray-100 px-4 py-4 dark:bg-[#1a1a1a]">
             <p className="text-sm text-rose-300">{(error as Error).message}</p>
             <Link
               href="/history"
@@ -231,7 +231,7 @@ export default function SessionHistoryDetailPage() {
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#7c6ef2]">
                 {planName}
               </p>
-              <p className="mt-1 text-xl font-extrabold capitalize leading-tight text-white">
+              <p className="mt-1 text-xl font-extrabold capitalize leading-tight text-gray-900 dark:text-white">
                 {titleDate}
               </p>
             </div>
@@ -252,22 +252,22 @@ export default function SessionHistoryDetailPage() {
               ).map((c) => (
                 <div
                   key={c.l}
-                  className="rounded-2xl border border-[#232323] bg-[#1a1a1a] px-1.5 py-3 text-center"
+                  className="rounded-2xl border border-gray-200 bg-gray-100 px-1.5 py-3 text-center dark:border-[#232323] dark:bg-[#1a1a1a]"
                 >
                   <p className="text-sm font-extrabold leading-tight text-[#7c6ef2]">
                     {c.v}
                   </p>
-                  <p className="mt-1 text-[10px] text-muted">{c.l}</p>
+                  <p className="mt-1 text-[10px] text-gray-500 dark:text-muted">{c.l}</p>
                 </div>
               ))}
             </div>
 
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-500 dark:text-muted">
               Упражнения
             </p>
 
             {exerciseBlocks.length === 0 ? (
-              <p className="rounded-2xl border border-[#232323] bg-[#1a1a1a] px-4 py-6 text-center text-sm text-muted">
+              <p className="rounded-2xl border border-gray-200 bg-gray-100 px-4 py-6 text-center text-sm text-gray-500 dark:border-[#232323] dark:bg-[#1a1a1a] dark:text-muted">
                 Нет записанных подходов.
               </p>
             ) : (
@@ -275,15 +275,15 @@ export default function SessionHistoryDetailPage() {
                 {exerciseBlocks.map((ex) => (
                   <div
                     key={ex.exercise_id}
-                    className="overflow-hidden rounded-2xl border border-[#232323] bg-[#1a1a1a]"
+                    className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 dark:border-[#232323] dark:bg-[#1a1a1a]"
                   >
-                    <p className="border-b border-[#232323] px-4 py-3 text-sm font-bold text-white">
+                    <p className="border-b border-gray-200 px-4 py-3 text-sm font-bold text-gray-900 dark:border-[#232323] dark:text-white">
                       {ex.exercise_name}
                     </p>
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[260px] text-left text-sm">
                         <thead>
-                          <tr className="border-b border-[#232323] text-[11px] text-muted">
+                          <tr className="border-b border-gray-200 text-[11px] text-gray-500 dark:border-[#232323] dark:text-muted">
                             <th className="px-4 py-2.5 font-semibold">Сет</th>
                             <th className="px-4 py-2.5 font-semibold">Вес</th>
                             <th className="px-4 py-2.5 font-semibold">
@@ -295,15 +295,15 @@ export default function SessionHistoryDetailPage() {
                           {ex.sets.map((row) => (
                             <tr
                               key={`${ex.exercise_id}-${row.set_num}`}
-                              className="border-t border-[#232323]"
+                              className="border-t border-gray-200 dark:border-[#232323]"
                             >
-                              <td className="px-4 py-2.5 tabular-nums text-white">
+                              <td className="px-4 py-2.5 tabular-nums text-gray-900 dark:text-white">
                                 {row.set_num}
                               </td>
-                              <td className="px-4 py-2.5 text-white">
+                              <td className="px-4 py-2.5 text-gray-900 dark:text-white">
                                 {formatWeightCell(row.weight_kg)}
                               </td>
-                              <td className="px-4 py-2.5 tabular-nums text-white">
+                              <td className="px-4 py-2.5 tabular-nums text-gray-900 dark:text-white">
                                 {row.reps_done}
                               </td>
                             </tr>
