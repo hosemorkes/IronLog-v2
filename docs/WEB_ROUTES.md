@@ -1,6 +1,6 @@
 # Web (PWA) — маршруты и ответственность
 
-Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фактическое состояние репозитория: **15 экранов** (файлов `app/**/page.tsx`). Отдельное приложение **admin** в дереве проекта может отсутствовать — страницы админки здесь не перечислены.
+Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фактическое состояние репозитория: **16 экранов** (файлов `app/**/page.tsx`). Отдельное приложение **admin** в дереве проекта может отсутствовать — страницы админки здесь не перечислены.
 
 ## Таблица маршрутов
 
@@ -10,7 +10,8 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 | `/login` | `web/app/(auth)/login/page.tsx` | Вход. |
 | `/signup` | `web/app/(auth)/signup/page.tsx` | Регистрация. |
 | `/dashboard` | `web/app/(app)/dashboard/page.tsx` | Главный дашборд после входа. |
-| `/history` | `web/app/(app)/history/page.tsx` | История тренировок. |
+| `/history` | `web/app/(app)/history/page.tsx` | История тренировок; каждая карточка ведёт на `/history/[session_id]`. |
+| `/history/[session_id]` | `web/app/(app)/history/[session_id]/page.tsx` | Деталь завершённой сессии: план, дата, время, объём, таблицы подходов по упражнениям. Данные: **`GET /api/user/sessions/{session_id}`** (хук **`useSessionDetail`** в `useSessions.ts`). |
 | `/progress` | `web/app/(app)/progress/page.tsx` | Прогресс и статистика. (сейчас слился с /dashboard) |
 | `/profile` | `web/app/(app)/profile/page.tsx` | Профиль пользователя. |
 | `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека упражнений. |
@@ -38,7 +39,7 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 |-----------|------|------|
 | Группа `(app)` | `web/app/(app)/layout.tsx` | Защищённая зона: `AppAuthGuard` (JWT), контейнер с `AppShell`. |
 | Оболочка | `web/components/navigation/AppShell.tsx` | Отступ под нижнюю панель; на маршрутах `/session/*` нижняя навигация **не показывается**. |
-| Нижняя навигация | `web/components/navigation/BottomNav.tsx` | Четыре вкладки: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`). Остальные экраны открываются по ссылкам с этих страниц и из контента. |
+| Нижняя навигация | `web/components/navigation/BottomNav.tsx` | Четыре вкладки: **Старт** (`/dashboard`), **История** (`/history`), **Планы** (`/workouts`), **Профиль** (`/profile`). Остальные экраны открываются по ссылкам с этих страниц и из контента. С дашборда блок **«Последняя тренировка»** ведёт на **`/history/[session_id]`** (при активной сессии кнопка «Продолжить» остаётся ссылкой на **`/session/[plan_id]`**). |
 
 Группа `(auth)` (`login`, `signup`) не использует layout `(app)` — отдельные экраны без нижней навигации.
 

@@ -44,6 +44,7 @@ docker-compose exec api python -m seeds.achievements
 # Планы — http://localhost:3000/workouts (новый: /workouts/new; карточка: /workouts/<id>; редактирование: /workouts/<id>/edit)
 # Профиль — http://localhost:3000/profile
 # История тренировок — http://localhost:3000/history
+# Деталь тренировки (журнал подходов) — http://localhost:3000/history/<session_id> (UUID сессии; список из истории и с дашборда «Последняя тренировка»)
 # /progress — редирект на /dashboard
 # Активная тренировка по плану (JWT) — http://localhost:3000/session/<plan_id>
 #   (POST /api/user/sessions через apiFetch при монте; при 409 с активной сессией подставляется active_session_id из ответа;
@@ -83,6 +84,7 @@ docker-compose exec api python -m seeds.achievements
 | `/progress` | редирект на `/dashboard` |
 | Профиль | http://localhost:3000/profile |
 | История тренировок | http://localhost:3000/history |
+| Деталь тренировки (подходы) | http://localhost:3000/history/[session_id] (`session_id` — UUID сессии из API) |
 | Активная тренировка | http://localhost:3000/session/[plan_id] (`plan_id` из карточки плана; не UUID сессии) |
 | Итоги тренировки | `/session/[plan_id]/complete?session_id=<uuid>` (`sessionId` — устаревший алиас) |
 | Admin Panel (:3002) | сервис **`admin` в compose по умолчанию закомментирован**; после раскомментирования — http://localhost:3002 |
@@ -112,7 +114,7 @@ docker-compose exec api python -m seeds.achievements
 | Аутентификация | `POST /api/auth/login`, `POST /api/auth/signup`, `GET /api/auth/me` (по JWT), `POST /api/auth/refresh`, `POST /api/auth/logout` |
 | Справочник | `GET /api/exercises`, `GET /api/exercises/{id}` |
 | Планы пользователя | `GET/POST /api/user/plans`, `GET/PUT/DELETE /api/user/plans/{id}`, `POST .../duplicate` |
-| Журнал тренировок | `POST /api/user/sessions`, `GET /api/user/sessions`, `GET/PUT /api/user/sessions/{id}`, `POST .../sets` |
+| Журнал тренировок | `POST /api/user/sessions`, `GET /api/user/sessions`, `GET /api/user/sessions/{id}` (сессия пользователя: `sets` — подходы с полным `exercise`; `exercises` — группировка по упражнению: `set_num`, `reps_done`, `weight_kg`), `PUT .../{id}` (завершить), `POST .../{id}/sets` |
 | Прогресс и дашборд | `GET /api/user/progress`, `GET /api/user/progress/weekly` (календарная неделя Пн–Вс), `GET /api/user/progress/recent-prs`, `GET /api/user/sessions`, `GET /api/user/achievements` |
 
 После **`PUT`** завершения сессии API ставит в очередь Dramatiq задачи **`check_achievements`** и **`update_stats`**.  

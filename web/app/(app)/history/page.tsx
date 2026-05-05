@@ -183,45 +183,50 @@ export default function HistoryPage() {
                 const vol = parseVolumeKg(s.total_volume_kg ?? null);
                 return (
                   <li key={s.session_id}>
-                    <article className="rounded-2xl border border-[#232323] bg-[#1a1a1a] p-4">
-                      <div className="mb-2.5 flex justify-between gap-2">
-                        <div className="min-w-0">
-                          <h2 className="text-base font-bold text-white">
-                            {title}
-                          </h2>
-                          <p className="mt-1 text-xs text-muted">
-                            {dateStr}
-                            {dur !== "—" ? ` · ${dur}` : ""}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-6">
-                        {(
-                          [
-                            {
-                              v: "—",
-                              l: "сетов",
-                            },
-                            {
-                              v:
-                                vol != null
-                                  ? `${nf.format(Math.round(vol))} кг`
-                                  : "—",
-                              l: "поднято",
-                            },
-                          ] as const
-                        ).map((row) => (
-                          <div key={row.l}>
-                            <div className="text-[15px] font-bold text-accent">
-                              {row.v}
-                            </div>
-                            <div className="mt-0.5 text-[11px] text-muted">
-                              {row.l}
-                            </div>
+                    <Link
+                      href={`/history/${s.session_id}`}
+                      className="block rounded-2xl border border-[#232323] bg-[#1a1a1a] p-4 transition-opacity hover:opacity-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7c6ef2]"
+                    >
+                      <article>
+                        <div className="mb-2.5 flex justify-between gap-2">
+                          <div className="min-w-0">
+                            <h2 className="text-base font-bold text-white">
+                              {title}
+                            </h2>
+                            <p className="mt-1 text-xs text-muted">
+                              {dateStr}
+                              {dur !== "—" ? ` · ${dur}` : ""}
+                            </p>
                           </div>
-                        ))}
-                      </div>
-                    </article>
+                        </div>
+                        <div className="flex gap-6">
+                          {(
+                            [
+                              {
+                                v: "—",
+                                l: "сетов",
+                              },
+                              {
+                                v:
+                                  vol != null
+                                    ? `${nf.format(Math.round(vol))} кг`
+                                    : "—",
+                                l: "поднято",
+                              },
+                            ] as const
+                          ).map((row) => (
+                            <div key={row.l}>
+                              <div className="text-[15px] font-bold text-[#7c6ef2]">
+                                {row.v}
+                              </div>
+                              <div className="mt-0.5 text-[11px] text-muted">
+                                {row.l}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </article>
+                    </Link>
                   </li>
                 );
               })}

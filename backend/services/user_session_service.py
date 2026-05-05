@@ -18,6 +18,8 @@ from models.user import User
 from models.workout_plan import PlanExercise, WorkoutPlan
 from models.workout_session import WorkoutSession, WorkoutSet
 from schemas.workout_session import (
+    SessionDetailExerciseItem,
+    SessionDetailSetItem,
     SessionExercisePreview,
     WorkoutSessionCompleteResponse,
     WorkoutSessionDetailResponse,
@@ -304,6 +306,41 @@ async def list_sessions(
     return WorkoutSessionHistoryResponse(items=items, total=total)
 
 
+def _session_exercise_groups(
+    sorted_sets: list[WorkoutSet],
+) -> list[SessionDetailExerciseItem]:
+    """Сгруппировать подходы по упражнению (порядок — как первое появление в сессии)."""
+    by_ex: dict[UUID, list[WorkoutSet]] = {}
+    order: list[UUID] = []
+    for ws in sorted_sets:
+        if ws.exercise_id not in by_ex:
+            by_ex[ws.exercise_id] = []
+            order.append(ws.exercise_id)
+        by_ex[ws.exercise_id].append(ws)
+
+    blocks: list[SessionDetailExerciseItem] = []
+    for eid in order:
+        rows = by_ex[eid]
+        ex = rows[0].exercise
+        label = (ex.name_ru or ex.name or "").strip() or "—"
+        rows_sorted = sorted(rows, key=lambda r: (r.set_num, r.created_at))
+        blocks.append(
+            SessionDetailExerciseItem(
+                exercise_id=eid,
+                exercise_name=label,
+                sets=[
+                    SessionDetailSetItem(
+                        set_num=r.set_num,
+                        reps_done=r.reps_done,
+                        weight_kg=r.weight_kg,
+                    )
+                    for r in rows_sorted
+                ],
+            ),
+        )
+    return blocks
+
+
 async def get_session_detail(
     db: AsyncSession,
     user: User,
@@ -328,6 +365,7 @@ async def get_session_detail(
         )
         for ws in sorted_sets
     ]
+    exercise_groups = _session_exercise_groups(sorted_sets)
 
     return WorkoutSessionDetailResponse(
         session_id=session.id,
@@ -337,6 +375,7 @@ async def get_session_detail(
         total_volume_kg=session.total_volume_kg,
         notes=session.notes,
         sets=set_items,
+        exercises=exercise_groups,
     )
 
 

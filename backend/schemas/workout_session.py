@@ -68,6 +68,22 @@ class WorkoutSetItemResponse(BaseModel):
     is_pr: bool
 
 
+class SessionDetailSetItem(BaseModel):
+    """Подход в группе упражнений (история / детальный просмотр)."""
+
+    set_num: int
+    reps_done: int
+    weight_kg: Decimal | None
+
+
+class SessionDetailExerciseItem(BaseModel):
+    """Упражнение в детали сессии: подходы по порядку."""
+
+    exercise_id: UUID
+    exercise_name: str
+    sets: list[SessionDetailSetItem]
+
+
 class WorkoutSessionDetailResponse(BaseModel):
     """Детали сессии с подходами."""
 
@@ -78,6 +94,14 @@ class WorkoutSessionDetailResponse(BaseModel):
     total_volume_kg: Decimal | None
     notes: str | None
     sets: list[WorkoutSetItemResponse]
+    exercises: list[SessionDetailExerciseItem] = Field(
+        default_factory=list,
+        description="Подходы, сгруппированные по упражнению (для истории и отчётов)",
+    )
+
+
+# Алиас для контрактов «деталь сессии» в журнале пользователя.
+SessionDetailResponse = WorkoutSessionDetailResponse
 
 
 class WorkoutSetLogBody(BaseModel):

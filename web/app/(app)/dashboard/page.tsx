@@ -288,8 +288,13 @@ export default function DashboardPage() {
           />
         ) : hasToken ? (
           lastCompletedSession ? (
-            <section className="rounded-2xl border border-border bg-surface p-4">
-              <div className="flex items-start justify-between gap-3">
+            <section className="relative rounded-2xl border border-border bg-surface p-4">
+              <Link
+                href={`/history/${lastCompletedSession.session_id}`}
+                className="absolute inset-0 z-0 rounded-2xl"
+                aria-label={`Подробнее о тренировке «${lastPlanName}»`}
+              />
+              <div className="pointer-events-none relative z-[1] flex items-start justify-between gap-3">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-accent">
                     Последняя тренировка
@@ -301,13 +306,13 @@ export default function DashboardPage() {
                 {activeSessionId && activePlanId ? (
                   <Link
                     href={`/session/${activePlanId}`}
-                    className="shrink-0 rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 text-[11px] font-semibold text-accent"
+                    className="pointer-events-auto relative z-[2] shrink-0 rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 text-[11px] font-semibold text-accent"
                   >
                     Продолжить →
                   </Link>
                 ) : null}
               </div>
-              <p className="mt-2 capitalize text-xs text-muted">
+              <p className="pointer-events-none relative z-[1] mt-2 capitalize text-xs text-muted">
                 {lastCompletedSession.completed_at
                   ? dfSession.format(
                       new Date(lastCompletedSession.completed_at),
@@ -319,7 +324,7 @@ export default function DashboardPage() {
                   lastCompletedSession.completed_at,
                 )}
               </p>
-              <p className="mt-1 text-sm text-white">
+              <p className="pointer-events-none relative z-[1] mt-1 text-sm text-white">
                 Поднято:{" "}
                 {(() => {
                   const v = parseVolumeKg(

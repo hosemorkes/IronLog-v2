@@ -31,6 +31,15 @@ async function fetchSessionDetail(sessionId: string) {
       duration_seconds: number | null;
       is_pr: boolean;
     }>;
+    exercises?: Array<{
+      exercise_id: string;
+      exercise_name: string;
+      sets: Array<{
+        set_num: number;
+        reps_done: number;
+        weight_kg: string | null;
+      }>;
+    }>;
   }>;
 }
 

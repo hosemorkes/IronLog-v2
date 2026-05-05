@@ -11,10 +11,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.session import get_db
 from dependencies.auth import get_current_user
 from models.user import User
+from schemas.user_sessions import SessionDetailResponse
 from schemas.workout_session import (
     WorkoutSessionCompleteBody,
     WorkoutSessionCompleteResponse,
-    WorkoutSessionDetailResponse,
     WorkoutSessionHistoryResponse,
     WorkoutSessionStartBody,
     WorkoutSessionStartResponse,
@@ -52,13 +52,13 @@ async def list_sessions(
     return await user_session_service.list_sessions(db, current_user, limit=limit, offset=offset)
 
 
-@router.get("/{session_id}", response_model=WorkoutSessionDetailResponse)
+@router.get("/{session_id}", response_model=SessionDetailResponse)
 async def get_session(
     session_id: UUID,
     db: Annotated[AsyncSession, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
-) -> WorkoutSessionDetailResponse:
-    """Детали сессии и залогированные подходы."""
+) -> SessionDetailResponse:
+    """Детали сессии, подходы (sets) и группировка по упражнениям (exercises)."""
     return await user_session_service.get_session_detail(db, current_user, session_id)
 
 

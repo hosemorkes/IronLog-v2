@@ -41,6 +41,18 @@ export interface PlanDetailDto {
   updated_at: string;
 }
 
+export interface SessionDetailExerciseSetDto {
+  set_num: number;
+  reps_done: number;
+  weight_kg: string | number | null;
+}
+
+export interface SessionDetailExerciseDto {
+  exercise_id: string;
+  exercise_name: string;
+  sets: SessionDetailExerciseSetDto[];
+}
+
 export interface SessionSetDto {
   id: string;
   exercise_id: string;
@@ -60,4 +72,6 @@ export interface SessionDetailDto {
   total_volume_kg: string | null;
   notes: string | null;
   sets: SessionSetDto[];
+  /** Сгруппированные упражнения (GET /user/sessions/:id). */
+  exercises?: SessionDetailExerciseDto[];
 }

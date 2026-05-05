@@ -116,11 +116,12 @@ DELETE /api/user/plans/{id}
 ### Сессии (логирование)
 ```
 POST   /api/user/sessions                    начать тренировку
-GET    /api/user/sessions                    история
-GET    /api/user/sessions/{id}
+GET    /api/user/sessions                    история (пагинация)
+GET    /api/user/sessions/{id}               детали сессии владельца: session_id, plan_id, started_at,
+                                          completed_at, total_volume_kg, notes; sets — подходы с полным exercise;
+                                          exercises — группировка: exercise_id, exercise_name, sets[{set_num, reps_done, weight_kg}]
 POST   /api/user/sessions/{id}/sets          логировать подход
 PUT    /api/user/sessions/{id}               завершить
-DELETE /api/user/sessions/{id}
 ```
 
 ### Прогресс

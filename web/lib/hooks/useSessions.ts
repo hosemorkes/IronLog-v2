@@ -187,12 +187,13 @@ export function invalidateAfterSessionComplete(qc: QueryClient): void {
 }
 
 /**
- * Детали сессии GET /user/sessions/:id (после завершения — для экрана итогов).
+ * Детали сессии GET /user/sessions/:id (активная или завершённая).
+ * Ответ включает `sets` и `exercises` (группировка по упражнению для истории).
  */
 export function useSessionDetail(sessionId: string | null) {
   return useQuery({
     queryKey: ["workout-session", sessionId],
-    enabled: Boolean(sessionId),
+    enabled: Boolean(sessionId) && isSessionHistoryEnabled(),
     queryFn: async (): Promise<SessionDetailDto> => {
       const res = await apiFetch(`/user/sessions/${sessionId}`);
       if (!res.ok) {
