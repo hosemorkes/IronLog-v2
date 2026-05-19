@@ -74,7 +74,9 @@ ironlog/                                   # Корневая папка
 │   │       └── 001_initial.py
 │   │
 │   ├── seeds/                             # Начальные данные
-│   │   ├── exercises.py                   # 60+ упражнений из списка
+│   │   ├── db.py                          # DATABASE_URL для CLI-сидов
+│   │   ├── exercises.py                   # 60+ упражнений из PRODUCT_NOTES (RU)
+│   │   ├── import_exercisedb.py           # Опционально: импорт ExerciseDB → Postgres + MinIO
 │   │   └── achievements.py                # Определения ачивок
 │   │
 │   └── tests/
@@ -253,4 +255,12 @@ shell:
 
 psql:
 	docker-compose exec postgres psql -U ironlog -d ironlog
+
+import-exercises:
+	docker-compose exec api python -m seeds.import_exercisedb --api-key $(RAPIDAPI_KEY)
+
+import-exercises-no-gifs:
+	docker-compose exec api python -m seeds.import_exercisedb --api-key $(RAPIDAPI_KEY) --skip-gifs
 ```
+
+Импорт ExerciseDB: ключ **`RAPIDAPI_KEY`** в **`backend/.env`** (или `make import-exercises RAPIDAPI_KEY=...`). Скрипт идемпотентен по полю `name` (англ.).

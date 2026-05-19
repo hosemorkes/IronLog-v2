@@ -28,7 +28,33 @@ class ExerciseListResponse(BaseModel):
     equipment: str
     difficulty: str
     image_url: str | None
+    gif_url: str | None = None
     tags: list[str] = Field(description="Группа мышц + доп. мышцы для тегов")
+
+
+class ExerciseGifUrlResponse(BaseModel):
+    """Временная presigned-ссылка на GIF упражнения в MinIO."""
+
+    url: str | None = None
+
+
+class ExerciseResponse(BaseModel):
+    """Ответ упражнения; gif_url — внутренний путь в MinIO (не presigned URL)."""
+
+    id: UUID
+    name: str
+    name_ru: str
+    muscle_group: str
+    secondary_muscles: list[str] | None
+    equipment: str
+    difficulty: str
+    description: str | None
+    technique_steps: Any | None
+    image_url: str | None
+    gif_url: str | None = None
+    created_by: UUID | None
+    is_active: bool
+    created_at: datetime
 
 
 class ExerciseDetailResponse(BaseModel):

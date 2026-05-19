@@ -17,6 +17,8 @@ cp .env.example .env
 
 cp backend/.env.example backend/.env
 # Минимум для API: SECRET_KEY (JWT); в docker-compose URL БД, Redis, RabbitMQ и MinIO подставляются в environment сервиса api.
+# Корневой .env — пароли инфраструктуры (Postgres, Redis, MinIO root). backend/.env — SECRET_KEY, RAPIDAPI_KEY (импорт ExerciseDB), локальные URL при pytest.
+# MinIO: MINIO_ROOT_PASSWORD в корне = MINIO_SECRET_KEY у API в compose; не путать с RAPIDAPI_KEY (только backend/.env).
 
 # Фронт вне Docker (локальная разработка):
 cp web/.env.local.example web/.env.local
@@ -34,6 +36,10 @@ docker-compose exec api alembic upgrade head
 # 5. Сиды — наполнить БД упражнениями и ачивками (один раз)
 docker-compose exec api python -m seeds.exercises
 docker-compose exec api python -m seeds.achievements
+
+# Опционально: каталог из ExerciseDB (RapidAPI) — см. backend/.env RAPIDAPI_KEY
+# make import-exercises-no-gifs RAPIDAPI_KEY=...   # только данные
+# make import-exercises RAPIDAPI_KEY=...           # данные + GIF в MinIO
 
 # 6. Открыть приложение
 # Главная — http://localhost:3000 (лендинг: вход / регистрация; если в localStorage уже есть ironlog_access_token — редирект на /dashboard)
@@ -112,7 +118,7 @@ docker-compose exec api python -m seeds.achievements
 | Область | Примеры |
 |---------|---------|
 | Аутентификация | `POST /api/auth/login`, `POST /api/auth/signup`, `GET /api/auth/me` (роль в ответе), `PUT /api/auth/me` (смена `username`, 3–30 символов), `POST /api/auth/refresh`, `POST /api/auth/logout` |
-| Справочник упражнений | `GET /api/exercises`, `GET /api/exercises/{id}` (публично); `POST /api/exercises` — **тренер/админ**; `POST /api/user/exercises` — **любой авторизованный** (кастомное упражнение, `created_by` = текущий пользователь) |
+| Справочник упражнений | `GET /api/exercises`, `GET /api/exercises/{id}` (публично); `GET /api/exercises/{id}/gif-url` — presigned GIF (1 ч); `POST /api/exercises` — **тренер/админ**; `POST /api/user/exercises` — **любой авторизованный** (кастомное упражнение, `created_by` = текущий пользователь) |
 | Планы пользователя | `GET/POST /api/user/plans`, `GET/PUT/DELETE /api/user/plans/{id}`, `POST .../duplicate` |
 | Журнал тренировок | `POST /api/user/sessions`, `GET /api/user/sessions`, `GET /api/user/sessions/{id}` (сессия пользователя: `sets` — подходы с полным `exercise`; `exercises` — группировка по упражнению: `set_num`, `reps_done`, `weight_kg`), `PUT .../{id}` (завершить), `POST .../{id}/sets` |
 | Прогресс и дашборд | `GET /api/user/progress`, `GET /api/user/progress/weekly` (календарная неделя Пн–Вс), `GET /api/user/progress/recent-prs`, `GET /api/user/sessions`, `GET /api/user/achievements` |
@@ -178,6 +184,10 @@ docker-compose exec api alembic upgrade head
 
 # Тесты backend в контейнере
 docker-compose exec api pytest
+
+# Импорт ExerciseDB (нужен RAPIDAPI_KEY в backend/.env или в команде make)
+# make import-exercises-no-gifs RAPIDAPI_KEY=your_key
+# make import-exercises RAPIDAPI_KEY=your_key
 
 # Тесты backend локально (интерпретатор только из backend/.venv, см. docs/VENV_SETUP.md)
 # Windows:  cd backend && .venv\Scripts\python -m pytest

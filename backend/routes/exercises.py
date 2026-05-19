@@ -14,10 +14,12 @@ from core.config import get_settings
 from database.session import get_db
 from dependencies.auth import require_admin, require_trainer_or_admin
 from dependencies.infra import get_minio, get_redis
+from models.exercise import Exercise
 from models.user import User
 from schemas.exercise import (
     ExerciseCreate,
     ExerciseDetailResponse,
+    ExerciseGifUrlResponse,
     ExerciseListResponse,
     ExerciseUpdate,
 )
@@ -49,6 +51,27 @@ async def list_exercises(
         limit=limit,
         offset=offset,
     )
+
+
+@router.get("/{exercise_id}/gif-url", response_model=ExerciseGifUrlResponse)
+async def get_exercise_gif_url(
+    exercise_id: UUID,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    minio: Annotated[Minio, Depends(get_minio)],
+) -> ExerciseGifUrlResponse:
+    """Временная presigned-ссылка на GIF (TTL 1 ч); при отсутствии файла — url: null."""
+    exercise = await db.get(Exercise, exercise_id)
+    if exercise is None or not exercise.is_active:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Упражнение не найдено")
+    if not exercise.gif_url:
+        return ExerciseGifUrlResponse(url=None)
+    settings = get_settings()
+    url = await storage_service.presigned_exercise_gif_url(
+        client=minio,
+        settings=settings,
+        object_path=exercise.gif_url,
+    )
+    return ExerciseGifUrlResponse(url=url)
 
 
 @router.get("/{exercise_id}", response_model=ExerciseDetailResponse)

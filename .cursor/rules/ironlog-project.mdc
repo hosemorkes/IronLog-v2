@@ -35,6 +35,23 @@ alwaysApply: true
 
 **Дизайн web:** dark `bg #141414`, surface `#1c1c1c`, border `#252525`, accent `#7c6ef2`, blue `#5ba3d9`, text `#fff`, muted `#888`; light `bg #f5f5f5`, surface `#fff`, border `#e8e8e8`. Макеты: `exercise_library_mockup.html`, `exercise_detail_mockup.html`. Сиды упражнений и ачивки: `docs/PRODUCT_NOTES.md`.
 
+**Web UI — светлая и тёмная тема:** любые новые экраны и заметные правки в `web/` (и при работе с UI в `admin/`) должны корректно выглядеть в **обеих** темах. В Tailwind уже `darkMode: "class"`: базовые классы под светлую тему, тёмная через `dark:*`. Следуй существующим паттернам (`bg-bg-light` + `dark:bg-bg-dark`, `text-gray-900` + `dark:text-white`, `border-gray-200` + `dark:border-...`, `text-gray-500` + `dark:text-muted`). Не добавляй экраны только под одну тему без явной договорённости.
+
+**Синхронизация документации:** если изменения по задаче затрагивают перечисленное — **в том же заходе** обнови соответствующие файлы (не откладывай без просьбы пользователя).
+
+| Изменение | Файл |
+|-----------|------|
+| API, аутентификация, WebSocket, сущности данных | `docs/ARCHITECTURE.md` |
+| Сервисы в compose, воркеры Dramatiq, очереди, фоновые задачи, порты инфры | `docs/MICROSERVICES.md` |
+| Структура каталогов репозитория | `docs/PROJECT_STRUCTURE.md` |
+| Маршруты и экраны web, навигация, профиль/тема | `docs/WEB_ROUTES.md` |
+| Продукт, каталог упражнений для сидов, ачивки | `docs/PRODUCT_NOTES.md` |
+| Локальный venv/pytest workflow | `docs/VENV_SETUP.md` |
+| Команды запуска, деплой, ключевые env, onboarding | корневой `README.md` |
+| Появился новый файл в `docs/` или крупный новый раздел | `docs/README.md` (индекс таблицы) |
+
+Для точечного прохода только по докам: субагент **`/documentation`** или скилл **`@ironlog-docs-sync`** (проект: `.cursor/skills/ironlog-docs-sync/`).
+
 **Опасные зоны:** не править файлы миграций вручную; секреты только через `.env`; не отдавать пароли/`hashed_password` из API.
 
 **Безопасность:** JWT access/refresh; bcrypt; CORS из env; MinIO через presigned URL; без секретов в репозитории.

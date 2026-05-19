@@ -100,9 +100,11 @@ POST   /api/auth/refresh
 ```
 GET    /api/exercises              фильтры: muscle_group, equipment, difficulty
 GET    /api/exercises/{id}
+GET    /api/exercises/{id}/gif-url presigned URL на demo.gif (TTL 1 ч); в БД — только путь, не URL
 POST   /api/exercises              TRAINER/ADMIN (полная форма)
 PUT    /api/exercises/{id}         TRAINER/ADMIN
 DELETE /api/exercises/{id}         ADMIN
+POST   /api/exercises/{id}/upload-image  TRAINER/ADMIN — картинка в MinIO
 
 POST   /api/user/exercises         любой JWT — кастомное упражнение (created_by = пользователь)
 ```
@@ -243,12 +245,17 @@ queue:analytics              → аналитика
 ```
 
 ### MinIO
+
+Бакет по умолчанию: **`ironlog-exercises`** (`MINIO_BUCKET_EXERCISES`). Ключи объектов:
+
 ```
 exercises/{exercise_id}/image.jpg
-exercises/{exercise_id}/demo.gif
+exercises/{exercise_id}/demo.gif   # gif_url в БД — этот путь; клиенту — GET .../gif-url (presigned)
 user-uploads/{user_id}/avatar.jpg
 user-uploads/{user_id}/workout-{session_id}.mp4
 ```
+
+Опциональное наполнение каталога из **ExerciseDB** (RapidAPI): `python -m seeds.import_exercisedb` — см. `Makefile`, `RAPIDAPI_KEY` в `backend/.env`.
 
 ### RabbitMQ очереди
 ```

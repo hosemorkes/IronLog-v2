@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import uuid
+from datetime import timedelta
 from pathlib import PurePosixPath
 from uuid import UUID
 
@@ -11,6 +12,8 @@ from fastapi import UploadFile
 from minio import Minio
 
 from core.config import Settings
+
+GIF_PRESIGNED_TTL_SECONDS = 3600
 
 
 def _build_public_object_url(settings: Settings, bucket: str, object_name: str) -> str:
@@ -65,3 +68,28 @@ async def upload_exercise_image_object(
 
     await asyncio.to_thread(_put)
     return _build_public_object_url(settings, bucket, object_name)
+
+
+async def presigned_exercise_gif_url(
+    *,
+    client: Minio,
+    settings: Settings,
+    object_path: str,
+    expires_seconds: int = GIF_PRESIGNED_TTL_SECONDS,
+) -> str:
+    """
+    Возвращает временный presigned GET URL для объекта GIF упражнения.
+
+    ``object_path`` — ключ в бакете, например ``exercises/{uuid}/demo.gif``.
+    """
+    bucket = settings.minio_bucket_exercises
+    safe_name = PurePosixPath(object_path).as_posix()
+
+    def _presign() -> str:
+        return client.presigned_get_object(
+            bucket,
+            safe_name,
+            expires=timedelta(seconds=expires_seconds),
+        )
+
+    return await asyncio.to_thread(_presign)

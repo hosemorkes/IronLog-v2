@@ -64,10 +64,12 @@ IronLog использует монолитный подход на старте
 **Что хранит:** бинарные файлы.
 
 Бакеты:
-- `exercises` — images и GIF демонстрации упражнений
-- `user-uploads` — аватары, видео тренировок (опц.)
+- **`ironlog-exercises`** (env `MINIO_BUCKET_EXERCISES`) — изображения и GIF упражнений (`exercises/{id}/…`)
+- `user-uploads` — аватары, видео тренировок (опц., по мере реализации)
 
-Доступ: API работает только через presigned URL (прямого публичного доступа нет).
+Доступ: GIF для клиента — **`GET /api/exercises/{id}/gif-url`** (presigned GET, TTL 1 ч). В PostgreSQL в `gif_url` хранится только ключ объекта, не полный URL.
+
+Учётные данные API к MinIO в Docker: `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` из `environment` сервиса **api** (берутся из корневого `.env`: `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`).
 
 ---
 
