@@ -1,4 +1,4 @@
-.PHONY: up down logs migrate seed test shell psql import-exercises import-exercises-no-gifs
+.PHONY: up down logs migrate seed test shell psql import-exercises import-exercises-no-gifs import-free-exercises import-free-exercises-no-images
 
 up:
 	docker-compose up -d
@@ -29,3 +29,9 @@ import-exercises:
 
 import-exercises-no-gifs:
 	docker-compose exec api python -m seeds.import_exercisedb --api-key $(RAPIDAPI_KEY) --skip-gifs
+
+import-free-exercises:
+	docker compose exec api python -m seeds.import_free_exercise_db
+
+import-free-exercises-no-images:
+	docker compose exec api python -m seeds.import_free_exercise_db --skip-images

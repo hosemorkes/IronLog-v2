@@ -76,7 +76,10 @@ ironlog/                                   # Корневая папка
 │   ├── seeds/                             # Начальные данные
 │   │   ├── db.py                          # DATABASE_URL для CLI-сидов
 │   │   ├── exercises.py                   # 60+ упражнений из PRODUCT_NOTES (RU)
-│   │   ├── import_exercisedb.py           # Опционально: импорт ExerciseDB → Postgres + MinIO
+│   │   ├── import_exercisedb.py           # Опционально: ExerciseDB (RapidAPI) → Postgres + MinIO (GIF)
+│   │   ├── import_free_exercise_db.py     # Опционально: free-exercise-db JSON → Postgres + MinIO (image.jpg)
+│   │   ├── exercises_raw.json             # Офлайн-дамп каталога (EN), в .gitignore
+│   │   ├── exercises_translated.json      # free-exercise-db + name_ru (RU, ~873), в .gitignore
 │   │   └── achievements.py                # Определения ачивок
 │   │
 │   └── tests/
@@ -261,6 +264,14 @@ import-exercises:
 
 import-exercises-no-gifs:
 	docker-compose exec api python -m seeds.import_exercisedb --api-key $(RAPIDAPI_KEY) --skip-gifs
+
+import-free-exercises:
+	docker compose exec api python -m seeds.import_free_exercise_db
+
+import-free-exercises-no-images:
+	docker compose exec api python -m seeds.import_free_exercise_db --skip-images
 ```
 
-Импорт ExerciseDB: ключ **`RAPIDAPI_KEY`** в **`backend/.env`** (или `make import-exercises RAPIDAPI_KEY=...`). Скрипт идемпотентен по полю `name` (англ.).
+**Импорт ExerciseDB (RapidAPI):** ключ **`RAPIDAPI_KEY`** в **`backend/.env`** (или `make import-exercises RAPIDAPI_KEY=...`). Идемпотентность по **`name`** (англ.); **`name_ru`** при импорте дублирует **`name`**. GIF → `exercises/{uuid}/demo.gif`.
+
+**Импорт free-exercise-db (офлайн):** файл **`exercises_translated.json`** (не в git; положить в `backend/seeds/`). `make import-free-exercises` / `import-free-exercises-no-images`; CLI: `--skip-images`, `--limit N`. Идемпотентность по **`name`** (англ.); **`name_ru`** из JSON. Картинки: raw GitHub [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) → `exercises/{uuid}/image.jpg`. Маппинг мышц/оборудования — как в `import_exercisedb.py`.

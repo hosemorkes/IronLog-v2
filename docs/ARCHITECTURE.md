@@ -255,7 +255,12 @@ user-uploads/{user_id}/avatar.jpg
 user-uploads/{user_id}/workout-{session_id}.mp4
 ```
 
-Опциональное наполнение каталога из **ExerciseDB** (RapidAPI): `python -m seeds.import_exercisedb` — см. `Makefile`, `RAPIDAPI_KEY` в `backend/.env`.
+Опциональное наполнение каталога:
+
+- **ExerciseDB (RapidAPI):** `python -m seeds.import_exercisedb` — `Makefile` `import-exercises*`, `RAPIDAPI_KEY` в `backend/.env`; **`name_ru`** = **`name`** (EN); медиа — `demo.gif`.
+- **free-exercise-db (офлайн):** `python -m seeds.import_free_exercise_db` — `Makefile` `import-free-exercises*`; JSON **`exercises_translated.json`** (`name_ru` на RU, ~873) в `.gitignore`; медиа — `image.jpg` из [raw GitHub](https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/).
+
+Оба импорта идемпотентны по **`name`** (англ.), маппинг мышц/оборудования — `import_exercisedb.py`. Основной RU-каталог MVP — `seeds.exercises` из PRODUCT_NOTES.
 
 ### RabbitMQ очереди
 ```
