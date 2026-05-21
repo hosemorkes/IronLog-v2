@@ -88,7 +88,7 @@
 
 **Опционально (отдельно):** импорт **ExerciseDB** через RapidAPI — `python -m seeds.import_exercisedb` или `make import-exercises*`; в БД **`name`** — англ., **`name_ru`** при импорте дублирует **`name`**; группы мышц в кодах (`chest`, `back`, …), GIF в MinIO. Ключ **`RAPIDAPI_KEY`** в `backend/.env`.
 
-**Опционально (офлайн, free-exercise-db):** `backend/seeds/exercises_translated.json` (~873 позиций, поле **`name_ru`** на русском; исходник — `exercises_raw.json`). Импорт: `python -m seeds.import_free_exercise_db` или `make import-free-exercises` / `import-free-exercises-no-images`; флаги `--skip-images`, `--limit N`. Идемпотентно по английскому **`name`**. Не заменяет сид из этого раздела — источники можно комбинировать.
+**Опционально (офлайн, free-exercise-db):** `backend/seeds/exercises_translated.json` (~873 позиций, поле **`name_ru`** на русском; исходник — `exercises_raw.json`). Импорт: `python -m seeds.import_free_exercise_db` или `make import-free-exercises` / `import-free-exercises-no-images`; флаги `--skip-images`, `--limit N`, **`--update-images`** (только догрузка `image_url` у существующих записей с `image_url IS NULL`, без вставки новых). Идемпотентно по английскому **`name`**. Не заменяет сид из этого раздела — источники можно комбинировать.
 
 ### Базовые / многосуставные
 

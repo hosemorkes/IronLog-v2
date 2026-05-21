@@ -11,6 +11,7 @@ import {
 } from "@/lib/exercise/constants";
 import { normalizeTechniqueSteps } from "@/lib/exercise/technique";
 import { useExerciseDetail } from "@/lib/hooks/useExerciseDetail";
+import { getMediaUrl } from "@/lib/utils/media";
 
 /** TODO: GET /api/user/progress или аналог — подставки до готовности API. */
 const STATS_PLACEHOLDER = {
@@ -80,16 +81,17 @@ export default function ExerciseDetailPage() {
   const primaryList = [data.muscle_group];
   const secondaryList = data.secondary_muscles ?? [];
   const steps = normalizeTechniqueSteps(data.technique_steps);
+  const imageUrl = getMediaUrl(data.image_url);
 
   return (
     <>
       <div className="min-h-full bg-gray-100 pb-36 dark:bg-[#111]">
         <header className="relative min-h-[240px] bg-gray-100/90 dark:bg-[#1a1a1a]/90">
-          {data.image_url ? (
+          {imageUrl ? (
             <div
               aria-hidden
               className="absolute inset-0 bg-cover bg-center opacity-[0.22] blur-sm"
-              style={{ backgroundImage: `url(${data.image_url})` }}
+              style={{ backgroundImage: `url(${imageUrl})` }}
             />
           ) : null}
           <Link

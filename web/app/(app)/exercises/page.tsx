@@ -11,6 +11,7 @@ import {
 import type { ExerciseListItem } from "@/lib/hooks/useExercises";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 import { useExercises } from "@/lib/hooks/useExercises";
+import { getMediaUrl } from "@/lib/utils/media";
 
 /** Debounce строки поиска (мс), как в требованиях. */
 const SEARCH_DEBOUNCE_MS = 300;
@@ -39,6 +40,7 @@ function ExerciseCardRow({
   const title = exercise.name_ru.trim() || exercise.name;
   const category = exercise.muscle_group;
   const tagLimit = exercise.tags.slice(0, 4);
+  const imageUrl = getMediaUrl(exercise.image_url);
 
   return (
     <Link
@@ -49,10 +51,10 @@ function ExerciseCardRow({
       }}
     >
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-200 dark:border-[#232323] dark:bg-[#252525]">
-        {exercise.image_url ? (
+        {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- внешние URL из API
           <img
-            src={exercise.image_url}
+            src={imageUrl}
             alt=""
             className="h-full w-full object-cover"
           />
@@ -329,6 +331,7 @@ interface PopularProps {
 
 function PopularCard({ exercise, index }: PopularProps) {
   const title = exercise.name_ru.trim() || exercise.name;
+  const imageUrl = getMediaUrl(exercise.image_url);
   return (
     <Link
       href={`/exercises/${exercise.id}`}
@@ -337,10 +340,10 @@ function PopularCard({ exercise, index }: PopularProps) {
     >
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-[#232323] dark:bg-[#1a1a1a] dark:shadow-none">
         <div className="aspect-[16/11] bg-gray-200 dark:bg-[#252525]">
-          {exercise.image_url ? (
+          {imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- внешние URL
             <img
-              src={exercise.image_url}
+              src={imageUrl}
               alt=""
               className="h-full w-full object-cover"
             />

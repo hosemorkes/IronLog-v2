@@ -250,6 +250,7 @@ queue:analytics              → аналитика
 
 ```
 exercises/{exercise_id}/image.jpg
+exercises/{exercise_id}/image.jpg   # image_url в БД — этот путь; web — NEXT_PUBLIC_MEDIA_URL + getMediaUrl()
 exercises/{exercise_id}/demo.gif   # gif_url в БД — этот путь; клиенту — GET .../gif-url (presigned)
 user-uploads/{user_id}/avatar.jpg
 user-uploads/{user_id}/workout-{session_id}.mp4
@@ -258,9 +259,11 @@ user-uploads/{user_id}/workout-{session_id}.mp4
 Опциональное наполнение каталога:
 
 - **ExerciseDB (RapidAPI):** `python -m seeds.import_exercisedb` — `Makefile` `import-exercises*`, `RAPIDAPI_KEY` в `backend/.env`; **`name_ru`** = **`name`** (EN); медиа — `demo.gif`.
-- **free-exercise-db (офлайн):** `python -m seeds.import_free_exercise_db` — `Makefile` `import-free-exercises*`; JSON **`exercises_translated.json`** (`name_ru` на RU, ~873) в `.gitignore`; медиа — `image.jpg` из [raw GitHub](https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/).
+- **free-exercise-db (офлайн):** `python -m seeds.import_free_exercise_db` — `Makefile` `import-free-exercises*`; JSON **`exercises_translated.json`** (`name_ru` на RU, ~873) в `.gitignore`; медиа — `image.jpg` из [raw GitHub](https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/); флаг **`--update-images`** — догрузка картинок для уже импортированных записей без `image_url`.
 
 Оба импорта идемпотентны по **`name`** (англ.), маппинг мышц/оборудования — `import_exercisedb.py`. Основной RU-каталог MVP — `seeds.exercises` из PRODUCT_NOTES.
+
+**Web и медиа упражнений:** в ответах API поля **`image_url`** / **`gif_url`** — относительные ключи объектов MinIO (не HTTP URL). Превью на **`/exercises`** и **`/exercises/[id]`** собирает **`getMediaUrl()`** (`web/lib/utils/media.ts`) из **`NEXT_PUBLIC_MEDIA_URL`** и пути из API.
 
 ### RabbitMQ очереди
 ```

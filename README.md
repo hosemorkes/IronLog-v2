@@ -24,6 +24,8 @@ cp backend/.env.example backend/.env
 cp web/.env.local.example web/.env.local
 # Минимум:
 #   NEXT_PUBLIC_API_URL=http://localhost:8000
+# Для превью картинок упражнений (API отдаёт путь MinIO, не полный URL):
+#   NEXT_PUBLIC_MEDIA_URL=https://your-domain.com/media/ironlog-exercises
 # Опционально (иначе WS-URL выводится из API):
 #   NEXT_PUBLIC_WS_URL=ws://localhost:8000
 
@@ -44,6 +46,7 @@ docker-compose exec api python -m seeds.achievements
 # Опционально: free-exercise-db из backend/seeds/exercises_translated.json (файл в .gitignore)
 # make import-free-exercises-no-images   # только данные
 # make import-free-exercises             # данные + image.jpg в MinIO
+# docker compose exec api python -m seeds.import_free_exercise_db --update-images  # картинки для записей без image_url
 
 # 6. Открыть приложение
 # Главная — http://localhost:3000 (лендинг: вход / регистрация; если в localStorage уже есть ironlog_access_token — редирект на /dashboard)
@@ -74,7 +77,7 @@ docker-compose exec api python -m seeds.achievements
 |--------|------|---------|
 | **api** | `backend/Dockerfile` | Multi-stage (wheels → runtime), Python **3.11-slim**, non-root `appuser`, **HEALTHCHECK** на `GET /health`. В **`docker-compose.yml`** для **api** задано `development` (uvicorn **--reload** и монтирование `./backend:/app`); для продакшена API соберите с **`APP_ENV=production`**. |
 | **worker** | тот же образ | Dramatiq, очереди RabbitMQ — **сервис в корневом `docker-compose.yml` по умолчанию закомментирован** (см. `# TODO` в файле); без воркера задачи из API остаются в очереди. |
-| **web** | `web/Dockerfile` | Multi-stage **deps → builder → runner**, Next.js **`output: "standalone"`**, Node **20**, пользователь **nextjs**, **`node server.js`**. **Build args** `NEXT_PUBLIC_*`: локально — `localhost` в compose; на VPS — через **`docker-compose.override.yml`** (шаблон **`docker-compose.override.yml.example`**, см. «Деплой на VPS»). Локально без Docker: **`cd web && npm run dev`**. |
+| **web** | `web/Dockerfile` | Multi-stage **deps → builder → runner**, Next.js **`output: "standalone"`**, Node **20**, пользователь **nextjs**, **`node server.js`**. **Build args** `NEXT_PUBLIC_*` (`API_URL`, `WS_URL`, `MEDIA_URL`): локально — `localhost` в compose; на VPS — через **`docker-compose.override.yml`** (шаблон **`docker-compose.override.yml.example`**, см. «Деплой на VPS»). Локально без Docker: **`cd web && npm run dev`**. |
 
 Мониторинг: `docker-compose --profile monitoring up -d`.
 
@@ -197,6 +200,7 @@ docker-compose exec api pytest
 # make import-free-exercises-no-images
 # make import-free-exercises
 # docker compose exec api python -m seeds.import_free_exercise_db --limit 10
+# docker compose exec api python -m seeds.import_free_exercise_db --update-images
 
 # Тесты backend локально (интерпретатор только из backend/.venv, см. docs/VENV_SETUP.md)
 # Windows:  cd backend && .venv\Scripts\python -m pytest
@@ -220,7 +224,7 @@ docker-compose down -v
 
 1. Скопировать шаблон подстановки URL для сборки фронта:  
    `cp docker-compose.override.yml.example docker-compose.override.yml`
-2. Отредактировать **`docker-compose.override.yml`**: заменить `your-domain.com` на свой домен (HTTPS / WSS для прода).
+2. Отредактировать **`docker-compose.override.yml`**: заменить `your-domain.com` на свой домен (HTTPS / WSS для прода; **`NEXT_PUBLIC_MEDIA_URL`** — публичный URL бакета упражнений MinIO).
 3. Пересобрать веб-образ с подставленными `NEXT_PUBLIC_*`:  
    `docker compose build web`
 4. Поднять стек:  

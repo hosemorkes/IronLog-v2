@@ -95,8 +95,9 @@ ironlog/                                   # Корневая папка
 │   ├── tsconfig.json
 │   ├── next.config.js                     # PWA конфиг (next-pwa)
 │   ├── tailwind.config.ts
-│   ├── .env.local                         # NEXT_PUBLIC_API_URL=http://localhost:8000
-│   │
+│   ├── .env.local                         # NEXT_PUBLIC_API_URL, NEXT_PUBLIC_MEDIA_URL (локально)
+│   ├── .env.example                       # Шаблон NEXT_PUBLIC_* для web
+│   ├── .env.local.example
 │   ├── app/                               # App Router
 │   │   ├── layout.tsx                     # Root: стили, скрипт темы, Providers
 │   │   ├── page.tsx                       # Landing / redirect
@@ -173,6 +174,7 @@ ironlog/                                   # Корневая папка
 │   ├── lib/
 │   │   ├── api.ts                         # apiUrl, apiFetch + Bearer
 │   │   ├── constants/theme.ts             # IRONLOG_THEME_STORAGE_KEY
+│   │   ├── utils/media.ts                 # getMediaUrl — NEXT_PUBLIC_MEDIA_URL + путь MinIO
 │   │   ├── hooks/
 │   │   │   ├── useExercises.ts            # каталог, useCreateCustomExercise
 │   │   │   ├── useWorkouts.ts
@@ -274,4 +276,4 @@ import-free-exercises-no-images:
 
 **Импорт ExerciseDB (RapidAPI):** ключ **`RAPIDAPI_KEY`** в **`backend/.env`** (или `make import-exercises RAPIDAPI_KEY=...`). Идемпотентность по **`name`** (англ.); **`name_ru`** при импорте дублирует **`name`**. GIF → `exercises/{uuid}/demo.gif`.
 
-**Импорт free-exercise-db (офлайн):** файл **`exercises_translated.json`** (не в git; положить в `backend/seeds/`). `make import-free-exercises` / `import-free-exercises-no-images`; CLI: `--skip-images`, `--limit N`. Идемпотентность по **`name`** (англ.); **`name_ru`** из JSON. Картинки: raw GitHub [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) → `exercises/{uuid}/image.jpg`. Маппинг мышц/оборудования — как в `import_exercisedb.py`.
+**Импорт free-exercise-db (офлайн):** файл **`exercises_translated.json`** (не в git; положить в `backend/seeds/`). `make import-free-exercises` / `import-free-exercises-no-images`; CLI: `--skip-images`, `--limit N`, **`--update-images`**. Идемпотентность по **`name`** (англ.); **`name_ru`** из JSON. Картинки: raw GitHub [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) → `exercises/{uuid}/image.jpg`. **`--update-images`** — только UPDATE `image_url` у существующих записей с NULL. Маппинг мышц/оборудования — как в `import_exercisedb.py`.

@@ -14,9 +14,9 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 | `/history/[session_id]` | `web/app/(app)/history/[session_id]/page.tsx` | Деталь завершённой сессии: план, дата, время, объём, таблицы подходов по упражнениям. Данные: **`GET /api/user/sessions/{session_id}`** (хук **`useSessionDetail`** в `useSessions.ts`). |
 | `/progress` | `web/app/(app)/progress/page.tsx` | Прогресс и статистика. (сейчас слился с /dashboard) |
 | `/profile` | `web/app/(app)/profile/page.tsx` | Профиль: переключатель **светлой/тёмной темы** (**`ironlog_theme`**, класс **`dark`** на `<html>`, Tailwind **`darkMode: 'class'`**), **имя** (**`PUT /api/auth/me`**), **отдых по умолчанию** (**`ironlog_default_rest`**, хук **`useDefaultRest`**), **экспорт** последних сессий (**`fetchSessionDetail`**, **`buildSessionExportText`**). Единицы — заглушка. |
-| `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека; «Назад» → `/workouts`, создание → `/exercises/new`. |
+| `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека; «Назад» → `/workouts`, создание → `/exercises/new`. Превью: **`getMediaUrl(image_url)`** (`web/lib/utils/media.ts`, env **`NEXT_PUBLIC_MEDIA_URL`**). |
 | `/exercises/new` | `web/app/(app)/exercises/new/page.tsx` | Кастомное упражнение: **`POST /api/user/exercises`** (тренер/админ может **`POST /api/exercises`**), хук **`useCreateCustomExercise`**. |
-| `/exercises/[id]` | `web/app/(app)/exercises/[id]/page.tsx` | Карточка упражнения. |
+| `/exercises/[id]` | `web/app/(app)/exercises/[id]/page.tsx` | Карточка упражнения; фон шапки — тот же **`getMediaUrl`**. |
 | `/workouts` | `web/app/(app)/workouts/page.tsx` | Список планов тренировок. |
 | `/workouts/new` | `web/app/(app)/workouts/new/page.tsx` | Создание плана. |
 | `/workouts/[id]` | `web/app/(app)/workouts/[id]/page.tsx` | Просмотр плана. |
