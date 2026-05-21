@@ -274,6 +274,7 @@ async def run_update_images(
     *,
     json_path: Path,
     limit: int | None,
+    force_image2: bool = False,
 ) -> None:
     settings = get_settings()
     print(f"📥 Обновляем изображения из {json_path.name}...")
@@ -313,7 +314,11 @@ async def run_update_images(
                 continue
 
             images = item.get("images")
-            needs_image_1 = exercise.image_url is None and _image_remote_url(images, 0) is not None
+            needs_image_1 = (
+                not force_image2
+                and exercise.image_url is None
+                and _image_remote_url(images, 0) is not None
+            )
             needs_image_2 = exercise.image_url_2 is None and _image_remote_url(images, 1) is not None
 
             if not needs_image_1 and not needs_image_2:
@@ -401,6 +406,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Обновить image_url/image_url_2 у существующих упражнений без изображений (без вставки новых)",
     )
     parser.add_argument(
+        "--force-image2",
+        action="store_true",
+        help="С --update-images: догрузить только image_url_2 (images[1] → image2.jpg), не трогая image_url",
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         default=None,
@@ -420,11 +430,15 @@ def main(argv: list[str] | None = None) -> None:
     if args.update_images and args.skip_images:
         print("Флаги --update-images и --skip-images несовместимы", file=sys.stderr)
         sys.exit(1)
+    if args.force_image2 and not args.update_images:
+        print("Флаг --force-image2 требует --update-images", file=sys.stderr)
+        sys.exit(1)
     if args.update_images:
         asyncio.run(
             run_update_images(
                 json_path=args.json,
                 limit=args.limit,
+                force_image2=args.force_image2,
             ),
         )
     else:
