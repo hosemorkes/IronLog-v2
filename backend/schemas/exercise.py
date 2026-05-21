@@ -51,6 +51,7 @@ class ExerciseResponse(BaseModel):
     description: str | None
     technique_steps: Any | None
     image_url: str | None
+    image_url_2: str | None = None
     gif_url: str | None = None
     created_by: UUID | None
     is_active: bool
@@ -70,6 +71,7 @@ class ExerciseDetailResponse(BaseModel):
     description: str | None
     technique_steps: Any | None
     image_url: str | None
+    image_url_2: str | None = None
     gif_url: str | None
     created_by: UUID | None
     is_active: bool

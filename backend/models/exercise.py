@@ -44,6 +44,7 @@ class Exercise(UUIDPrimaryKeyMixin, CreatedAtMixin, Base):
         nullable=True,
     )
     image_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
+    image_url_2: Mapped[str | None] = mapped_column(Text, nullable=True)
     gif_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     created_by: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True),

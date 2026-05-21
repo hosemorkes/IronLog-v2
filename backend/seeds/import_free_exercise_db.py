@@ -91,13 +91,13 @@ def _load_json(path: Path) -> list[dict[str, Any]]:
     return data
 
 
-def _image_remote_url(images: list[str] | None) -> str | None:
-    if not images:
+def _image_remote_url(images: list[str] | None, index: int = 0) -> str | None:
+    if not images or index >= len(images):
         return None
-    first = (images[0] or "").strip()
-    if not first:
+    item = (images[index] or "").strip()
+    if not item:
         return None
-    return f"{IMAGE_BASE_URL}/{first}"
+    return f"{IMAGE_BASE_URL}/{item}"
 
 
 def _download_image(url: str) -> bytes | None:
@@ -121,8 +121,10 @@ def _upload_image_sync(
     bucket: str,
     exercise_id: UUID,
     data: bytes,
+    *,
+    filename: str = "image.jpg",
 ) -> str:
-    object_name = f"exercises/{exercise_id}/image.jpg"
+    object_name = f"exercises/{exercise_id}/{filename}"
     client.put_object(
         bucket,
         object_name,
@@ -131,6 +133,35 @@ def _upload_image_sync(
         content_type="image/jpeg",
     )
     return object_name
+
+
+async def _upload_exercise_image(
+    *,
+    minio_client: Minio,
+    bucket: str,
+    exercise_id: UUID,
+    remote_url: str,
+    filename: str,
+) -> str | None:
+    image_data = await asyncio.to_thread(_download_image, remote_url)
+    if not image_data:
+        return None
+    try:
+        return await asyncio.to_thread(
+            _upload_image_sync,
+            minio_client,
+            bucket,
+            exercise_id,
+            image_data,
+            filename=filename,
+        )
+    except Exception as exc:
+        logger.warning(
+            "Не удалось загрузить изображение в MinIO (%s): %s",
+            filename,
+            exc,
+        )
+        return None
 
 
 async def run_import(
@@ -281,42 +312,60 @@ async def run_update_images(
                 skipped += 1
                 continue
 
-            if exercise.image_url is not None:
-                print(f"[{index}/{total}] {name} → image_url есть, пропуск")
+            images = item.get("images")
+            needs_image_1 = exercise.image_url is None and _image_remote_url(images, 0) is not None
+            needs_image_2 = exercise.image_url_2 is None and _image_remote_url(images, 1) is not None
+
+            if not needs_image_1 and not needs_image_2:
+                print(f"[{index}/{total}] {name} → пропуск")
                 skipped += 1
                 continue
 
-            image_url_remote = _image_remote_url(item.get("images"))
-            if not image_url_remote:
-                print(f"[{index}/{total}] {name} → нет изображения в JSON, пропуск")
-                skipped += 1
-                continue
+            row_updated = False
+            print(f"[{index}/{total}] {name}", end="", flush=True)
 
-            print(f"[{index}/{total}] {name} → ↓ image...", end=" ", flush=True)
-            image_data = await asyncio.to_thread(_download_image, image_url_remote)
-            if not image_data:
-                print("✗")
-                skipped += 1
-                continue
-
-            try:
-                image_path = await asyncio.to_thread(
-                    _upload_image_sync,
-                    minio_client,
-                    bucket,
-                    exercise.id,
-                    image_data,
+            if needs_image_1:
+                image_url_remote = _image_remote_url(images, 0)
+                assert image_url_remote is not None
+                print(" → ↓ image...", end=" ", flush=True)
+                image_path = await _upload_exercise_image(
+                    minio_client=minio_client,
+                    bucket=bucket,
+                    exercise_id=exercise.id,
+                    remote_url=image_url_remote,
+                    filename="image.jpg",
                 )
-            except Exception as exc:
-                logger.warning("Не удалось загрузить изображение в MinIO для %s: %s", name, exc)
-                print("✗")
-                skipped += 1
-                continue
+                if image_path:
+                    exercise.image_url = image_path
+                    row_updated = True
+                    print("✓", end="", flush=True)
+                else:
+                    print("✗", end="", flush=True)
 
-            exercise.image_url = image_path
-            print("✓")
-            updated += 1
-            pending += 1
+            if needs_image_2:
+                image_url_remote_2 = _image_remote_url(images, 1)
+                assert image_url_remote_2 is not None
+                print(" → ↓ image2...", end=" ", flush=True)
+                image_path_2 = await _upload_exercise_image(
+                    minio_client=minio_client,
+                    bucket=bucket,
+                    exercise_id=exercise.id,
+                    remote_url=image_url_remote_2,
+                    filename="image2.jpg",
+                )
+                if image_path_2:
+                    exercise.image_url_2 = image_path_2
+                    row_updated = True
+                    print("✓", end="", flush=True)
+                else:
+                    print("✗", end="", flush=True)
+
+            print()
+            if row_updated:
+                updated += 1
+                pending += 1
+            else:
+                skipped += 1
 
             if pending >= BATCH_SIZE:
                 await session.commit()
@@ -349,7 +398,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--update-images",
         action="store_true",
-        help="Обновить image_url у существующих упражнений без изображения (без вставки новых)",
+        help="Обновить image_url/image_url_2 у существующих упражнений без изображений (без вставки новых)",
     )
     parser.add_argument(
         "--limit",
