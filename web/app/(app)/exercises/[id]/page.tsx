@@ -142,10 +142,6 @@ export default function ExerciseDetailPage() {
             <StatBox value={STATS_PLACEHOLDER.workouts} label="тренировок" />
             <StatBox value={STATS_PLACEHOLDER.tonnageKg} label="кг поднято" />
           </div>
-          <p className="text-[10px] leading-snug text-gray-500/90 dark:text-muted/90">
-            TODO: агрегаты по данным пользователя после эндпоинтов прогресса /
-            журнала подходов.
-          </p>
 
           <Divider />
 
@@ -165,10 +161,6 @@ export default function ExerciseDetailPage() {
                 PR
               </span>
             </div>
-            <p className="mt-2 text-[10px] text-gray-500/90 dark:text-muted/90">
-              TODO: отдать с API связку вес × повторы и дату (personal_records /
-              workout_sets с is_pr).
-            </p>
           </section>
 
           <Divider />
@@ -257,6 +249,9 @@ interface ExerciseTechniqueImagesProps {
   alt: string;
 }
 
+const TECHNIQUE_IMAGE_FRAME_CLASS =
+  "relative mb-4 h-[200px] w-full overflow-hidden rounded-xl bg-[#252525] md:mx-auto md:h-[280px] md:max-w-sm";
+
 function ExerciseTechniqueImages({
   imageUrl,
   imageUrl2,
@@ -272,7 +267,7 @@ function ExerciseTechniqueImages({
   if (media1 && media2) {
     return (
       <div
-        className="exercise-technique-images mb-4"
+        className={`exercise-technique-images ${TECHNIQUE_IMAGE_FRAME_CLASS}`}
         aria-hidden
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- внешние URL из MinIO */}
@@ -297,7 +292,7 @@ function ExerciseTechniqueImages({
   }
 
   return (
-    <div className="mb-4 h-[200px] w-full overflow-hidden rounded-xl bg-[#252525]">
+    <div className={TECHNIQUE_IMAGE_FRAME_CLASS}>
       {/* eslint-disable-next-line @next/next/no-img-element -- внешние URL из MinIO */}
       <img
         src={singleUrl}
