@@ -77,7 +77,7 @@ ironlog/                                   # Корневая папка
 │   │   ├── db.py                          # DATABASE_URL для CLI-сидов
 │   │   ├── exercises.py                   # 60+ упражнений из PRODUCT_NOTES (RU)
 │   │   ├── import_exercisedb.py           # Опционально: ExerciseDB (RapidAPI) → Postgres + MinIO (GIF)
-│   │   ├── import_free_exercise_db.py     # Опционально: free-exercise-db JSON → Postgres + MinIO (image.jpg)
+│   │   ├── import_free_exercise_db.py     # free-exercise-db JSON → Postgres + MinIO (image.jpg, image2.jpg)
 │   │   ├── exercises_raw.json             # Офлайн-дамп каталога (EN), в .gitignore
 │   │   ├── exercises_translated.json      # free-exercise-db + name_ru (RU, ~873), в .gitignore
 │   │   └── achievements.py                # Определения ачивок
@@ -276,4 +276,4 @@ import-free-exercises-no-images:
 
 **Импорт ExerciseDB (RapidAPI):** ключ **`RAPIDAPI_KEY`** в **`backend/.env`** (или `make import-exercises RAPIDAPI_KEY=...`). Идемпотентность по **`name`** (англ.); **`name_ru`** при импорте дублирует **`name`**. GIF → `exercises/{uuid}/demo.gif`.
 
-**Импорт free-exercise-db (офлайн):** файл **`exercises_translated.json`** (не в git; положить в `backend/seeds/`). `make import-free-exercises` / `import-free-exercises-no-images`; CLI: `--skip-images`, `--limit N`, **`--update-images`**. Идемпотентность по **`name`** (англ.); **`name_ru`** из JSON. Картинки: raw GitHub [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) → `exercises/{uuid}/image.jpg`. **`--update-images`** — только UPDATE `image_url` у существующих записей с NULL. Маппинг мышц/оборудования — как в `import_exercisedb.py`.
+**Импорт free-exercise-db (офлайн):** файл **`exercises_translated.json`** (не в git; положить в `backend/seeds/`). `make import-free-exercises` / `import-free-exercises-no-images`; CLI: `--skip-images`, `--limit N`, **`--update-images`**, **`--force-image2`**. Идемпотентность по **`name`** (англ.); **`name_ru`** из JSON. Картинки: [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) → `exercises/{uuid}/image.jpg`, `image2.jpg` (`image_url`, `image_url_2` в БД; миграция **`b7e4c91a2f03`**). Маппинг мышц/оборудования — как в `import_exercisedb.py`.

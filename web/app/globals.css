@@ -56,3 +56,50 @@ html:not(.dark) body {
   opacity: 0;
   animation: exercise-card-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+
+.exercise-technique-images {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #252525;
+}
+
+.exercise-technique-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.exercise-technique-image--first {
+  animation: exercise-technique-image-first 3s infinite;
+}
+
+.exercise-technique-image--second {
+  animation: exercise-technique-image-second 3s infinite;
+}
+
+@keyframes exercise-technique-image-first {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes exercise-technique-image-second {
+  0%,
+  50% {
+    opacity: 0;
+  }
+  50.01%,
+  100% {
+    opacity: 1;
+  }
+}

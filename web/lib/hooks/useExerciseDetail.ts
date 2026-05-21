@@ -16,6 +16,7 @@ export interface ExerciseDetail {
   description: string | null;
   technique_steps: unknown;
   image_url: string | null;
+  image_url_2: string | null;
   gif_url: string | null;
   created_by: string | null;
   is_active: boolean;

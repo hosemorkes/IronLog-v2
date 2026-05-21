@@ -187,7 +187,7 @@ users (id UUID PK, email, username, hashed_password, role ENUM,
 -- Упражнения
 exercises (id UUID PK, name, name_ru, muscle_group, secondary_muscles[],
            equipment, difficulty ENUM, description, technique_steps JSONB,
-           image_url, gif_url, created_by UUID FK→users, created_at)
+           image_url, image_url_2, gif_url, created_by UUID FK→users, created_at)
 
 -- Планы тренировок
 workout_plans (id UUID PK, user_id FK, trainer_id FK NULL,
@@ -249,9 +249,9 @@ queue:analytics              → аналитика
 Бакет по умолчанию: **`ironlog-exercises`** (`MINIO_BUCKET_EXERCISES`). Ключи объектов:
 
 ```
-exercises/{exercise_id}/image.jpg
-exercises/{exercise_id}/image.jpg   # image_url в БД — этот путь; web — NEXT_PUBLIC_MEDIA_URL + getMediaUrl()
-exercises/{exercise_id}/demo.gif   # gif_url в БД — этот путь; клиенту — GET .../gif-url (presigned)
+exercises/{exercise_id}/image.jpg    # image_url — путь в БД; web: NEXT_PUBLIC_MEDIA_URL + getMediaUrl()
+exercises/{exercise_id}/image2.jpg   # image_url_2 — второй кадр free-exercise-db (images[1])
+exercises/{exercise_id}/demo.gif     # gif_url — GET .../gif-url (presigned)
 user-uploads/{user_id}/avatar.jpg
 user-uploads/{user_id}/workout-{session_id}.mp4
 ```
@@ -259,11 +259,11 @@ user-uploads/{user_id}/workout-{session_id}.mp4
 Опциональное наполнение каталога:
 
 - **ExerciseDB (RapidAPI):** `python -m seeds.import_exercisedb` — `Makefile` `import-exercises*`, `RAPIDAPI_KEY` в `backend/.env`; **`name_ru`** = **`name`** (EN); медиа — `demo.gif`.
-- **free-exercise-db (офлайн):** `python -m seeds.import_free_exercise_db` — `Makefile` `import-free-exercises*`; JSON **`exercises_translated.json`** (`name_ru` на RU, ~873) в `.gitignore`; медиа — `image.jpg` из [raw GitHub](https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/); флаг **`--update-images`** — догрузка картинок для уже импортированных записей без `image_url`.
+- **free-exercise-db (офлайн):** `python -m seeds.import_free_exercise_db` — `Makefile` `import-free-exercises*`; JSON **`exercises_translated.json`** (`name_ru` на RU, ~873) в `.gitignore`; медиа — `images[0]` → `image.jpg`, `images[1]` → `image2.jpg` из [raw GitHub](https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/); флаги **`--update-images`** (догрузка `image_url` / `image_url_2` у существующих записей), **`--force-image2`** (только `image_url_2`, не трогая `image_url`).
 
 Оба импорта идемпотентны по **`name`** (англ.), маппинг мышц/оборудования — `import_exercisedb.py`. Основной RU-каталог MVP — `seeds.exercises` из PRODUCT_NOTES.
 
-**Web и медиа упражнений:** в ответах API поля **`image_url`** / **`gif_url`** — относительные ключи объектов MinIO (не HTTP URL). Превью на **`/exercises`** и **`/exercises/[id]`** собирает **`getMediaUrl()`** (`web/lib/utils/media.ts`) из **`NEXT_PUBLIC_MEDIA_URL`** и пути из API.
+**Web и медиа упражнений:** в ответах API поля **`image_url`**, **`image_url_2`**, **`gif_url`** — относительные ключи MinIO (не HTTP URL). Список **`/exercises`** и фон шапки **`/exercises/[id]`** — **`getMediaUrl()`** (`web/lib/utils/media.ts`) + **`NEXT_PUBLIC_MEDIA_URL`**. В блоке «Техника выполнения» на **`/exercises/[id]`** — одна статичная картинка или CSS-анимация чередования двух кадров (1.5 с каждый), если заданы оба URL.
 
 ### RabbitMQ очереди
 ```

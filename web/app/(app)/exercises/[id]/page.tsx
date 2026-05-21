@@ -198,6 +198,11 @@ export default function ExerciseDetailPage() {
             <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.55px] text-gray-500 dark:text-muted">
               Техника выполнения
             </h2>
+            <ExerciseTechniqueImages
+              imageUrl={data.image_url}
+              imageUrl2={data.image_url_2}
+              alt={title}
+            />
             <ol className="space-y-3">
               {steps.length === 0 ? (
                 <li className="text-sm text-gray-500 dark:text-muted">
@@ -244,6 +249,63 @@ export default function ExerciseDetailPage() {
 
 function Divider() {
   return <div className="my-5 h-px bg-gray-200 dark:bg-border" role="presentation" />;
+}
+
+interface ExerciseTechniqueImagesProps {
+  imageUrl: string | null;
+  imageUrl2: string | null;
+  alt: string;
+}
+
+function ExerciseTechniqueImages({
+  imageUrl,
+  imageUrl2,
+  alt,
+}: ExerciseTechniqueImagesProps) {
+  const media1 = getMediaUrl(imageUrl);
+  const media2 = getMediaUrl(imageUrl2);
+
+  if (!media1 && !media2) {
+    return null;
+  }
+
+  if (media1 && media2) {
+    return (
+      <div
+        className="exercise-technique-images mb-4"
+        aria-hidden
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- внешние URL из MinIO */}
+        <img
+          src={media1}
+          alt=""
+          className="exercise-technique-image exercise-technique-image--first"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element -- внешние URL из MinIO */}
+        <img
+          src={media2}
+          alt=""
+          className="exercise-technique-image exercise-technique-image--second"
+        />
+      </div>
+    );
+  }
+
+  const singleUrl = media1 ?? media2;
+  if (!singleUrl) {
+    return null;
+  }
+
+  return (
+    <div className="mb-4 h-[200px] w-full overflow-hidden rounded-xl bg-[#252525]">
+      {/* eslint-disable-next-line @next/next/no-img-element -- внешние URL из MinIO */}
+      <img
+        src={singleUrl}
+        alt={alt}
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
 }
 
 function StatBox({ value, label }: { value: string; label: string }) {

@@ -46,7 +46,8 @@ docker-compose exec api python -m seeds.achievements
 # Опционально: free-exercise-db из backend/seeds/exercises_translated.json (файл в .gitignore)
 # make import-free-exercises-no-images   # только данные
 # make import-free-exercises             # данные + image.jpg в MinIO
-# docker compose exec api python -m seeds.import_free_exercise_db --update-images  # картинки для записей без image_url
+# docker compose exec api python -m seeds.import_free_exercise_db --update-images  # догрузка image_url / image_url_2
+# docker compose exec api python -m seeds.import_free_exercise_db --update-images --force-image2  # только image_url_2
 
 # 6. Открыть приложение
 # Главная — http://localhost:3000 (лендинг: вход / регистрация; если в localStorage уже есть ironlog_access_token — редирект на /dashboard)
@@ -201,6 +202,7 @@ docker-compose exec api pytest
 # make import-free-exercises
 # docker compose exec api python -m seeds.import_free_exercise_db --limit 10
 # docker compose exec api python -m seeds.import_free_exercise_db --update-images
+# docker compose exec api python -m seeds.import_free_exercise_db --update-images --force-image2
 
 # Тесты backend локально (интерпретатор только из backend/.venv, см. docs/VENV_SETUP.md)
 # Windows:  cd backend && .venv\Scripts\python -m pytest

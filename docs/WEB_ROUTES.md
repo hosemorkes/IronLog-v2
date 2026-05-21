@@ -16,7 +16,7 @@ Next.js 14 App Router, сервис **`web`** (порт 3000). Ниже — фа
 | `/profile` | `web/app/(app)/profile/page.tsx` | Профиль: переключатель **светлой/тёмной темы** (**`ironlog_theme`**, класс **`dark`** на `<html>`, Tailwind **`darkMode: 'class'`**), **имя** (**`PUT /api/auth/me`**), **отдых по умолчанию** (**`ironlog_default_rest`**, хук **`useDefaultRest`**), **экспорт** последних сессий (**`fetchSessionDetail`**, **`buildSessionExportText`**). Единицы — заглушка. |
 | `/exercises` | `web/app/(app)/exercises/page.tsx` | Библиотека; «Назад» → `/workouts`, создание → `/exercises/new`. Превью: **`getMediaUrl(image_url)`** (`web/lib/utils/media.ts`, env **`NEXT_PUBLIC_MEDIA_URL`**). |
 | `/exercises/new` | `web/app/(app)/exercises/new/page.tsx` | Кастомное упражнение: **`POST /api/user/exercises`** (тренер/админ может **`POST /api/exercises`**), хук **`useCreateCustomExercise`**. |
-| `/exercises/[id]` | `web/app/(app)/exercises/[id]/page.tsx` | Карточка упражнения; фон шапки — тот же **`getMediaUrl`**. |
+| `/exercises/[id]` | `web/app/(app)/exercises/[id]/page.tsx` | Карточка упражнения; фон шапки — **`getMediaUrl(image_url)`**. В «Технике выполнения» — блок с 1–2 кадрами (`image_url`, `image_url_2`): статичная картинка или CSS-анимация чередования (1.5 с); стили **`globals.css`** (`.exercise-technique-images`). |
 | `/workouts` | `web/app/(app)/workouts/page.tsx` | Список планов тренировок. |
 | `/workouts/new` | `web/app/(app)/workouts/new/page.tsx` | Создание плана. |
 | `/workouts/[id]` | `web/app/(app)/workouts/[id]/page.tsx` | Просмотр плана. |
