@@ -239,6 +239,98 @@ async def run_import(
     print(f"\n✅ Импортировано: {imported}, пропущено (дубли и пустые): {skipped}")
 
 
+async def run_update_images(
+    *,
+    json_path: Path,
+    limit: int | None,
+) -> None:
+    settings = get_settings()
+    print(f"📥 Обновляем изображения из {json_path.name}...")
+    raw_items = _load_json(json_path)
+    if limit is not None:
+        raw_items = raw_items[:limit]
+    total = len(raw_items)
+    print(f"✓ Записей в файле: {total}\n")
+
+    engine = make_engine()
+    session_factory = make_session_factory(engine)
+    minio_client = _make_minio_client(settings)
+    bucket = settings.minio_bucket_exercises
+    await ensure_exercises_bucket(minio_client, bucket)
+
+    updated = 0
+    skipped = 0
+    pending = 0
+    index = 0
+
+    async with session_factory() as session:
+        for item in raw_items:
+            index += 1
+            name = (item.get("name") or "").strip()
+            if not name:
+                print(f"[{index}/{total}] (без имени) → пропуск")
+                skipped += 1
+                continue
+
+            result = await session.execute(
+                select(Exercise).where(Exercise.name == name).limit(1),
+            )
+            exercise = result.scalar_one_or_none()
+            if exercise is None:
+                print(f"[{index}/{total}] {name} → не в БД, пропуск")
+                skipped += 1
+                continue
+
+            if exercise.image_url is not None:
+                print(f"[{index}/{total}] {name} → image_url есть, пропуск")
+                skipped += 1
+                continue
+
+            image_url_remote = _image_remote_url(item.get("images"))
+            if not image_url_remote:
+                print(f"[{index}/{total}] {name} → нет изображения в JSON, пропуск")
+                skipped += 1
+                continue
+
+            print(f"[{index}/{total}] {name} → ↓ image...", end=" ", flush=True)
+            image_data = await asyncio.to_thread(_download_image, image_url_remote)
+            if not image_data:
+                print("✗")
+                skipped += 1
+                continue
+
+            try:
+                image_path = await asyncio.to_thread(
+                    _upload_image_sync,
+                    minio_client,
+                    bucket,
+                    exercise.id,
+                    image_data,
+                )
+            except Exception as exc:
+                logger.warning("Не удалось загрузить изображение в MinIO для %s: %s", name, exc)
+                print("✗")
+                skipped += 1
+                continue
+
+            exercise.image_url = image_path
+            print("✓")
+            updated += 1
+            pending += 1
+
+            if pending >= BATCH_SIZE:
+                await session.commit()
+                print(f"💾 Батч {pending} сохранён")
+                pending = 0
+
+        if pending:
+            await session.commit()
+            print(f"💾 Батч {pending} сохранён")
+
+    await engine.dispose()
+    print(f"\n✅ Обновлено изображений: {updated}, пропущено: {skipped}")
+
+
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Импорт упражнений из exercises_translated.json (free-exercise-db)",
@@ -253,6 +345,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--skip-images",
         action="store_true",
         help="Импортировать только данные, без загрузки изображений в MinIO",
+    )
+    parser.add_argument(
+        "--update-images",
+        action="store_true",
+        help="Обновить image_url у существующих упражнений без изображения (без вставки новых)",
     )
     parser.add_argument(
         "--limit",
@@ -271,13 +368,24 @@ def main(argv: list[str] | None = None) -> None:
     if not args.json.is_file():
         print(f"Файл не найден: {args.json}", file=sys.stderr)
         sys.exit(1)
-    asyncio.run(
-        run_import(
-            json_path=args.json,
-            skip_images=args.skip_images,
-            limit=args.limit,
-        ),
-    )
+    if args.update_images and args.skip_images:
+        print("Флаги --update-images и --skip-images несовместимы", file=sys.stderr)
+        sys.exit(1)
+    if args.update_images:
+        asyncio.run(
+            run_update_images(
+                json_path=args.json,
+                limit=args.limit,
+            ),
+        )
+    else:
+        asyncio.run(
+            run_import(
+                json_path=args.json,
+                skip_images=args.skip_images,
+                limit=args.limit,
+            ),
+        )
 
 
 if __name__ == "__main__":
