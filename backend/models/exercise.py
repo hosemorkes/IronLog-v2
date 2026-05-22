@@ -43,6 +43,7 @@ class Exercise(UUIDPrimaryKeyMixin, CreatedAtMixin, Base):
         JSONB,
         nullable=True,
     )
+    technique_steps_ru: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
     image_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     image_url_2: Mapped[str | None] = mapped_column(Text, nullable=True)
     gif_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)

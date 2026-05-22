@@ -80,7 +80,11 @@ export default function ExerciseDetailPage() {
   const title = data.name_ru.trim() || data.name;
   const primaryList = [data.muscle_group];
   const secondaryList = data.secondary_muscles ?? [];
-  const steps = normalizeTechniqueSteps(data.technique_steps);
+  const stepsSource =
+    data.technique_steps_ru != null && data.technique_steps_ru.length > 0
+      ? data.technique_steps_ru
+      : data.technique_steps;
+  const steps = normalizeTechniqueSteps(stepsSource);
   const imageUrl = getMediaUrl(data.image_url);
 
   return (

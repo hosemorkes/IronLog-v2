@@ -187,6 +187,7 @@ users (id UUID PK, email, username, hashed_password, role ENUM,
 -- Упражнения
 exercises (id UUID PK, name, name_ru, muscle_group, secondary_muscles[],
            equipment, difficulty ENUM, description, technique_steps JSONB,
+           technique_steps_ru JSONB,
            image_url, image_url_2, gif_url, created_by UUID FK→users, created_at)
 
 -- Планы тренировок
@@ -263,7 +264,7 @@ user-uploads/{user_id}/workout-{session_id}.mp4
 
 Оба импорта идемпотентны по **`name`** (англ.), маппинг мышц/оборудования — `import_exercisedb.py`. Основной RU-каталог MVP — `seeds.exercises` из PRODUCT_NOTES.
 
-**Web и медиа упражнений:** в ответах API поля **`image_url`**, **`image_url_2`**, **`gif_url`** — относительные ключи MinIO (не HTTP URL). Список **`/exercises`** и фон шапки **`/exercises/[id]`** — **`getMediaUrl()`** (`web/lib/utils/media.ts`) + **`NEXT_PUBLIC_MEDIA_URL`**. В блоке «Техника выполнения» на **`/exercises/[id]`** — одна статичная картинка или CSS-анимация чередования двух кадров (1.5 с каждый), если заданы оба URL.
+**Web и медиа упражнений:** в ответах API поля **`image_url`**, **`image_url_2`**, **`gif_url`** — относительные ключи MinIO (не HTTP URL). Список **`/exercises`** и фон шапки **`/exercises/[id]`** — **`getMediaUrl()`** (`web/lib/utils/media.ts`) + **`NEXT_PUBLIC_MEDIA_URL`**. В блоке «Техника выполнения» на **`/exercises/[id]`** — одна статичная картинка или CSS-анимация чередования двух кадров (1.5 с); на **md+** блок до **`max-w-sm`**, по центру, высота 280px (на мобильном — на всю ширину, 200px).
 
 ### RabbitMQ очереди
 ```

@@ -70,6 +70,7 @@ class ExerciseDetailResponse(BaseModel):
     difficulty: str
     description: str | None
     technique_steps: Any | None
+    technique_steps_ru: list[str] | None = None
     image_url: str | None
     image_url_2: str | None = None
     gif_url: str | None

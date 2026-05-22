@@ -15,6 +15,7 @@ export interface ExerciseDetail {
   difficulty: string;
   description: string | null;
   technique_steps: unknown;
+  technique_steps_ru?: string[] | null;
   image_url: string | null;
   image_url_2: string | null;
   gif_url: string | null;

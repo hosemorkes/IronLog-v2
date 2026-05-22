@@ -63,6 +63,7 @@ def _to_detail_response(row: Exercise) -> ExerciseDetailResponse:
         difficulty=row.difficulty.value,
         description=row.description,
         technique_steps=row.technique_steps,
+        technique_steps_ru=row.technique_steps_ru,
         image_url=row.image_url,
         image_url_2=row.image_url_2,
         gif_url=row.gif_url,
