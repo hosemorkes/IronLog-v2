@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-import { MuscleMap } from "@/components/exercise/MuscleMap";
+import { MuscleMap } from "@/components/exercises/MuscleMap";
 import {
   DIFFICULTY_LABELS,
   DIFFICULTY_TAILWIND,

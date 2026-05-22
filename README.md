@@ -43,11 +43,12 @@ docker-compose exec api python -m seeds.achievements
 # make import-exercises-no-gifs RAPIDAPI_KEY=...   # только данные
 # make import-exercises RAPIDAPI_KEY=...           # данные + GIF в MinIO
 
-# Опционально: free-exercise-db из backend/seeds/exercises_translated.json (файл в .gitignore)
+# Опционально: free-exercise-db из backend/seeds/exercises_translated.json (в репозитории)
 # make import-free-exercises-no-images   # только данные
 # make import-free-exercises             # данные + image.jpg в MinIO
 # docker compose exec api python -m seeds.import_free_exercise_db --update-images  # догрузка image_url / image_url_2
 # docker compose exec api python -m seeds.import_free_exercise_db --update-images --force-image2  # только image_url_2
+# docker compose exec api python -m seeds.load_technique_steps_ru  # instructions_ru из JSON → technique_steps_ru в БД
 
 # 6. Открыть приложение
 # Главная — http://localhost:3000 (лендинг: вход / регистрация; если в localStorage уже есть ironlog_access_token — редирект на /dashboard)
@@ -197,12 +198,13 @@ docker-compose exec api pytest
 # make import-exercises-no-gifs RAPIDAPI_KEY=your_key
 # make import-exercises RAPIDAPI_KEY=your_key
 
-# Импорт free-exercise-db (положить exercises_translated.json в backend/seeds/, не в git)
+# Импорт free-exercise-db (backend/seeds/exercises_translated.json — в репозитории)
 # make import-free-exercises-no-images
 # make import-free-exercises
 # docker compose exec api python -m seeds.import_free_exercise_db --limit 10
 # docker compose exec api python -m seeds.import_free_exercise_db --update-images
 # docker compose exec api python -m seeds.import_free_exercise_db --update-images --force-image2
+# docker compose exec api python -m seeds.load_technique_steps_ru  # instructions_ru → technique_steps_ru (после import-free-exercises)
 
 # Тесты backend локально (интерпретатор только из backend/.venv, см. docs/VENV_SETUP.md)
 # Windows:  cd backend && .venv\Scripts\python -m pytest

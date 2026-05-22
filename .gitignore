@@ -136,7 +136,3 @@ IronLog-handoff.zip
 
 # ── Tests ────────────────────────────────────
 .hypothesis/
-
-# ── Seeds ────────────────────────────────────
-backend/seeds/exercises_raw.json 
-backend/seeds/exercises_translated.json 

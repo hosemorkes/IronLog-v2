@@ -78,8 +78,11 @@ ironlog/                                   # Корневая папка
 │   │   ├── exercises.py                   # 60+ упражнений из PRODUCT_NOTES (RU)
 │   │   ├── import_exercisedb.py           # Опционально: ExerciseDB (RapidAPI) → Postgres + MinIO (GIF)
 │   │   ├── import_free_exercise_db.py     # free-exercise-db JSON → Postgres + MinIO (image.jpg, image2.jpg)
-│   │   ├── exercises_raw.json             # Офлайн-дамп каталога (EN), в .gitignore
-│   │   ├── exercises_translated.json      # free-exercise-db + name_ru (RU, ~873), в .gitignore
+│   │   ├── translate_instructions_json.py # instructions → instructions_ru в exercises_translated.json (Google Translate)
+│   │   ├── load_technique_steps_ru.py     # instructions_ru из JSON → exercises.technique_steps_ru (по name)
+│   │   ├── translate_technique_steps.py   # technique_steps → technique_steps_ru в БД (Claude API, ANTHROPIC_API_KEY)
+│   │   ├── exercises_raw.json             # Офлайн-дамп каталога (EN, free-exercise-db)
+│   │   ├── exercises_translated.json      # free-exercise-db + name_ru + instructions_ru (RU, ~873)
 │   │   └── achievements.py                # Определения ачивок
 │   │
 │   └── tests/
@@ -276,4 +279,6 @@ import-free-exercises-no-images:
 
 **Импорт ExerciseDB (RapidAPI):** ключ **`RAPIDAPI_KEY`** в **`backend/.env`** (или `make import-exercises RAPIDAPI_KEY=...`). Идемпотентность по **`name`** (англ.); **`name_ru`** при импорте дублирует **`name`**. GIF → `exercises/{uuid}/demo.gif`.
 
-**Импорт free-exercise-db (офлайн):** файл **`exercises_translated.json`** (не в git; положить в `backend/seeds/`). `make import-free-exercises` / `import-free-exercises-no-images`; CLI: `--skip-images`, `--limit N`, **`--update-images`**, **`--force-image2`**. Идемпотентность по **`name`** (англ.); **`name_ru`** из JSON. Картинки: [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) → `exercises/{uuid}/image.jpg`, `image2.jpg` (`image_url`, `image_url_2` в БД; миграция **`b7e4c91a2f03`**). Маппинг мышц/оборудования — как в `import_exercisedb.py`.
+**Импорт free-exercise-db (офлайн):** JSON в репозитории — **`backend/seeds/exercises_translated.json`** (исходник EN: **`exercises_raw.json`**). `make import-free-exercises` / `import-free-exercises-no-images`; CLI: `--skip-images`, `--limit N`, **`--update-images`**, **`--force-image2`**. Идемпотентность по **`name`** (англ.); **`name_ru`** и **`instructions_ru`** из JSON. Картинки: [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) → `exercises/{uuid}/image.jpg`, `image2.jpg` (`image_url`, `image_url_2` в БД; миграция **`b7e4c91a2f03`**). Маппинг мышц/оборудования — как в `import_exercisedb.py`.
+
+**Русские шаги техники в БД:** после импорта каталога — `python -m seeds.load_technique_steps_ru` (поле **`instructions_ru`** из JSON → **`technique_steps_ru`** в Postgres, сопоставление по **`Exercise.name`**, батчи по 50). Альтернатива без JSON: `python -m seeds.translate_technique_steps` — перевод **`technique_steps`** через Claude API (**`ANTHROPIC_API_KEY`** в `backend/.env`). Подготовка JSON: `python -m seeds.translate_instructions_json` — заполнить **`instructions_ru`** в `exercises_translated.json` (Google Translate). Миграция колонки: **`c3a8f12b4d56`**.

@@ -260,11 +260,13 @@ user-uploads/{user_id}/workout-{session_id}.mp4
 Опциональное наполнение каталога:
 
 - **ExerciseDB (RapidAPI):** `python -m seeds.import_exercisedb` — `Makefile` `import-exercises*`, `RAPIDAPI_KEY` в `backend/.env`; **`name_ru`** = **`name`** (EN); медиа — `demo.gif`.
-- **free-exercise-db (офлайн):** `python -m seeds.import_free_exercise_db` — `Makefile` `import-free-exercises*`; JSON **`exercises_translated.json`** (`name_ru` на RU, ~873) в `.gitignore`; медиа — `images[0]` → `image.jpg`, `images[1]` → `image2.jpg` из [raw GitHub](https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/); флаги **`--update-images`** (догрузка `image_url` / `image_url_2` у существующих записей), **`--force-image2`** (только `image_url_2`, не трогая `image_url`).
+- **free-exercise-db (офлайн):** `python -m seeds.import_free_exercise_db` — `Makefile` `import-free-exercises*`; JSON **`backend/seeds/exercises_translated.json`** (`name_ru`, `instructions_ru` на RU, ~873) в репозитории; медиа — `images[0]` → `image.jpg`, `images[1]` → `image2.jpg` из [raw GitHub](https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/); флаги **`--update-images`** (догрузка `image_url` / `image_url_2` у существующих записей), **`--force-image2`** (только `image_url_2`, не трогая `image_url`). После импорта — **`load_technique_steps_ru`** (`instructions_ru` → `technique_steps_ru` по `name`).
 
 Оба импорта идемпотентны по **`name`** (англ.), маппинг мышц/оборудования — `import_exercisedb.py`. Основной RU-каталог MVP — `seeds.exercises` из PRODUCT_NOTES.
 
-**Web и медиа упражнений:** в ответах API поля **`image_url`**, **`image_url_2`**, **`gif_url`** — относительные ключи MinIO (не HTTP URL). Список **`/exercises`** и фон шапки **`/exercises/[id]`** — **`getMediaUrl()`** (`web/lib/utils/media.ts`) + **`NEXT_PUBLIC_MEDIA_URL`**. В блоке «Техника выполнения» на **`/exercises/[id]`** — одна статичная картинка или CSS-анимация чередования двух кадров (1.5 с); на **md+** блок до **`max-w-sm`**, по центру, высота 280px (на мобильном — на всю ширину, 200px).
+**Русские шаги техники:** колонка **`technique_steps_ru`** (JSONB, миграция **`c3a8f12b4d56`**); в **`GET /api/exercises/{id}`** (`ExerciseDetailResponse`) — **`technique_steps_ru`** и **`technique_steps`** (EN). Заполнение: **`load_technique_steps_ru`** из JSON или **`translate_technique_steps`** (Claude, **`ANTHROPIC_API_KEY`**).
+
+**Web и медиа упражнений:** в ответах API поля **`image_url`**, **`image_url_2`**, **`gif_url`** — относительные ключи MinIO (не HTTP URL). Список **`/exercises`** и фон шапки **`/exercises/[id]`** — **`getMediaUrl()`** (`web/lib/utils/media.ts`) + **`NEXT_PUBLIC_MEDIA_URL`**. В блоке «Техника выполнения» на **`/exercises/[id]`** — шаги из **`technique_steps_ru`**, fallback на **`technique_steps`**; одна статичная картинка или CSS-анимация чередования двух кадров (1.5 с); на **md+** блок до **`max-w-sm`**, по центру, высота 280px (на мобильном — на всю ширину, 200px).
 
 ### RabbitMQ очереди
 ```
